@@ -22,7 +22,7 @@ class Log
 
     log(logLevel, message)
     {
-        if (logEnum[logLevel] > logEnum[this.LogLevel])
+        if (logEnum[logLevel] < logEnum[this.LogLevel])
         {
             return;
         }
