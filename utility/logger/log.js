@@ -15,44 +15,44 @@ class Log
 
     static LogLevel = "Event";
 
-    setlogLevel(level)
+    setLevel(level)
     {
         this.LogLevel = level
     }
 
-    log(logLevel, message)
+    log(logLevel, ...args )
     {
         if (logEnum[logLevel] < logEnum[this.LogLevel])
         {
             return;
         }
-        console.log(logString[logLevel], message);
+        console.log(logString[logLevel], ...args);
     }
 
     
-    trace(message)
+    trace(...args)
     {
-        this.log("Trace", message);
+        this.log("Trace", ...args);
     }
-    debug(message)
+    debug(...args)
     {
-        this.log("Debug", message);
+        this.log("Debug", ...args);
     }   
-    event(message)
+    event(...args)
     {
-        this.log("Event", message);
+        this.log("Event", ...args);
     }   
-    error(message)
+    error(...args)
     {
-        this.log("Error", message);
+        this.log("Error", ...args);
     }   
-    fatal(message)
+    fatal(...args)
     {
-        this.log("Fatal", message);
+        this.log("Fatal", ...args);
     }
-    system(message)
+    system(...args)
     {
-        this.log("System", message);
+        this.log("System", ...args);
     }    
 }
 

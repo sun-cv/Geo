@@ -1,0 +1,37 @@
+
+{
+    "test-button-0": 
+    {
+        "meta": 
+        {
+            "id":               "",
+            "type":             "",
+            "description":      ""
+        },
+
+        "access":
+        {
+            "cooldown":         0,
+            "permissions":      [],
+            "channels":         [],
+            "roles":            [],
+            "exclude":  
+            {   
+                "permissions":  [],
+                "channels":     [],
+                "roles":        []
+            }
+        },
+
+        "flag":
+        {
+            "ignore":           false,
+            "defer":            false,
+            "maintenance":      false 
+        },
+
+        "execute":              "command-moderator-throwerror.js"
+    }
+
+    
+}

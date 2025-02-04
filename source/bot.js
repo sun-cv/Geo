@@ -1,10 +1,9 @@
 import config from "../environment/config.json" with { type: "json" };
 
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits } from 'discord.js';
 import { log } from "../utility/logger/log.js";
 
-import { ModuleLoader } from "./module/moduleLoader.js"
-
+import { Registry } from './registry/registry.js'
 
 class Bot
 {
@@ -13,12 +12,12 @@ class Bot
         this.client;
         this.registry;
 
-        this.eventManager;
+        this.construct();
     }
 
-    async initialize()
+    async construct()
     {
-        log.setlogLevel("Trace");
+        log.system("Initiating startup sequence");
 
         this.client = new Client({
             intents: [
@@ -28,34 +27,36 @@ class Bot
                 GatewayIntentBits.MessageContent,
             ],
         });
-
-        this.registry = 
-        {
-            command:    new Collection(),
-            button:     new Collection(),
-            menu:       new Collection(),
-            modal:      new Collection(),
-            filter:     new Collection(),
-        }
-
-        await ModuleLoader.events(this.client, this.registry)
-        await ModuleLoader.commands(this.client, this.registry);
-        await ModuleLoader.components(this.client, this.registry);
-        await ModuleLoader.deployCommands(this.client, this.registry);
-
+        
+        this.registry           = new Registry(this.client);
+        
+        
     }
     
-    
+    async initialize()
+    {
+        log.setLevel("trace");
+
+        await this.systemEvents();
+        await this.registry.loadRegistryModules();
+
+    }
+
     async engage()
     {
-        log.system("All systems online. Engage!")
-        this.client.login(config.token);
+        await this.client.login(config.token);
     }
 
+    async systemEvents()
+    {
+        process.on("SIGINT", this.shutdown);
+        process.on("SIGTERM", this.shutdown);
+    }
 
     async shutdown()
     {
         log.system("Powering down..")
+        process.exit(0);
     }
 
 

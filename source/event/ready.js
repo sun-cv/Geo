@@ -1,5 +1,5 @@
 import { Events } from 'discord.js';
-import { log }    from '../../../../utility/logger/log.js'
+import { log }    from '../../utility/logger/log.js'
 
 
 export const event = {
@@ -19,12 +19,12 @@ export const event = {
 
 	execute: async (client) =>
     {
-		console.log(`Ready! Logged in as ${client.user.tag}`);
+        log.system("All systems online. Engage!")
 
 		client.guilds.cache.forEach(async (guild) => 
         {
 			await guild.members.fetch();
-			console.log(`Fetched ${guild.members.cache.size} members for guild: ${guild.name}`);
+			log.system(`Fetched ${guild.members.cache.size} members for guild: ${guild.name}`);
 		});
 	},
 };

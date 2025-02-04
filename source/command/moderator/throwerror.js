@@ -1,6 +1,6 @@
 import fs   from 'node:fs';
-import path from 'node:path';
-import  { SlashCommandBuilder, CommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, CommandInteraction } from 'discord.js';
+import { log } from '../../../utility/index.js'
 
 async function throwErrorCommand(interaction = new CommandInteraction()) {
 	try {
@@ -33,7 +33,7 @@ async function throwErrorCommand(interaction = new CommandInteraction()) {
 		}
 	}
 	catch (error) {
-		console.log(error);
+		log.error(error);
 	}
 }
 
@@ -42,7 +42,7 @@ async function throwErrorCommand(interaction = new CommandInteraction()) {
 const command = {
     meta: 
     {
-        id:             "test-command",     // Unique identifier (e.g., "ping", "confirm-modal")
+        id:             "throwerror",     // Unique identifier (e.g., "ping", "confirm-modal")
         type:           "command",          // "command", "button", "menu", "modal", "filter"
         description:    "this is a test",   // Short explanation
     },
