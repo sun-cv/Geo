@@ -17,7 +17,7 @@ class FileManager
         }
 
         const extension   = path.extname(filePath);
-        const fileLoader  = this.loadFileType[extension];
+        const fileLoader  = this.fileLoaders[extension];
 
         if (!fileLoader)
         {
@@ -28,6 +28,7 @@ class FileManager
         await fileLoader(filePath, callbackFunction, ...args)
     }
 
+    
     static async loadDirectory(folderPath, callbackFunction, ...args)
     {
         
@@ -51,21 +52,27 @@ class FileManager
 
 
     static async loadJS(filePath, callbackFunction, ...args)
-    {
+    {        
         const fileURL   = pathToFileURL(filePath).href;
         const data      = await import(fileURL);
-        const object    = data.default;
 
-        log.trace(`Loading ${object.meta.type} (source: ${fileURL})`);
-    
-        if (!object)
+        if (data.ignore)
         {
-            log.error("File.js load failed (object data not found)")
             return;
         }
+        const object    = data.default;
+        
+        if (!object)
+        {
+            log.error(`File.js load failed (object data not found: ${fileURL})`)
+            return;
+        }
+        
+        log.trace(`Loading ${object.meta.type} (source: ${fileURL})`);
 
         await callbackFunction(object, ...args);
     }
+
 
     static async loadJSON(filePath, callbackFunction, ...args)
     {
@@ -76,20 +83,21 @@ class FileManager
 
         if (!json)
         {
-            log.error("File.JSON load failed (could not parse json data)");
+            log.error(`File.JSON load failed (could not parse json data: ${filePath})`);
         }
 
         await callbackFunction(json, ...args);
     }
 
-    static get loadFileType()
+
+    static get fileLoaders()
     {
-        const fileTypes =
+        const path =
         {
             ".js":      FileManager.loadJS,
             ".json":    FileManager.loadJSON,
         }
-        return fileTypes;
+        return path;
     }
 
 }

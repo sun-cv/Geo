@@ -3,10 +3,11 @@
 
 //  Task List
 
-// 1. Component Handlers - In Progress
-// 2. Task Manager 
-// 3. Rebuild command structure
-// 4. tbd
+// 1. Move event handling out of Registry
+// 2. Component Handlers
+// 3. Task Manager 
+// 4. Rebuild command structure
+// 5. tbd
 
 
 

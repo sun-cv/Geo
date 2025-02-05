@@ -1,19 +1,20 @@
 import { Events } from 'discord.js';
-import { log }    from '../../utility/logger/log.js'
+import { log }    from '../../../utility/logger/log.js'
 
 
-export const event = {
+export const event = 
+{
     meta: 
     {
         id:             Events.ClientReady,
         name:           "client ready",
         type:           "event",
+        category:       "client",
         description:    "Geo bot - discord communication established. Client ready event",
     },
 
     flag: 
     {
-        ignore:         false,
         once:           true,
     },
 
@@ -24,7 +25,7 @@ export const event = {
 		client.guilds.cache.forEach(async (guild) => 
         {
 			await guild.members.fetch();
-			log.system(`Fetched ${guild.members.cache.size} members for guild: ${guild.name}`);
+			log.system(`${guild.name} has ${guild.members.cache.size} members`);
 		});
 	},
 };

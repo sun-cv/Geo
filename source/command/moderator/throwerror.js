@@ -42,24 +42,24 @@ async function throwErrorCommand(interaction = new CommandInteraction()) {
 const command = {
     meta: 
     {
-        id:             "throwerror",     // Unique identifier (e.g., "ping", "confirm-modal")
-        type:           "command",          // "command", "button", "menu", "modal", "filter"
-        description:    "this is a test",   // Short explanation
+        id:             "throwerror",
+        type:           "command",
+        description:    "Throws an error for testing error handling.",
     },
 
     access: 
     {
         cooldown:       0,
-        permissions:    [],    // Required Discord permissions (e.g., ["ADMINISTRATOR"])
-        channels:       [],    // Required channel location
-        roles:          [],    // Required role IDs (for finer control)
+        permissions:    [],
+        channels:       [],
+        roles:          ["moderator"],
     },
 
     flag: 
     {
-        ignore:         false,  // Flag to ignore load 
-        defer:          false,  // Whether it defers the reply
-        maintenance:    false   // Whether command is under maintenance (may be moved)
+        ignore:         false,
+        defer:          true,
+        maintenance:    false
     },
 
     data: new SlashCommandBuilder()

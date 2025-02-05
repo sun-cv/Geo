@@ -4,23 +4,17 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import { log } from "../utility/logger/log.js";
 
 import { Registry } from './registry/registry.js'
+import { Dispatcher } from './event/dispatcher.js'
+import { Interaction } from "./interaction/interaction.js";
 
 class Bot
 {
     constructor()
     {
-        this.client;
-        this.registry;
-
-        this.construct();
-    }
-
-    async construct()
-    {
-        log.system("Initiating startup sequence");
-
-        this.client = new Client({
-            intents: [
+        this.client     = new Client(
+        {
+            intents: 
+            [
                 GatewayIntentBits.Guilds,
                 GatewayIntentBits.GuildMembers,
                 GatewayIntentBits.GuildMessages,
@@ -28,17 +22,26 @@ class Bot
             ],
         });
         
-        this.registry           = new Registry(this.client);
-        
-        
+        this.registry    = new Registry(this.client);
+        this.dispatcher  = new Dispatcher(this.client);
+        this.interaction = new Interaction(this.client, this.registry)
     }
     
+
     async initialize()
     {
-        log.setLevel("trace");
+        log.setLevel("System");
 
-        await this.systemEvents();
-        await this.registry.loadRegistryModules();
+        log.system("Initiating startup sequence");
+
+        await this.dispatcher.setContext(this);
+        await this.dispatcher.registerEvents();
+        await this.dispatcher.registerClient(this.interaction.create);
+
+        await this.registry.registerModules();
+        await this.registry.deployCommands(); // Move to command handler?
+
+
 
     }
 

@@ -1,5 +1,7 @@
-import { Collection }   from 'discord.js';
-import path             from 'node:path';
+import { REST, Routes, Collection }     from 'discord.js';
+import path                     from 'node:path';
+
+import config from '../../environment/config.json' with { type: 'json' }
 
 import { log, FileManager } from '../../utility/index.js'
 
@@ -28,19 +30,10 @@ class Registry
         this.modal      = new Collection();
         this.filter     = new Collection();
         this.tasks      = new Collection();
-
-        this.bot        = null;
-
     }
 
-    async setBot(Geo)
+    async registerModules()
     {
-        this.bot = Geo;
-    }
-
-    async loadRegistryModules()
-    {
-        await this.loadEvents();
         await this.loadCommands();
         await this.loadButtons()
         await this.loadMenus();
@@ -48,12 +41,7 @@ class Registry
         await this.loadFilters();
         await this.loadTasks();
         
-        log.system("Registry modules loaded successfully")
-    }
-
-    async loadEvents()
-    {
-        await FileManager.loadDirectory(this.directory.event,   (object) => this.registerListener(object));
+        log.system("Registry data loaded successfully")
     }
 
     async loadCommands()
@@ -86,18 +74,6 @@ class Registry
         await FileManager.loadDirectory(this.directory.task, this.registerTask)
     }
 
-    async registerListener(event) 
-    {
-        if (event.flag.once) 
-        {
-            this.client.once(event.meta.id, (...args) => event.execute(this.client, ...args));
-        }
-        else 
-        {
-            this.client.on(event.meta.id, (...args) => event.execute(this.client, ...args));
-        }
-        log.system(`Registered event: ${event.meta.name}`)
-    }
     
     async registerCommand(command) 
     {
@@ -106,7 +82,8 @@ class Registry
             return;
         }  
         this.command.set(command.meta.id, command);
-        log.system(`Registered command: ${command.meta.id}`)
+
+        log.trace(`Registered command: ${command.meta.id}`)
     }
     
     async registerComponent(components, type)
@@ -118,7 +95,8 @@ class Registry
                 return;
             }
             this[type].set(id, component);
-            log.trace(`Registered button: ${id}`)
+
+            log.trace(`Registered component: ${id}`)
         }
     }
 
@@ -131,6 +109,27 @@ class Registry
     {
         // TBD
     }
+
+    async deployCommands()
+    {
+
+        const commandData = [];
+
+        for (const entry of this.command.values())
+        {
+            commandData.push(entry.data);
+        }
+
+		const rest = new REST().setToken(config.token);
+
+		const data = await rest.put
+        (
+			Routes.applicationGuildCommands(config.clientId, config.guildId),
+			{ body: commandData },
+		);
+		log.system(`Successfully reloaded ${data.length}/${this.command.size} application (/) commands.`);
+    }
+
 }
 
 
