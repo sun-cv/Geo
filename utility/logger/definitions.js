@@ -5,7 +5,7 @@ const logEnum =
     Event: 2,
     Error: 3,
     Fatal: 4,
-    System: 5
+    Admin: 5
 }
 
 const logString =
@@ -15,7 +15,7 @@ const logString =
     Event: "[Event]",
     Error: "[Error]",
     Fatal: "[Fatal]",
-    System: "[System]"
+    Admin: "[Admin]"
 }
 
 

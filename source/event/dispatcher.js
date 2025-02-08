@@ -59,7 +59,7 @@ class Dispatcher
         {
             process.on(event.meta.id,   (...args) => event.execute(this.bot, ...args));
         }
-        log.trace(`Registered event: ${event.meta.name}`)
+        log.debug(`Registered event: ${event.meta.name}`)
     }
 
     async registerClient(event, ...args) 
@@ -72,7 +72,7 @@ class Dispatcher
         {
             this.client.on(event.meta.id,   (...args) => event.execute(this.client, ...args));
         }
-        log.trace(`Registered event: ${event.meta.name}`)
+        log.debug(`Registered event: ${event.meta.name}`)
     }
 
 }

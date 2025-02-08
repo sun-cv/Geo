@@ -8,9 +8,7 @@ async function cleanCommand(interaction = new CommandInteraction()) {
 
 	const deletedMessages = await interaction.channel.bulkDelete(messages)
 
-    console.log(deletedMessages)
-
-	interaction.editReply({ content : `Deleted ${deletedMessages.size} messages!`, ephemeral : true });
+	await interaction.editReply({ content : `Deleted ${deletedMessages.size} messages!`, ephemeral : true });
 }
 
 const command = {

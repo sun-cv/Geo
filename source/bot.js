@@ -30,16 +30,16 @@ class Bot
 
     async initialize()
     {
-        log.setLevel("System");
+        log.setLevel("Trace");
 
-        log.system("Initiating startup sequence");
+        log.admin("Initiating startup sequence");
 
         await this.dispatcher.setContext(this);
         await this.dispatcher.registerEvents();
         await this.dispatcher.registerClient(this.interaction.create);
 
         await this.registry.registerModules();
-        await this.registry.deployCommands(); // Move to command handler?
+        // await this.registry.deployCommands(); // Move to command handler?
 
 
 
@@ -50,16 +50,10 @@ class Bot
         await this.client.login(config.token);
     }
 
-    async systemEvents()
+    shutdown()
     {
-        process.on("SIGINT", this.shutdown);
-        process.on("SIGTERM", this.shutdown);
-    }
-
-    async shutdown()
-    {
-        log.system("Powering down..")
-        process.exit(0);
+        log.admin("Powering down..")
+        // process.exit(0);
     }
 
 

@@ -55,12 +55,15 @@ class FileManager
     {        
         const fileURL   = pathToFileURL(filePath).href;
         const data      = await import(fileURL);
+        const object    = data.default;
 
-        if (data.ignore)
+        log.trace(`Loading ${object.meta.type} (source: ${fileURL})`);
+
+        if (object.flag.ignore)
         {
+            log.trace(`${object.meta.id} load flag set to ignore`)
             return;
         }
-        const object    = data.default;
         
         if (!object)
         {
@@ -68,7 +71,6 @@ class FileManager
             return;
         }
         
-        log.trace(`Loading ${object.meta.type} (source: ${fileURL})`);
 
         await callbackFunction(object, ...args);
     }

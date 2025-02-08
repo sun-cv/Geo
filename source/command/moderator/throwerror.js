@@ -47,18 +47,30 @@ const command = {
         description:    "Throws an error for testing error handling.",
     },
 
-    access: 
+    permission: 
     {
         cooldown:       0,
-        permissions:    [],
-        channels:       [],
-        roles:          ["moderator"],
+        access:         [],
+        require:
+        {
+            active:     false,
+            channels:   [],
+            roles:      ["moderator"],
+        },
+        exclude:
+        {
+            active:     false,
+            channels:   [],
+            roles:      []
+        }
     },
 
     flag: 
     {
+        handled:        false,
         ignore:         false,
         defer:          true,
+        access:         true,
         maintenance:    false
     },
 

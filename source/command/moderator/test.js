@@ -1,10 +1,11 @@
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js'
-
+import { log } from '../../../utility/index.js'
 
 
 async function testCommand(interaction = new CommandInteraction()) 
 {
-    console.log("Test command used");
+    interaction.editReply({content: "test"})
+    log.event("Test command used");
 }
 
 
@@ -16,24 +17,47 @@ const command = {
         description:    "this is a test command",
     },
 
-    access: 
+    permission: 
     {
-        cooldown:       0,
-        permissions:    [],
-        channels:       [],
-        roles:          ["moderator"],
+        access:         [],
+        require:
+        {
+            active:     true,
+            channels:   [],
+            roles:      ["Moderator"],
+        },
+        exclude:
+        {
+            active:     true,
+            channels:   ["test"],
+            roles:      []
+        },
+        cooldown: 
+        {
+            command:    120,
+            share:      120,
+        }
     },
 
     flag: 
     {
+        handled:        false,
         ignore:         false,
-        defer:          true,
+        defer:          false,
+        permission:     true,
+        cooldown:       true,
         maintenance:    false
     },
 
 	data: new SlashCommandBuilder()
 		.setName('test')
-		.setDescription('test command'),
+		.setDescription('test command')
+        		.addStringOption(option =>
+			option.setName('share')
+				.setDescription('Sharing test')
+				.addChoices(
+					{ name: 'true', value: 'true' })),
+
 	execute: testCommand,
 };
 

@@ -1,62 +1,119 @@
-import { logEnum, logString }   from "./definitions.js"
+import { Collection } from 'discord.js';
+import { Timestamp } from '../toolkit/timestamp.js';
+import { logEnum, logString } from './definitions.js';
+import { Text } from '../toolkit/Text.js';
 
 class Log 
 {
+    static instance = null;
+
     constructor()
     {
-        Log.instance = this;
         if (Log.instance)
         {
             return Log.instance;
         }
+        Log.instance    = this;
 
-        this.events  = new Map();
+        this.logs       = new Collection();
+        this.logLevel   = "Trace";
     }
 
-    static LogLevel = "Event";
-
-    setLevel(level)
+    setLevel(level) 
     {
-        this.LogLevel = level
+        this.logLevel = level;
     }
 
-    log(logLevel, ...args )
+    log(level, ...messages)
     {
-        if (logEnum[logLevel] < logEnum[this.LogLevel])
+        if (logEnum[level] < logEnum[this.logLevel])
         {
             return;
-        }
-        console.log(logString[logLevel], ...args);
+        } 
+        console.log(logString[level], `${Timestamp.hour()} :`, ...messages);
     }
 
-    
-    trace(...args)
+    trace(...args) { this.log("Trace", ...args); }
+    debug(...args) { this.log("Debug", ...args); }
+    event(...args) { this.log("Event", ...args); }
+    error(...args) { this.log("Error", ...args); }
+    fatal(...args) { this.log("Fatal", ...args); }
+    admin(...args) { this.log("Admin", ...args); }
+
+    initiate(interaction)
     {
-        this.log("Trace", ...args);
+        this.initializeUserLogs(interaction);
     }
-    debug(...args)
+
+    push(interaction, ...messages) 
     {
-        this.log("Debug", ...args);
-    }   
-    event(...args)
-    {
-        this.log("Event", ...args);
-    }   
-    error(...args)
-    {
-        this.log("Error", ...args);
-    }   
-    fatal(...args)
-    {
-        this.log("Fatal", ...args);
+        const userLogs = this.logs.get(interaction.member.id)?.get(interaction.id);
+
+        if (userLogs) 
+        {
+            userLogs.push(...messages);
+        }
     }
-    system(...args)
+
+    async interaction(interaction) 
     {
-        this.log("System", ...args);
-    }    
+        const { member, tracer, values, data: { meta } } = interaction;
+
+        const timestamp     = Timestamp.hour();
+        const logPrefix     = `[Event] ${timestamp} - ${Text.set(tracer.responseTime).constrain(5)} : ${member.user.username}`;
+        const adminPrefix   = `[Admin] ${timestamp} :`;
+
+        const logMessages   = 
+        {
+            command:        `${logPrefix} used ${await this.constructCommand(interaction)}`,
+            button:         `${logPrefix} is navigating ${meta.id}`,
+            menu:           `${logPrefix} selected ${values}`,
+            modal:          `${logPrefix} submitted modal`,
+            message:        `${tracer.endTime}: ${member.user.username} {} > {}`,
+        };
+
+        const interactionLogs = this.logs.get(member.id)?.get(interaction.id) || [];
+
+        if (logMessages[meta.type])
+        {
+            console.log(logMessages[meta.type]);
+        }
+
+        interactionLogs.forEach(log => console.log(`${adminPrefix} ${log}`));
+    }
+
+    async constructCommand(interaction)
+    {
+        let fullCommand = `/${interaction.data.meta.id}`;
+
+        function appendOption(option)
+        {
+            fullCommand += ` ${option.name}`;
+
+            if (option.value)
+            {
+                fullCommand += ` ${option.value}`;
+            }
+            if (option.options)
+            {
+                option.options.forEach(appendOption);
+            }
+        }
+
+        interaction.options.data.forEach(appendOption);
+        return fullCommand;
+    }
+
+    initializeUserLogs(interaction)
+    {
+        const userLogs = this.logs.get(interaction.member.id) || new Collection();
+
+        userLogs.set(interaction.id, []);
+
+        this.logs.set(interaction.member.id, userLogs);
+    }
 }
 
 const log = new Log();
 
 export { log };
-
