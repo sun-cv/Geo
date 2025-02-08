@@ -25,11 +25,11 @@ class CooldownHandler
 
         for (const { name, time: seconds } of cooldowns) 
         {
-            const key           = this.getCooldownKey(name, id, member.id);
-            const timestamps    = this.cooldowns.get(member.id);
-            const timeout       = seconds * 1000;
-            const expiration    = timestamps.get(key) + timeout;
-            const timeLeft      = (expiration - now) / 1000;
+            const key       = this.getCooldownKey(name, id, member.id);
+            const timestamps= this.cooldowns.get(member.id);
+            const timeout   = seconds * 1000;
+            const expiration= timestamps.get(key) + timeout;
+            const timeLeft  = (expiration - now) / 1000;
 
             if (now < expiration) 
             {
@@ -75,18 +75,18 @@ class CooldownHandler
 
     formatCooldownMessage(name, seconds, timeLeft) 
     {
-        const minutes = seconds / 60;
-        const label = name === "command" ? "This (/)" : "The";
-        const description = name === "command" ? "has a" : "option has a";
-        const cooldownTime = minutes < 1 ? `${seconds} second cooldown` : `${minutes.toFixed(0)} minute cooldown`;
-        const remainingTime = Text.create(timeLeft.toFixed(0)).constrain(3);
+        const minutes       = seconds / 60;
+        const label         = name === "command" ? "This (/)" : "The";
+        const description   = name === "command" ? "has a" : "option has a";
+        const cooldownTime  = minutes < 1 ? `${seconds} second cooldown` : `${minutes.toFixed(0)} minute cooldown`;
+        const remainingTime = Text.set(timeLeft.toFixed(0)).constrain(3);
 
         return `${label} ${name} ${description} ${cooldownTime}. Remaining time: ${remainingTime} seconds\n`;
     }
 
     logCooldown(interaction, name, timeLeft) 
     {
-        log.push( interaction, `${interaction.member.user.username} was cooled down: ${Text.create(name).constrain(7)} in ${interaction.channel.name} channel. Remaining time: ${Text.create(timeLeft.toFixed(0)).constrain(3)} seconds`);
+        log.push( interaction, `${interaction.member.user.username} was cooled down: ${Text.set(name).constrain(7)} in ${interaction.channel.name} channel. Remaining time: ${Text.set(timeLeft.toFixed(0)).constrain(3)} seconds`);
     }
 
     async sendCooldownMessage(interaction, messages) 

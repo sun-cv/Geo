@@ -30,7 +30,7 @@ class Text {
             {
                 this.content = `\`\`\`\n${this.content}\n\`\`\``;
             } 
-            else if (formatMap[style]) 
+            else if (formatMap[style])
             {
                 this.content = `${formatMap[style]}${this.content}${formatMap[style]}`;
             }

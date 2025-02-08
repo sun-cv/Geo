@@ -13,7 +13,7 @@ class Timestamp {
 
         // Padding the hour with a space if it's a single digit
         const [hour, minute, second] = time.split(':');
-        const paddedHour = hour.length == 1 ? `0${hour}` : hour;
+        const paddedHour = hour.length == 1 ? ` ${hour}` : hour;
         const formattedTime = `${paddedHour}:${minute}:${second}`;
 
         return { date, formattedDate, time: formattedTime, day, month, year };
