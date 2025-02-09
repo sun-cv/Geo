@@ -102,5 +102,19 @@ class FileManager
         return path;
     }
 
+    static async createDirectory(directory)
+    {
+        if (!fs.existsSync(directory))
+        {
+            log.debug(`Creating directry: ${directory}`);
+            fs.mkdirSync(directory, { recursive: true})
+        }
+    }
+
+    static async copyFile(source, target)
+    {
+        fs.copyFileSync(source, target);
+    }
+
 }
 export { FileManager }

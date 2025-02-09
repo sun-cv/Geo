@@ -9,10 +9,8 @@ class Log
 
     constructor()
     {
-        if (Log.instance)
-        {
-            return Log.instance;
-        }
+        if (Log.instance) return Log.instance;
+        
         Log.instance    = this;
 
         this.logs       = new Collection();
@@ -33,12 +31,12 @@ class Log
         console.log(logString[level], `${Timestamp.hour()} :`, ...messages);
     }
 
-    trace(...args) { this.log("Trace", ...args); }
-    debug(...args) { this.log("Debug", ...args); }
-    event(...args) { this.log("Event", ...args); }
-    error(...args) { this.log("Error", ...args); }
-    fatal(...args) { this.log("Fatal", ...args); }
-    admin(...args) { this.log("Admin", ...args); }
+    trace(...args) { this.log("Trace", ...args); };
+    debug(...args) { this.log("Debug", ...args); };
+    event(...args) { this.log("Event", ...args); };
+    error(...args) { this.log("Error", ...args); };
+    fatal(...args) { this.log("Fatal", ...args); };
+    admin(...args) { this.log("Admin", ...args); };
 
     initiate(interaction)
     {

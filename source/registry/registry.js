@@ -20,7 +20,7 @@ class Registry
             menu:           path.join(this.root, "source", "component", "menu"),
             modal:          path.join(this.root, "source", "component", "modal"),
             filter:         path.join(this.root, "source", "filter"),
-            task:           path.join(this.root, "source", "task"),
+            task:           path.join(this.root, "source", "tasks", "task"),
         }
 
         this.client         = client;
@@ -31,7 +31,7 @@ class Registry
         this.menu           = new Collection();
         this.modal          = new Collection();
         this.filter         = new Collection();
-        this.tasks          = new Collection();
+        this.task           = new Collection();
     }
 
 
@@ -44,43 +44,43 @@ class Registry
         await this.loadModals();
         await this.loadFilters();
         await this.loadTasks();
-        
-        log.admin("Registry data loaded successfully")
+
+        log.admin("Successfully loaded registry data")
     }
 
     async loadAutocomplete()
     {
-        await FileManager.loadDirectory(this.directory.autocomplete, (object) => this.registerAutocomplete(object));
+        await FileManager.loadDirectory(this.directory.autocomplete, (data) => this.registerAutocomplete(data));
     }
 
     async loadCommands()
     {
-        await FileManager.loadDirectory(this.directory.command, (object) => this.registerCommand(object));
+        await FileManager.loadDirectory(this.directory.command, (data) => this.registerCommand(data));
     }
 
     async loadButtons()
     {
-        await FileManager.loadDirectory(this.directory.button,  (object) => this.registerComponent(object, "button"));
+        await FileManager.loadDirectory(this.directory.button,  (data) => this.registerComponent(data, "button"));
     }
 
     async loadMenus()
     {
-        await FileManager.loadDirectory(this.directory.menu,    (object) => this.registerComponent(object, "menu"));
+        await FileManager.loadDirectory(this.directory.menu,    (data) => this.registerComponent(data, "menu"));
     }
 
     async loadModals()
     {
-        await FileManager.loadDirectory(this.directory.modal,   (object) => this.registerComponent(object, "modal"));
+        await FileManager.loadDirectory(this.directory.modal,   (data) => this.registerComponent(data, "modal"));
     }
 
     async loadFilters()
     {
-        await FileManager.loadDirectory(this.directory.filter,  (object) => this.registerFilter(object));
+        await FileManager.loadDirectory(this.directory.filter,  (data) => this.registerFilter(data));
     }
 
     async loadTasks()
     {
-        await FileManager.loadDirectory(this.directory.task, this.registerTask)
+        await FileManager.loadDirectory(this.directory.task, (data) => this.registerTask(data))
     }
 
     async registerAutocomplete(autocomplete)
@@ -97,6 +97,7 @@ class Registry
     
     async registerCommand(command) 
     {
+
         if (command.flag.ignore) 
         {
             log.trace(`${command.meta.id} load flag set to ignore.`)
@@ -129,31 +130,38 @@ class Registry
 
     async registerTask(task)
     {
-        // TBD
+        if (task.flag.ignore)
+        {
+            log.trace(`${task.meta.id} load flag set to ignore`);
+            return;
+        }
+        this.task.set(task.meta.id, task);
+
+        log.debug(`Registered task: ${task.meta.id}`)
     }
 
-    async deployCommands()
+    async deployCommands(enabled)
     {
-        try {
-            
-        const commandData = [];
-
-        for (const entry of this.command.values())
+        if (enabled)
         {
-            commandData.push(entry.data);
-        }
+            const commandData = [];
 
-		const rest = new REST().setToken(config.token);
+            for (const entry of this.command.values())
+            {
+                commandData.push(entry.data);
+                log.debug(`Redeploying command: ${entry.meta.id}`)
+            }
 
-		const data = await rest.put
-        (
-			Routes.applicationGuildCommands(config.clientId, config.guildId),
-			{ body: commandData },
-		);
-		log.admin(`Successfully reloaded ${data.length}/${this.command.size} application (/) commands.`);
-            } catch (error) {
-            console.log(error)
-        }
+		    const rest = new REST().setToken(config.token);
+
+		    const data = await rest.put
+            (
+		    	Routes.applicationGuildCommands(config.clientId, config.guildId),
+		    	{ body: commandData },
+		    );
+
+		    log.admin(`Successfully loaded ${data.length}/${this.command.size} application (/) commands.`);
+        }        
     }
 
     

@@ -1,65 +1,86 @@
 class Timestamp {
-    static options = { timeZone: 'America/New_York' }; // Default to 12-hour format
+    static options = { timeZone: 'America/New_York' }; // Default timezone
 
-    static formatDate(pastStamp) {
+    static formatDate(pastStamp) 
+    {
         const date = pastStamp ? new Date(pastStamp) : new Date();
+
         const formatter = new Intl.DateTimeFormat('en-US', {
             ...this.options,
             dateStyle: 'short',
-            timeStyle: 'medium' // Keeps AM/PM format
+            timeStyle: 'medium'
         });
-        const [formattedDate, time] = formatter.format(date).split(', ');
-        const [month, day, year] = formattedDate.split('/');
 
-        // Padding the hour with a space if it's a single digit
+        const [formattedDate, time] = formatter.format(date).split(', ');
+        const [month, day, year] = formattedDate.split('/').map(num => num.padStart(2, '0'));
+
         const [hour, minute, second] = time.split(':');
-        const paddedHour = hour.length == 1 ? ` ${hour}` : hour;
+        const paddedHour = hour.length === 1 ? ` ${hour}` : hour;
         const formattedTime = `${paddedHour}:${minute}:${second}`;
 
         return { date, formattedDate, time: formattedTime, day, month, year };
     }
 
-    static get hour() {
+    static get hour() 
+    {
         return (pastStamp) => this.formatDate(pastStamp).time;
     }
 
-    static get day() {
+    static get day() 
+    {
         return (pastStamp) => this.formatDate(pastStamp).day;
     }
 
-    static get month() {
+    static get month()
+    {
         return (pastStamp) => this.formatDate(pastStamp).month;
     }
 
-    static get year() {
+    static get year()
+    {
         return (pastStamp) => this.formatDate(pastStamp).year;
     }
 
-    static get date() {
+    static get date()
+    {
         return (pastStamp) => this.formatDate(pastStamp).formattedDate;
     }
 
-    static get monthDay() {
+    static get monthDay()
+    {
         return (pastStamp) => {
             const { day, month } = this.formatDate(pastStamp);
             return `${day}/${month}`;
         };
     }
 
-    static get unix() {
+    static get unix()
+    {
         return (pastStamp) => (pastStamp ? new Date(pastStamp).getTime() : Date.now());
     }
 
-    static get iso() {
+    static get iso()
+    {
         return (pastStamp) => (pastStamp ? new Date(pastStamp).toISOString() : new Date().toISOString());
     }
 
-    static get reversed() {
+    static get reversed()
+    {
         return (pastStamp) => {
             const { formattedDate, time } = this.formatDate(pastStamp);
             return `${time} ${formattedDate}`;
         };
     }
+
+    static get backup() 
+    {
+        return (pastStamp) => {
+            const { year, month, day } = this.formatDate(pastStamp);
+            return `backup_${year}-${month}-${day}.db`;
+        };
+    }
+
+
 }
 
 export { Timestamp };
