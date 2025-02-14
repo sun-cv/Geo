@@ -57,14 +57,19 @@ class FileManager
         const data      = await import(fileURL);
         const object    = data.default;
 
-        log.trace(`Loading ${object.meta.type} (source: ${fileURL})`);
+        if (!object)
+        {
+            return;
+        }
 
         if (object.flag.ignore)
         {
             log.trace(`${object.meta.id} load flag set to ignore`)
             return;
         }
-        
+
+        log.trace(`Loading ${object.meta.type} (source: ${fileURL})`);
+            
         if (!object)
         {
             log.error(`File.js load failed (object data not found: ${fileURL})`)

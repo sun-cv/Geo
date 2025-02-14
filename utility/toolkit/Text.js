@@ -79,6 +79,25 @@ class Text {
     {
         return this.content;
     }
+
+    capitalize(string)
+    {
+        this.content = this.content.charAt(0).toUpperCase() + this.content.slice(1);
+        return this;
+    }
+
+
+    formatList(arr) {
+        if (arr.length === 0) {
+            this.content = "";
+        } else if (arr.length === 1) {
+            this.content = arr[0];
+        } else {
+            this.content = arr.slice(0, -1).join(', ') + ' and ' + arr.at(-1);
+        }
+        return this;
+    }
+
 }
 
 export { Text };

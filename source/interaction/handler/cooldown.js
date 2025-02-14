@@ -25,11 +25,11 @@ class CooldownHandler
 
         for (const { name, time: seconds } of cooldowns) 
         {
-            const key       = this.getCooldownKey(name, id, member.id);
-            const timestamps= this.cooldowns.get(member.id);
-            const timeout   = seconds * 1000;
-            const expiration= timestamps.get(key) + timeout;
-            const timeLeft  = (expiration - now) / 1000;
+            const key           = this.getCooldownKey(name, id, member.id);
+            const timestamps    = this.cooldowns.get(member.id);
+            const timeout       = seconds * 1000;
+            const expiration    = timestamps.get(key) + timeout;
+            const timeLeft      = (expiration - now) / 1000;
 
             if (now < expiration) 
             {
@@ -91,7 +91,7 @@ class CooldownHandler
 
     async sendCooldownMessage(interaction, messages) 
     {
-        await interaction.editReply({ content: Text.set(messages), flags: MessageFlags.Ephemeral });
+        await interaction.editReply({ content: messages, flags: MessageFlags.Ephemeral });
     }
 }
 

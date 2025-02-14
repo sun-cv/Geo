@@ -12,7 +12,7 @@ class CommandHandler
     async handle(interaction)
     {
     	const command = interaction.data
-
+         
         if (command.flag.handled)
         {
             return;
@@ -27,8 +27,6 @@ class CommandHandler
             log.error(error);
             await interaction.editReply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
         }
-
-
     }
 }
 

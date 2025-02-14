@@ -20,14 +20,23 @@ const command = {
         description:    "Removes the last x number of messages in the channel.",
     },
 
-    access: 
+    permission: 
     {
         cooldown:       0,
-        permissions:    [],
-        channels:       [],
-        roles:          ["moderator"],
+        access:         [],
+        require:
+        {
+            active:     true,
+            channels:   [],
+            roles:      ["moderator"],
+        },
+        exclude:
+        {
+            active:     false,
+            channels:   [],
+            roles:      []
+        }
     },
-
     flag: 
     {
         ignore:         false,

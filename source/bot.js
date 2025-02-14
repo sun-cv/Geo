@@ -1,18 +1,24 @@
 import config from "../environment/config.json" with { type: "json" };
 
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, Options } from 'discord.js';
 import { log } from "../utility/logger/log.js";
 
 import { Registry } from './registry/registry.js'
 import { Dispatcher } from './event/dispatcher.js'
 import { Interaction } from "./interaction/interaction.js";
 import { TaskManager } from "./tasks/taskManager.js";
-import { cluster } from "../database/cluster.js";
+import { Cluster } from "../database/cluster/cluster.js";
+import { Mercy } from "./command/mercy/tracker/mercy.js";
+
+log.admin("Initiating startup sequence");
+
 
 class Bot
 {
     constructor()
     {
+        log.setLevel("Trace")
+
         this.client     = new Client(
         {
             intents: 
@@ -24,39 +30,43 @@ class Bot
             ],
         });
 
-        this.cluster     = cluster;
+        this.cluster        = new Cluster();
 
-        this.registry    = new Registry(this.client);
-        this.dispatcher  = new Dispatcher(this.client);
-        this.interaction = new Interaction(this.client, this.registry)
-        this.scheduler   = new TaskManager(this.client, this.registry)
+        this.registry       = new Registry(this.client);
+        this.dispatcher     = new Dispatcher(this.client);
+        this.interaction    = new Interaction(this.client, this.registry);
+        this.scheduler      = new TaskManager(this.client, this.registry);
 
-        this.enabled     = false; // Deploy commands?
+        this.mercy          = new Mercy(this.client, this.cluster, this.registry,)
+
+        this.deploy        = false; // Deploy commands?
     }
     
 
     async initialize()
     {
-        log.setLevel("Event");
-
-        log.admin("Initiating startup sequence");
-
-        await this.cluster.connect();
-
         await this.dispatcher.setContext(this);
         await this.dispatcher.registerEvents();
         await this.dispatcher.registerClient(this.interaction.create);
 
         await this.registry.registerModules();
-        await this.registry.deployCommands(this.enabled);
+
+        await this.registry.deployCommands(this.deploy);
 
         await this.scheduler.registerTasks();
 
+        this.engage();
     }
 
     async engage()
     {
+        await this.login()
+    }
+
+    async login()
+    {
         await this.client.login(config.token);
+        await this.registry.registerGuild();
     }
 
     shutdown()

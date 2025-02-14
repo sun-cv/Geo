@@ -1,41 +1,43 @@
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js'
-import { log } from '../../../utility/index.js'
+import { RoleAssignment } from '../../interaction/handler/role.js';
 
 
 async function testCommand(interaction = new CommandInteraction()) 
 {
-    interaction.editReply({content: "test"})
-    log.event("Test command used");
-}
+    const { mercy } = interaction.client;
 
+    const member    = mercy.initialize(interaction);
+
+    interaction.data.roleAssignment[member.id] = new RoleAssignment();
+
+    interaction.data.roleAssignment[member.id].remove.push('Moderator', 'Mercy')
+
+
+}
 
 const command = {
     meta: 
     {
         id:             "test",
         type:           "command",
-        description:    "this is a test command",
+        description:    "Command for testing purposes.",
     },
 
     permission: 
     {
+        cooldown:       0,
         access:         [],
         require:
         {
             active:     true,
             channels:   [],
-            roles:      ["Moderator"],
+            roles:      ["moderator"],
         },
         exclude:
         {
-            active:     true,
-            channels:   ["test"],
+            active:     false,
+            channels:   [],
             roles:      []
-        },
-        cooldown: 
-        {
-            command:    120,
-            share:      120,
         }
     },
 
@@ -43,23 +45,19 @@ const command = {
     {
         handled:        false,
         ignore:         false,
-        defer:          false,
-        permission:     true,
-        cooldown:       true,
+        defer:          true,
+        ephemeral:      true,
+        access:         true,
         maintenance:    false
     },
 
-	data: new SlashCommandBuilder()
-		.setName('test')
-		.setDescription('test command')
-        		.addStringOption(option =>
-			option.setName('share')
-				.setDescription('Sharing test')
-				.addChoices(
-					{ name: 'true', value: 'true' })),
+    roleAssignment:     {},
 
-	execute: testCommand,
+    data: new SlashCommandBuilder()
+    .setName('test')
+    .setDescription('Command for testing purposes.'),
+
+    execute: testCommand
 };
 
 export default command;
-

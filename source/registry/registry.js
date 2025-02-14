@@ -1,9 +1,9 @@
-import { REST, Routes, Collection }     from 'discord.js';
-import path                     from 'node:path';
-
 import config from '../../environment/config.json' with { type: 'json' }
-import lodash from 'lodash';
-import { log, FileManager } from '../../utility/index.js'
+
+import { REST, Routes, Collection } from 'discord.js';
+import path                         from 'node:path';
+import lodash                       from 'lodash';
+import { log, FileManager }         from '../../utility/index.js'
 
 class Registry
 {
@@ -25,6 +25,7 @@ class Registry
 
         this.client         = client;
 
+        // Bot cache
         this.autocomplete   = new Collection();
         this.command        = new Collection();
         this.button         = new Collection();
@@ -32,6 +33,15 @@ class Registry
         this.modal          = new Collection();
         this.filter         = new Collection();
         this.task           = new Collection();
+
+        // Guild
+        this.guild          = null;
+        this.role           = new Collection();
+
+        // Mercy Tracker
+        this.member         = new Collection();
+        this.account        = new Collection();
+
     }
 
 
@@ -156,7 +166,7 @@ class Registry
 
 		    const data = await rest.put
             (
-		    	Routes.applicationGuildCommands(config.clientId, config.guildId),
+		    	Routes.applicationGuildCommands(config.clientID, config.guildID),
 		    	{ body: commandData },
 		    );
 
@@ -188,6 +198,14 @@ class Registry
         }
     }
     
+    async registerGuild()
+    {
+        const guild = await this.client.guilds.fetch(config.guildID);
+        const roles = await guild.roles.fetch();
+
+        this.guild = guild;
+        roles.map((role) => this.role.set(role.name, role))
+    }
 
     
 }

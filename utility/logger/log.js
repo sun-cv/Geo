@@ -1,7 +1,7 @@
 import { Collection } from 'discord.js';
 import { Timestamp } from '../toolkit/timestamp.js';
 import { logEnum, logString } from './definitions.js';
-import { Text } from '../toolkit/Text.js';
+import { Text } from '../toolkit/text.js';
 
 class Log 
 {
@@ -34,9 +34,9 @@ class Log
     trace(...args) { this.log("Trace", ...args); };
     debug(...args) { this.log("Debug", ...args); };
     event(...args) { this.log("Event", ...args); };
+    admin(...args) { this.log("Admin", ...args); };
     error(...args) { this.log("Error", ...args); };
     fatal(...args) { this.log("Fatal", ...args); };
-    admin(...args) { this.log("Admin", ...args); };
 
     initiate(interaction)
     {

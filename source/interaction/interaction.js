@@ -1,8 +1,11 @@
-import { Events } from 'discord.js'
+import { Events, MessageFlags } from 'discord.js'
 import { PermissionHandler } from './handler/permission.js';
 import { CooldownHandler } from './handler/cooldown.js';
 import { CommandHandler } from './handler/command.js';
 import { Tracer, log } from '../../utility/index.js'
+import { DeferHandler } from './handler/defer.js';
+import { RoleHandler } from './handler/role.js';
+
 
 class Interaction
 {
@@ -11,6 +14,8 @@ class Interaction
         this.client     = client
         this.registry   = registry;
         
+
+        this.defer      = new DeferHandler();
         this.permission = new PermissionHandler(client, registry);
         this.cooldown   = new CooldownHandler(client, registry);
 
@@ -19,6 +24,8 @@ class Interaction
         // this.button     = new ButtonHandler(client, registry);
         // this.modal      = new ModalHandler(client, registry);
         // this.menu       = new MenuHandler(client, registry);
+
+        this.role       = new RoleHandler(client, registry);
 
     }
 
@@ -36,7 +43,6 @@ class Interaction
         execute: async (client, interaction) =>
         {
             await this.log(interaction);
-            await this.defer(interaction);
             await this.controller(client, interaction);
         },
     }
@@ -44,8 +50,9 @@ class Interaction
 
     async controller(client, interaction)
     {
-
         await this.registry     .identify(interaction);
+
+        await this.defer        .handle(interaction);
 
         await this.permission   .handle(interaction);
         await this.cooldown     .handle(interaction);
@@ -56,14 +63,11 @@ class Interaction
         // await this.modal        .handle(interaction);
         // await this.menu         .handle(interaction);
         
+        await this.role         .handle(interaction);
         await this              .finalize(interaction)
 
     }
 
-    async defer(interaction)
-    {
-        await interaction.deferReply();
-    }
 
     async log(interaction)
     {

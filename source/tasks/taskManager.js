@@ -53,7 +53,7 @@ class TaskManager
 
         this.queue.push({task, argument, attempt: task.data.attempt});
 
-        log.trace(`Pushed task "${task.meta.id}" into queue`);
+        log.trace(`Pushed task "${task.meta.id}" into task queue. Place in queue: ${this.queue.length }`);
     }
 
     async scheduleTask(task)
@@ -96,7 +96,7 @@ class TaskManager
             } 
             else 
             {
-                log.error(`Unable to queue task "${task.meta.id}" pushing to failed queue. ${task.flag.reattempt ? "No attempts left." : "Reattempts disabled."}`);
+                log.error(`Unable to queue task "${task.meta.id}" pushing to failed queue. ${task.flag.reattempt ? "No attempts left." : "Reattempts disabled."} Position in queue: ${this.failed.length}`);
                 this.failed.push({ task, argument, attempt})
             }
         }

@@ -3,9 +3,9 @@ const logEnum =
     Trace: 0,
     Debug: 1,
     Event: 2,
-    Error: 3,
-    Fatal: 4,
-    Admin: 5
+    Admin: 3,
+    Error: 4,
+    Fatal: 5
 }
 
 const logString =
@@ -13,9 +13,9 @@ const logString =
     Trace: "[Trace]",
     Debug: "[Debug]",
     Event: "[Event]",
+    Admin: "[Admin]",
     Error: "[Error]",
-    Fatal: "[Fatal]",
-    Admin: "[Admin]"
+    Fatal: "[Fatal]"
 }
 
 
