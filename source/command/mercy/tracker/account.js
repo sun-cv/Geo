@@ -59,7 +59,7 @@ class Account
         this.data       = JSON.parse(profile.data)      || {};
         this.settings   = JSON.parse(profile.settings)  || new AccountSettings();
 
-        this.mercy      = data
+        this.mercy      = data  // [shard][rarity].value
 
         log.debug(`Instantiated ${this.member}'s account '${this.account}'`);
     }

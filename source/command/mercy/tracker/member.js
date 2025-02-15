@@ -67,7 +67,22 @@ class Member
         this.registered = profile.registered;
 
         log.debug(`Instantiated ${this.member}'s member profile`);
-    }        
+    }
+    
+    getAccount(name)
+    {
+        if (!name)
+        {
+            return this.account.find((account) => account.main == true);
+        }
+        if (!this.account.has(name))
+        {
+            Interaction.editReply(`No account named ${name} was found.`)
+        }
+        return this.account.get(name);
+    }
+
+
 }
 
 

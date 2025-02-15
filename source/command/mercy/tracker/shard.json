@@ -1,0 +1,63 @@
+{
+    "ancient":
+    {
+        "rarity": ["legendary"],
+        "mercy": 
+        {
+            "start": 200,
+            "base": 0.5,
+            "increase": 5
+        },
+        "emoji": "<:Ancient:1184573482684661950>"
+    },
+
+    "void":
+    {
+        "rarity": ["legendary"],
+        "mercy": 
+        {
+            "start": 200,
+            "base": 0.5,
+            "increase": 5
+        },
+        "emoji": "<:Void:1184573509037477999>"
+    },
+
+    "primal":
+    {
+        "rarity": ["legendary", "mythical"],
+        "mercy": 
+        {
+            "start": 200,
+            "base": 0.5,
+            "increase": 5
+        },
+        "emoji": "<:Primal:1184573522958364762>"
+    },
+
+    "sacred":
+    {
+        "rarity": ["legendary"],
+        "mercy": 
+        {
+            "start": 200,
+            "base": 0.5,
+            "increase": 5
+        },
+        "emoji": "<:Sacred:1184573533037273258>"
+    },
+
+    "prism":
+    {
+        "rarity": [],
+        "mercy": 
+        {
+            "start": 200,
+            "base": 0.5,
+            "increase": 5
+        },
+        "emoji": "<:Sacred:1184573533037273258>"
+    }
+}
+
+
