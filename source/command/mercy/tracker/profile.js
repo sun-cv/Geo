@@ -10,10 +10,17 @@ class ProfileManager
     {
         this.mercy          = mercy
 
-        this.member         = new MemberManager(mercy)
-        this.account        = new AccountManager(mercy);
+        this.memberManager  = new MemberManager(mercy)
+        this.accountManager = new AccountManager(mercy);
     }
 
+    findMemberProfile()
+    {
+        return {
+            cache:     this.memberManager.searchCache(iMember),
+            database: !this.memberManager.searchCache(iMember) && this.memberManager.searchDatabase(iMember)
+        }
+    }
         
     get(iMember)
     {
@@ -21,7 +28,7 @@ class ProfileManager
 
         if (exists.cache)
         {
-            return this.member.getCache(iMember);
+            return this.memberManager.getCache(iMember);
         }
 
         if (exists.database)
@@ -32,36 +39,33 @@ class ProfileManager
         return this.createMemberProfile(iMember);
     }
 
-    findMemberProfile(iMember)
-    {
-        const exists = {};
 
-        exists.cache = this.member.searchCache(iMember);
-
-        if (!exists.cache)
-        {
-            exists.database = this.member.searchDatabase(iMember);
-        }
-        return exists;
-    }
-
-    
     loadMemberProfile(iMember)
     {
-        const member   = this.member.loadMember(iMember)
-        const accounts = this.account.loadAccounts(member);
+        const member   = this.memberManager.loadMember(iMember)
+        const accounts = this.accountManager.loadAccounts(member);
 
         return member;
     }
 
     createMemberProfile(iMember)
     {
-        this.member.createMemberProfile(iMember);
-        this.account.createAccountProfile(this.member.loadMember(iMember), "main");
+        this.memberManager.createMemberProfile(iMember);
+        this.accountManager.createAccountProfile(this.memberManager.loadMember(iMember), "main");
 
         log.admin(`Successfully created member profile for ${iMember.user.username}`)
 
-        return Object.assign(this.loadMemberProfile(iMember), {new: true});
+        return Object.assign(this.loadMemberProfile(iMember), { new: true });
+    }
+
+    update(member)
+    {
+        this.memberManager.updateMember(member);
+
+        member.account.filter((account) => account.flag.dirty.account).forEach((account) => 
+        {
+            this.accountManager.updateAccount(account);
+        })
     }
 }
 

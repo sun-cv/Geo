@@ -66,7 +66,8 @@ class Timestamp {
 
     static get reversed()
     {
-        return (pastStamp) => {
+        return (pastStamp) => 
+        {
             const { formattedDate, time } = this.formatDate(pastStamp);
             return `${time} ${formattedDate}`;
         };
@@ -74,10 +75,20 @@ class Timestamp {
 
     static get backup() 
     {
-        return (pastStamp) => {
+        return (pastStamp) => 
+        {
             const { year, month, day } = this.formatDate(pastStamp);
             return `backup_${year}-${month}-${day}.db`;
         };
+    }
+
+    static get session()
+    {
+        return (pastStamp) => 
+        {
+            const { month, day, year} = this.formatDate(pastStamp);
+            return `${month}/${day}/${year}`;
+        }
     }
 
 

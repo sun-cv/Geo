@@ -1,6 +1,7 @@
-import { Collection }   from 'discord.js'
-import { log }          from '../../../../utility/index.js';
-import { MemberCache }  from './cache.js';
+import { Collection, MessageFlags } from 'discord.js'
+import { log, Timestamp }           from '../../../../utility/index.js';
+import { MemberCache }              from './cache.js';
+import message                      from '../tracker/message.js'
 
 class MemberManager
 {
@@ -17,7 +18,6 @@ class MemberManager
 
     searchDatabase(iMember)
     {
-
         return this.database.has('member', 'id', iMember.id);
     }
 
@@ -46,7 +46,15 @@ class MemberManager
     createMemberProfile(iMember)
     {
         log.debug(`Creating new member profile for ${iMember.user.username}`);
+
         this.database.createMember(iMember);
+    }
+
+    updateMember(member)
+    {
+        log.trace(`Updating member ${account.member}`);
+
+        this.database.updateMember(member);
     }
 }
 
@@ -58,12 +66,13 @@ class Member
     {
         this.id         = profile.id;
         this.member     = profile.member;
+        this.accounts   = JSON.parse(profile.accounts)   || [];
         this.data       = JSON.parse(profile.data)       || {};
         this.settings   = JSON.parse(profile.settings)   || new MemberSettings();
         
         this.account    = new Collection();
         
-        this.lastActive = profile.lastActive;
+        this.lastActive = Timestamp.iso();
         this.registered = profile.registered;
 
         log.debug(`Instantiated ${this.member}'s member profile`);
@@ -77,7 +86,7 @@ class Member
         }
         if (!this.account.has(name))
         {
-            Interaction.editReply(`No account named ${name} was found.`)
+            Interaction.editReply({ content: message.error.account.notFound(name), flags: MessageFlags.Ephemeral})
         }
         return this.account.get(name);
     }

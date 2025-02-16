@@ -11,28 +11,53 @@ class RoleHandler
         this.role       = null;
     }    
 
-
     async handle(interaction)
     {
-        this.roleAssignment   = interaction.data?.roleAssignment
+        const roleAssignment = interaction.data?.roleAssignment;
 
-        if (!this.roleAssignment)
+        if (!Object.keys(roleAssignment).length)
         {
             return;
         }
-
-        log.trace(`Role assignment detected`);
+            
+        await this.validate(roleAssignment);
         
-        this.remove();
-        this.add();
+        await this.remove(roleAssignment);
+        await this.add(roleAssignment);
     }
 
-    async remove()
+    async validate(roleAssignment)
     {
-        for (const memberID in this.roleAssignment)
+        for (const memberID in roleAssignment)
+        {
+            const member = await this.registry.guild.members.fetch(memberID);
+            
+            roleAssignment[memberID].add = roleAssignment[memberID].add.filter(roleName => 
+            {
+                const role  = this.registry.role.get(roleName);
+                const hasRole = member.roles.cache.has(role.id);
+
+                if (hasRole) log.trace(`${member.user.username} already has role ${roleName}, removing from add list`);
+                return !hasRole;
+            });
+    
+            roleAssignment[memberID].remove = roleAssignment[memberID].remove.filter(roleName => 
+            {
+                const role  = this.registry.role.get(roleName);
+                const hasRole = member.roles.cache.has(role.id);
+
+                if (!hasRole) log.trace(`${member.user.username} does not have role ${roleName}, removing from remove list`);
+                return hasRole;
+            });
+        }
+    }
+
+    async remove(roleAssignment)
+    {
+        for (const memberID in roleAssignment)
         {
             const tracker   = []
-            const roles     = await this.roleAssignment[memberID].remove;
+            const roles     = await roleAssignment[memberID].remove;
 
             if (roles.length == 0)
             {
@@ -45,27 +70,23 @@ class RoleHandler
             for (const roleID of roles)
             {
                 const role  = this.registry.role.get(roleID);
-
-                if (!member.roles.cache.has(role.id))
-                {
-                    log.trace(`${member.user.username} does not have role ${roleID}`)
-                    continue;
-                }
-
-                tracker.push(roleID);
+                
                 member.roles.remove(role);
+                
+                tracker.push(roleID);
                 log.trace(`Removed role ${roleID}`);
             }
             if (tracker.length > 0) log.admin(`Successfully removed ${Text.set().formatList(tracker)} role${tracker.length > 1 ? 's' : ''} from ${member.user.username}`);
         }
     }
 
-    async add()
+    
+    async add(roleAssignment)
     {
-        for (const memberID in this.roleAssignment)
+        for (const memberID in roleAssignment)
         {
             const tracker   = []
-            const roles     = await this.roleAssignment[memberID].add;
+            const roles     = await roleAssignment[memberID].add;
 
             if (roles.length == 0)
             {
@@ -78,14 +99,10 @@ class RoleHandler
             for (const roleID of roles)
             {
                 const role  = this.registry.role.get(roleID);
-                
-                if (member.roles.cache.has(role.id))
-                {
-                    log.trace(`${member.user.username} already has role ${roleID}`)
-                    continue;
-                }
-                tracker.push(roleID);
+
                 member.roles.add(role);
+                
+                tracker.push(roleID);
                 log.trace(`Assigned role ${roleID}`);
             }
             if (tracker.length > 0) log.admin(`Successfully assigned ${Text.set().formatList(tracker)} role${tracker.length > 1 ? 's' : ''} to ${member.user.username}`);
@@ -95,14 +112,42 @@ class RoleHandler
 
 
 
-
 class RoleAssignment
 {
-    constructor()
+    constructor(interaction)
     {
-        this.require    = [];
-        this.remove     = [];
-        this.add        = [];
+        this.require        = [];
+        this.remove         = [];
+        this.add            = [];
+
+        this.initialize(interaction)
+    }
+
+    initialize(interaction)
+    {
+
+        interaction.data.roleAssignment ??= {};
+        interaction.data.roleAssignment[interaction.member.id] = this;
+    }
+
+    static set(interaction)
+    {
+        return new RoleAssignment(interaction);
+    }
+
+    requireRole(...args)
+    {
+        this.require.push(...args);
+    }
+
+    removeRole(...args)
+    {
+        this.remove.push(...args);
+    }
+
+    addRole(...args)
+    {
+        this.add.push(...args);
     }
 }
 

@@ -91,6 +91,12 @@ class FileManager
         if (!json)
         {
             log.error(`File.JSON load failed (could not parse json data: ${filePath})`);
+            return;
+        }
+        if (json?.flag?.ignore)
+        {
+            log.trace(`Load flag set to ignore.`);
+            return;
         }
 
         await callbackFunction(json, ...args);

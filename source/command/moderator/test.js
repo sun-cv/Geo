@@ -1,17 +1,17 @@
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js'
 import { RoleAssignment } from '../../interaction/handler/role.js';
-
+import Shards from '../mercy/tracker/shards.json' with { type: 'json' }
 
 async function testCommand(interaction = new CommandInteraction()) 
 {
     const { mercy } = interaction.client;
 
     const member    = mercy.initialize(interaction);
+    const account   = member.getAccount('main');
 
-    interaction.data.roleAssignment[member.id] = new RoleAssignment();
+    // interaction.data.roleAssignment[member.id] = new RoleAssignment();
 
-    interaction.data.roleAssignment[member.id].remove.push('Moderator', 'Mercy')
-
+    // interaction.data.roleAssignment[member.id].remove.push('Moderator', 'Mercy')
 
 }
 

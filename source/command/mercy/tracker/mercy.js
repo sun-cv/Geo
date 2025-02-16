@@ -1,6 +1,7 @@
 import { log, Text }        from '../../../../utility/index.js'
 import { ProfileManager }   from './profile.js';
-import { welcome }          from './definitions.js';
+import { welcome }          from './message.js';
+import { RoleAssignment }   from '../../../interaction/handler/role.js';
 
 class Mercy
 {
@@ -9,7 +10,7 @@ class Mercy
         this.registry       = registry;
         this.database       = cluster.mercy;
 
-        this.profile        = new ProfileManager(this);
+        this.profileManager = new ProfileManager(this);
 
         this.setClientContext(client);
     }
@@ -23,19 +24,23 @@ class Mercy
 
     initialize(interaction)
     {
-        const member = this.profile.get(interaction.member);
+        const member = this.profileManager.get(interaction.member);
         if (member.new)
         {
-            this.welcomeMessage(interaction);
+            this.greetNewMember(interaction, member);
         }
         return member
     }
 
-
-    welcomeMessage(interaction)
+    greetNewMember(interaction, member)
     {
-        const { id } = interaction.member
-        interaction.followUp({ content: welcome.message(id) });
+        RoleAssignment.set(interaction).addRole('Mercy')
+        interaction.followUp({ content: welcome(member.id) });
+    }
+
+    update(member)
+    {
+        this.profileManager.update(member);
     }
 
 }

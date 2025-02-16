@@ -1,4 +1,6 @@
-import { log } from '../../../../utility/index.js'
+import Shards               from './shards.json' with { type: 'json' };
+import { log, Timestamp }   from '../../../../utility/index.js'
+import { Session }          from './session.js';
 
 
 class AccountManager
@@ -17,31 +19,47 @@ class AccountManager
     {
         log.debug(`Loading ${member.member}'s accounts`)
 
-        const accounts = this.database.getAccounts(member);
-
-        for (const account of accounts)
+        this.database.getAccounts(member).forEach((account) => 
         {
             this.loadAccount(member, account.account);
-        }
+        })
+        
     }
 
-    async loadAccount(member, accountName)
+    loadAccount(member, accountName)
     {
         log.trace(`Loading account '${accountName}'`)
 
-        const profile = this.database.loadAccountProfile(member, accountName);
-        const data    = this.database.loadAccountData(member, accountName);
-        
-        const account = new Account(profile, data);
+        const account = new Account(
+            this.database.loadAccountProfile(member, accountName),
+            this.database.loadAccountData   (member, accountName),
+            this.database.loadAccountSession(member, accountName)
+        );
 
-        member.account.set(account.account, account);
+        member.accounts.push(account.account);
+        member.account .set (account.account, account);
     }
 
     
     async createAccountProfile(member, accountName)
     {
         log.debug(`Creating new account profile '${accountName}'`)
+
         await this.database.createAccount(member, accountName);
+    }
+
+    async updateAccount(account)
+    {
+        log.trace(`Updating ${account.member}'s account ${account.account}`);
+
+        await Promise.all([
+            this.database.updateAccount(account),
+            this.database.updateAccountMercy(account),
+            this.database.updateAccountSession(account),
+            this.database.updateAccountLogs(account)
+        ]);
+
+        account.clean();
     }
 
 
@@ -50,20 +68,68 @@ class AccountManager
 
 class Account 
 {
-    constructor(profile, data)
+    constructor(profile, mercy, session)
     {
         this.id         = profile.id;
         this.member     = profile.member;
         this.account    = profile.account;
         this.main       = !!profile.main;
-        this.data       = JSON.parse(profile.data)      || {};
-        this.settings   = JSON.parse(profile.settings)  || new AccountSettings();
+        this.data       = new AccountData(JSON.parse(profile.data));
+        this.settings   = new AccountSettings(JSON.parse(profile.settings));
 
-        this.mercy      = data  // [shard][rarity].value
+        this.mercy      = new AccountMercy(mercy);
+        this.session    = new Session(this, session);
+        
+        this.flag       = new AccountFlags();
+        
+        this.lastActive = Timestamp.iso();
+        this.registered = profile.registered;
 
         log.debug(`Instantiated ${this.member}'s account '${this.account}'`);
     }
+
+    dirty()
+    {
+        this.flag.dirty.account = true;
+        log.trace(`${this.account} flagged dirty`)
+    }
+
+    clean()
+    {
+        this.flag.dirty.account = false;
+        log.trace(`${this.account} marked clean`)
+    }
+
+    pull(shard, count)
+    {
+        this.validateSession();
+
+        this.mercy.pull(shard, count, this.flag);
+        this.session.addPull(shard, count);
+
+        this.dirty();
+    }
+
+    validateSession()
+    {
+        if (!this.session.session == Timestamp.session())
+        {
+            log.debug(`Invalid session: ${this.session.session}. Refreshing session`)
+            this.session.refresh();
+            this.mercy.refresh();
+        }
+    }
 }
+
+
+
+    // classes for account configuration and reference
+class AccountData
+{
+
+}
+
+
 
 class AccountSettings
 {
@@ -72,6 +138,92 @@ class AccountSettings
 
     }
 }
+
+class AccountFlags
+{
+    constructor()
+    {
+        this.dirty = 
+        {
+            account: false,
+            ancient: { legendary: false },
+            void:    { legendary: false },
+            primal:  { legendary: false, mythical: false },
+            sacred:  { legendary: false },
+            prism:   { legendary: false }
+        }
+    }
+}
+
+
+class AccountMercy
+{
+    constructor(data = {}, flag)
+    {
+        this.flag = flag;
+
+        for (const [shard, { rarity }] of Object.entries(Shards.configuration))
+        {
+            this[shard] = {};
+
+            for (const type of rarity)
+            {
+                this[shard][type] = 
+                {
+                    total: 0,
+                    session: 0,
+                    lifetime: 0,
+                    lastAdded: null,
+                    lastReset: null,
+                    lastChampion: null
+                };
+
+                if (data[shard] && data[shard][type])
+                {
+                    this[shard][type] = 
+                    {
+                        ...this[shard][type], 
+                        ...data[shard][type]
+                    };
+                }
+            }
+        }
+    }
+
+    pull(shard, count, flag)
+    {
+        if (shard === 'primal')
+        {
+            this[shard].mythical.total        += count;
+            this[shard].mythical.lifetime     += count;
+            this[shard].mythical.lastAdded    += count;
+
+            flag.dirty[shard].mythical        = true;
+        }
+        
+        this[shard].legendary.total           += count;
+        this[shard].legendary.lifetime        += count;
+        this[shard].legendary.lastAdded       += count;
+
+        flag.dirty[shard].legendary            = true;
+    }
+
+
+    refresh()
+    {
+        for (const [shard, { rarity }] of Object.entries(Shards.configuration))
+        {
+            for (const type of rarity)
+            {
+                this[shard][type].lastAdded = 0;
+            }
+        }
+        log.trace('Refreshed mercy lastAdded session data')
+    }
+    
+
+}
+
 
 
 export { AccountManager, Account, AccountSettings}

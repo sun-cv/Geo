@@ -6,9 +6,9 @@ class Input
     {
         const input = {}
 
-        for (option of interaction.options)
+        for (const option of interaction.options._hoistedOptions)
         {
-            input[option] = interaction.options.get(option)
+            input[option.name] = interaction.options.get(option.name).value;
         }
         return input;
     }

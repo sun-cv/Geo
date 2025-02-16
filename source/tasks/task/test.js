@@ -1,8 +1,10 @@
 import { log } from '../../../utility/index.js'
 
-async function test(client)
+async function test(interaction)
 {   
-    log.event("test task");
+
+    
+
 };
 
 const task = 

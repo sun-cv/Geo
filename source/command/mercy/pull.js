@@ -1,29 +1,27 @@
-import { CommandInteraction } from "discord.js";
-import { Input } from "../../../utility/toolkit/input";
-
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
+import Shards       from "./tracker/shards.json" with { type: "json" };
+import { Input }    from '../../../utility/index.js'
+import message      from '../mercy/tracker/message.js'
 
 async function pull(interaction = new CommandInteraction())
 {
-    const { mercy }                 = interaction.client
-    const { shard, count, name }    = Input.initialize(interaction);
 
-    
-    const member    = mercy.initialize(interaction);
-    const account   = member.getAccount(name);
+    const { mercy }                     = interaction.client
+    const { shard, count, account_name} = Input.initialize(interaction);
+  
+    const member                        = mercy.initialize(interaction);
+    const account                       = member.getAccount(account_name);
 
     if  (!account) 
     {
         return;
     }
     
-    if (shard == 'primal')  account.mercy[shard].mythical.count  += count;
-                            account.mercy[shard].legendary.count += count;
-
-    const output = `<@${interaction.user.id}> pulled ${count} ${shardEmojis[shard]}`;
-
+    account.pull(shard, count);
     
-
-
+    mercy.update(member);
+    
+    interaction.followUp({ content: message.pull(member, count, shard)});
 }
 
 const command = {
@@ -64,9 +62,30 @@ const command = {
 
     roleAssignment:     {},
 
-    data: new SlashCommandBuilder()
-    .setName('test')
-    .setDescription('Command for testing purposes.'),
+	data: new SlashCommandBuilder()
+		.setName('pull')
+		.setDescription('Track and log shard pulls')
+		.addIntegerOption(option =>
+			option.setName('count')
+				.setDescription('Number of shards to pull')
+				.setRequired(true)
+				.setMinValue(-999)
+				.setMaxValue(999))
+		.addStringOption(option =>
+			option.setName('shard')
+				.setDescription('Shard type to pull')
+				.setRequired(true)
+				.addChoices(
+					{ name: 'ancient',  value: 'ancient' },
+					{ name: 'void',     value: 'void'    },
+					{ name: 'primal',   value: 'primal'  },
+					{ name: 'sacred',   value: 'sacred'  },
+				))
+		.addStringOption(option =>
+			option.setName('account_name')
+				.setDescription('Specify an alt account to pull shards')
+				.setAutocomplete(false),
+		),
 
     execute: pull
 };

@@ -5,6 +5,7 @@ import { Timestamp }    from './toolkit/timestamp.js'
 import { Text }         from './toolkit/text.js'
 import { Parser }       from './toolkit/parser.js'
 import { Input }        from './toolkit/input.js'
+import { Message }       from '../source/command/mercy/tracker/message.js'
 
 export
 {
@@ -14,4 +15,6 @@ export
     Timestamp,
     Text,
     Parser,
+    Input,
+    Message
 }
