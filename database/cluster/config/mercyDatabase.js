@@ -62,7 +62,7 @@ class MercyDatabase extends Database
         return this.database.prepare(`SELECT * FROM session WHERE id = ? AND account = ? AND session = ?`).get(member.id, accountName, Timestamp.session())
     }
 
-    createAccount()
+    createAccount(member, accountName)
     {
         this.database.prepare(`INSERT INTO account(id, member, account) VALUES (?, ?, ?)`).run(member.id, member.member, accountName)
         log.trace(`Successfully generated database entry: account '${accountName}'`);
@@ -112,7 +112,7 @@ class MercyDatabase extends Database
             log.trace(`Successfully updated database entry: session`)
             return;
         }
-        this.database.prepare(`INSERT INTO session (id, member, account, pull, reset, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, Number(session.pull), Number(session.reset), Number(session.champion), session.session);
+        this.database.prepare(`INSERT INTO session (id, member, account, pull, reset, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, Number(account.session.pull), Number(account.session.reset), Number(account.session.champion), account.session.session);
         log.trace(`Successfully created database entry: session`)
 
     }

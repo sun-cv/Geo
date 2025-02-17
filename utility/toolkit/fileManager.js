@@ -57,6 +57,7 @@ class FileManager
         const data      = await import(fileURL);
         const object    = data.default;
 
+
         if (!object)
         {
             return;
@@ -64,7 +65,7 @@ class FileManager
 
         if (object.flag.ignore)
         {
-            log.trace(`${object.meta.id} load flag set to ignore`)
+            log.trace(`${object.meta?.id || fileURL} load flag set to ignore`)
             return;
         }
 

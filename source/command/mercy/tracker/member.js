@@ -1,7 +1,6 @@
 import { Collection, MessageFlags } from 'discord.js'
 import { log, Timestamp }           from '../../../../utility/index.js';
 import { MemberCache }              from './cache.js';
-import message                      from '../tracker/message.js'
 
 class MemberManager
 {
@@ -52,7 +51,7 @@ class MemberManager
 
     updateMember(member)
     {
-        log.trace(`Updating member ${account.member}`);
+        log.trace(`Updating member ${member.member}`);
 
         this.database.updateMember(member);
     }
@@ -66,7 +65,7 @@ class Member
     {
         this.id         = profile.id;
         this.member     = profile.member;
-        this.accounts   = JSON.parse(profile.accounts)   || [];
+        this.accounts   = [];
         this.data       = JSON.parse(profile.data)       || {};
         this.settings   = JSON.parse(profile.settings)   || new MemberSettings();
         
@@ -86,7 +85,7 @@ class Member
         }
         if (!this.account.has(name))
         {
-            Interaction.editReply({ content: message.error.account.notFound(name), flags: MessageFlags.Ephemeral})
+            return;
         }
         return this.account.get(name);
     }

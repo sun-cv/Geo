@@ -1,6 +1,6 @@
 import { log, Text }        from '../../../../utility/index.js'
 import { ProfileManager }   from './profile.js';
-import { welcome }          from './message.js';
+import message              from './message.js';
 import { RoleAssignment }   from '../../../interaction/handler/role.js';
 
 class Mercy
@@ -25,6 +25,7 @@ class Mercy
     initialize(interaction)
     {
         const member = this.profileManager.get(interaction.member);
+        
         if (member.new)
         {
             this.greetNewMember(interaction, member);
@@ -35,7 +36,8 @@ class Mercy
     greetNewMember(interaction, member)
     {
         RoleAssignment.set(interaction).addRole('Mercy')
-        interaction.followUp({ content: welcome(member.id) });
+        interaction.followUp({ content: message.welcome(member.id) });
+        delete member.new;
     }
 
     update(member)

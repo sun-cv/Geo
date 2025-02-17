@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 import Shards       from "./tracker/shards.json" with { type: "json" };
 import { Input }    from '../../../utility/index.js'
 import message      from '../mercy/tracker/message.js'
@@ -14,17 +14,18 @@ async function pull(interaction = new CommandInteraction())
 
     if  (!account) 
     {
-        return;
+        return interaction.followUp({ content: message.error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
     }
     
     account.pull(shard, count);
-    
-    mercy.update(member);
-    
+   
     interaction.followUp({ content: message.pull(member, count, shard)});
+
+    mercy.update(member);
 }
 
-const command = {
+const command = 
+{
     meta: 
     {
         id:             "pull",
@@ -57,7 +58,8 @@ const command = {
         defer:          true,
         ephemeral:      false,
         access:         false,
-        maintenance:    false
+        maintenance:    false,
+        autocomplete:   true,
     },
 
     roleAssignment:     {},
@@ -83,8 +85,8 @@ const command = {
 				))
 		.addStringOption(option =>
 			option.setName('account_name')
-				.setDescription('Specify an alt account to pull shards')
-				.setAutocomplete(false),
+				.setDescription('Specify an account to pull shards')
+				.setAutocomplete(true),
 		),
 
     execute: pull

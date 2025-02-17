@@ -11,7 +11,7 @@ class PermissionHandler
 
     async handle(interaction)
     {
-        const {flag, permission: { require = {}, exclude = {} }} = interaction.data;
+        const {flag, permission: { require = {}, exclude = {} } = {}} = interaction.data;
 
         if (!flag.permission)
         {

@@ -14,13 +14,22 @@ class ProfileManager
         this.accountManager = new AccountManager(mercy);
     }
 
-    findMemberProfile()
+    findMemberProfile(iMember)
     {
-        return {
-            cache:     this.memberManager.searchCache(iMember),
-            database: !this.memberManager.searchCache(iMember) && this.memberManager.searchDatabase(iMember)
+        const exists = 
+        {
+            cache: this.memberManager.searchCache(iMember)
+        };
+    
+        if (!exists.cache)
+        {
+            exists.database = this.memberManager.searchDatabase(iMember);
         }
+    
+        return exists;
     }
+    
+
         
     get(iMember)
     {

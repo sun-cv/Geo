@@ -178,7 +178,7 @@ class Registry
     async identify(interaction) {
         if (interaction.isAutocomplete()) 
         {
-            interaction.data = lodash.cloneDeep(this.autocomplete.get(interaction.commandName));
+            interaction.data = lodash.cloneDeep(this.autocomplete.get(interaction.options._hoistedOptions.filter(option => option.focused).at(-1).name));
         }
         if (interaction.isChatInputCommand()) 
         {

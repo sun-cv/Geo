@@ -48,15 +48,23 @@ const command = {
         defer:          true,
         ephemeral:      true,
         access:         true,
-        maintenance:    false
+        maintenance:    false,
+        autocomplete:   true,
     },
 
     roleAssignment:     {},
 
     data: new SlashCommandBuilder()
     .setName('test')
-    .setDescription('Command for testing purposes.'),
-
+    .setDescription('Command for testing purposes.')
+    		.addStringOption(option =>
+			option.setName('testing')
+				.setDescription('Specify an alt account to pull shards')
+				.setAutocomplete(true))
+            .addStringOption(option =>
+			option.setName('testing2')
+				.setDescription('test')
+				.setAutocomplete(true)),
     execute: testCommand
 };
 

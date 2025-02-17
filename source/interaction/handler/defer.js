@@ -11,6 +11,11 @@ class DeferHandler
 
     async handle(interaction)
     {
+        if (!interaction.data.flag.defer)
+        {
+            return;
+        }
+
         this.ephemeral = false;
 
         this.checkFlag(interaction);
