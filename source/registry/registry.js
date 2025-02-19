@@ -1,4 +1,4 @@
-import config from '../../environment/config.json' with { type: 'json' }
+import config from '../../configuration/secret/credentials.json' with { type: 'json' }
 
 import { REST, Routes, Collection } from 'discord.js';
 import path                         from 'node:path';
@@ -20,7 +20,7 @@ class Registry
             menu:           path.join(this.root, "source", "component", "menu"),
             modal:          path.join(this.root, "source", "component", "modal"),
             filter:         path.join(this.root, "source", "filter"),
-            task:           path.join(this.root, "source", "tasks", "task"),
+            task:           path.join(this.root, "source", "task")
         }
 
         this.client         = client;
@@ -42,8 +42,14 @@ class Registry
         this.member         = new Collection();
         this.account        = new Collection();
 
+        this.setClientContext(client);
     }
 
+    async setClientContext(client)
+    {
+        client.registry = this;
+        log.admin(`Successfully set Registry context`);
+    }
 
     async registerModules()
     {
@@ -206,6 +212,8 @@ class Registry
         this.guild = guild;
         roles.map((role) => this.role.set(role.name, role))
     }
+
+
 
     
 }

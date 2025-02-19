@@ -27,7 +27,8 @@ const autocomplete =
         defer:          false,
         ephemeral:      false,
         access:         false,
-        maintenance:    false
+        maintenance:    false,
+        autocomplete:   true,
     },
 
     roleAssignment:     {},

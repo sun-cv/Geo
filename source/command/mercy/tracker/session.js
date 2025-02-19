@@ -15,23 +15,23 @@ class Session
         this.log        = new Logs();
     }
 
-    addPull(shard, count)
+    logPull(shard, count)
     {
         this.pull       = true;
         this.log.addPull({shard, count});
     }
 
-    addReset(shard, count, total)
+    logReset(shard, rarity, total)
     {
         this.reset      = true;
-        this.log.addReset({shard, count, total});
+        this.log.addReset({shard, rarity, total});
 
     };
 
-    addChampion(shard, count, total, champion)
+    logChampion(shard, rarity, total, champion)
     {
         this.champion   = true;
-        this.log.addChampion({shard, count, total, champion});
+        this.log.addChampion({shard, rarity, total, champion});
     };
 
     refresh()
@@ -41,6 +41,21 @@ class Session
         this.champion   = false;
         this.session    = Timestamp.session();
         this.timestamp  = Timestamp.iso()
+    }
+
+    lastPull()
+    {
+        this.log.lastLog('pull');
+    }
+
+    lastReset()
+    {
+        this.log.lastLog('reset');
+    }
+
+    lastChampion()
+    {
+        return this.log.lastLog('champion');
     }
 
 }
@@ -69,6 +84,11 @@ class Logs
         this.champion.push(new Log(data, true))
     }
 
+    lastLog(log)
+    {
+        return this[log][this[log].length - 1];
+    }
+
 }
 
 class Log
@@ -76,8 +96,9 @@ class Log
     constructor(data, write)
     {
         this.shard      = data?.shard       || null;
-        this.count      = data?.count       || null;
-        this.total      = data?.total       || null
+        this.rarity     = data?.rarity      || null;
+        this.count      = data?.count       ?? null;
+        this.total      = data?.total       ?? null
         this.champion   = data?.champion    || null;
         this.session    = data?.session     || Timestamp.session();
         this.timestamp  = data?.timestamp   || Timestamp.iso();

@@ -1,4 +1,4 @@
-import Shards               from './shards.json' with { type: 'json' };
+import Shards               from '../../../../source/data/mercy/shards.json' with { type: 'json' };
 import { log, Timestamp }   from '../../../../utility/index.js'
 import { Session }          from './session.js';
 
@@ -104,8 +104,23 @@ class Account
     {
         this.validateSession();
 
+        this.session.logPull(shard, count);
         this.mercy.pull(shard, count, this.flag);
-        this.session.addPull(shard, count);
+
+        this.dirty();
+    }
+
+    reset(shard, rarity, champion)
+    {
+        this.validateSession();
+
+        const total = this.mercy[shard][rarity].total;
+
+        this.session.logReset(shard, rarity, total);
+        this.session.logChampion(shard, rarity, total, champion);
+        
+        this.mercy.reset(shard, rarity, this.flag);
+        this.mercy.lastChampion(shard, rarity, champion);
 
         this.dirty();
     }
@@ -158,17 +173,16 @@ class AccountFlags
 
 class AccountMercy
 {
-    constructor(data = {}, flag)
+    constructor(data = {},)
     {
-        this.flag = flag;
-
-        for (const [shard, { rarity }] of Object.entries(Shards.configuration))
+        for (const [shard, rarities ] of Object.entries(Shards.mercy))
         {
             this[shard] = {};
 
-            for (const type of rarity)
+            for (const rarity in rarities)
             {
-                this[shard][type] = 
+
+                this[shard][rarity] = 
                 {
                     total: 0,
                     session: 0,
@@ -178,12 +192,13 @@ class AccountMercy
                     lastChampion: null
                 };
 
-                if (data[shard] && data[shard][type])
+
+                if (data[shard] && data[shard][rarity])
                 {
-                    this[shard][type] = 
+                    this[shard][rarity] = 
                     {
-                        ...this[shard][type], 
-                        ...data[shard][type]
+                        ...this[shard][rarity], 
+                        ...data[shard][rarity]
                     };
                 }
             }
@@ -194,28 +209,40 @@ class AccountMercy
     {
         if (shard === 'primal')
         {
-            this[shard].mythical.total        += count;
-            this[shard].mythical.lifetime     += count;
-            this[shard].mythical.lastAdded    += count;
-
-            flag.dirty[shard].mythical        = true;
-        }
+            this[shard].mythical.total         += count;
+            this[shard].mythical.lifetime      += count;
+            this[shard].mythical.lastAdded     += count;
         
-        this[shard].legendary.total           += count;
-        this[shard].legendary.lifetime        += count;
-        this[shard].legendary.lastAdded       += count;
+            flag.dirty[shard].mythical         = true;
+        }  
+        
+        this[shard].legendary.total            += count;
+        this[shard].legendary.lifetime         += count;
+        this[shard].legendary.lastAdded        += count;
 
-        flag.dirty[shard].legendary            = true;
+        flag.dirty[shard].legendary             = true;
+    }
+
+    reset(shard, rarity, flag)
+    {
+        this[shard][rarity].total               = 0;
+        this[shard][rarity].lastReset           = Timestamp.session();
+        flag.dirty[shard][rarity]               = true;
+    }
+
+    lastChampion(shard, rarity, champion)
+    {
+        this[shard][rarity].lastChampion        = champion
     }
 
 
     refresh()
     {
-        for (const [shard, { rarity }] of Object.entries(Shards.configuration))
+        for (const [shard, rarities ] of Object.entries(Shards.mercy))
         {
-            for (const type of rarity)
+            for (const rarity in rarities)
             {
-                this[shard][type].lastAdded = 0;
+                this[shard][rarity].lastAdded = 0;
             }
         }
         log.trace('Refreshed mercy lastAdded session data')

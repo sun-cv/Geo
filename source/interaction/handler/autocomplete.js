@@ -8,27 +8,40 @@ class AutocompleteHandler
         this.registry   = registry;
     }
 
-    handle(interaction)
+    handle(interaction) 
     {
-    	const autocomplete = interaction.data
-
-        if (!autocomplete.flag.autocomplete && !interaction.isAutocomplete())
+        const { flag } = interaction.data;
+        
+        if (flag.handled || !flag.autocomplete || interaction.isChatInputCommand()) 
         {
             return;
         }
-
-        autocomplete.flag.handled = true;
-
-        this.respond(interaction)
+    
+        flag.handled = true;
+        this.respond(interaction);
     }
+    
 
     respond(interaction)
     {
+
         const autocomplete  = interaction.data
         const values        = autocomplete.execute(interaction)
+        const focused       = interaction.options.getFocused().toLowerCase();
  
-        const filtered      = values.filter((choice) => choice.toLowerCase().startsWith(interaction.options.getFocused().toLowerCase())).map((choice) => ({name: choice, value: choice}));
+        const filtered      = [];
 
+        for (const choice of values) 
+        {
+            if (filtered.length >= 25)
+            {
+                break;
+            }
+            if (choice.toLowerCase().includes(focused)) 
+            {
+                filtered.push({ name: choice, value: choice });
+            }
+        }
         interaction.respond(filtered);
     }
 }

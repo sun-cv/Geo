@@ -1,14 +1,15 @@
-import config from "../environment/config.json" with { type: "json" };
+import config from "../configuration/secret/credentials.json" with { type: "json" };
 
-import { Client, GatewayIntentBits, Options } from 'discord.js';
-import { log } from "../utility/logger/log.js";
+import { Client, GatewayIntentBits, Options }   from 'discord.js';
 
-import { Registry } from './registry/registry.js'
-import { Dispatcher } from './event/dispatcher.js'
-import { Interaction } from "./interaction/interaction.js";
-import { TaskManager } from "./tasks/taskManager.js";
-import { Cluster } from "../database/cluster/cluster.js";
-import { Mercy } from "./command/mercy/tracker/mercy.js";
+import { log }                                  from "../utility/logger/log.js";
+import { Registry }                             from './registry/registry.js'
+import { Dispatcher }                           from './event/dispatcher.js'
+import { Interaction }                          from "./interaction/interaction.js";
+import { TaskManager }                          from "./task/taskManager.js";
+import { Cluster }                              from "../database/cluster/cluster.js";
+import { Mercy }                                from "./command/mercy/tracker/mercy.js";
+
 
 log.admin("Initiating startup sequence");
 
@@ -50,7 +51,6 @@ class Bot
         await this.dispatcher.registerClient(this.interaction.create);
 
         await this.registry.registerModules();
-
         await this.registry.deployCommands(this.deploy);
 
         await this.scheduler.registerTasks();

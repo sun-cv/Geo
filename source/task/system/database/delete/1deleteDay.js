@@ -1,18 +1,18 @@
-import path from 'path';
-import fs from 'fs/promises';
-import envDirectory from '../../../../../../environment/directory.json' with { type: "json" };
-import { log } from '../../../../../../utility/index.js';
+import fs           from 'fs/promises';
+import path         from 'path'
+import envDirectory from '../../../../../configuration/environment/directory.json' with { type: "json" }
+import { log }      from '../../../../../utility/index.js';
 
-const RETENTION = 360;
-const DAY = 1000 * 60 * 60 * 24;
 
-async function cleanMonth() 
+const RETENTION = 7;
+const DAY       = 1000 * 60 * 60 * 24;
+
+async function deleteDay() 
 {
     const now = Date.now();
 
     for (const backupPath of Object.values(envDirectory.path.backup)) 
     {
-
         const files = await fs.readdir(backupPath);
 
         for (const file of files) 
@@ -22,6 +22,7 @@ async function cleanMonth()
 
             const backupDate = new Date(dateMatch[0]).getTime();
             const fileAgeDays = (now - backupDate) / DAY;
+            
             if (fileAgeDays < RETENTION) continue;
 
             const filePath = path.join(backupPath, file);
@@ -36,14 +37,14 @@ const task =
 {
     meta: 
     {
-        id:             "cleanMonth",
+        id:             "deleteDay",
         type:           "task",
-        description:    "Deletes Monthly backups in C and X drives after 12 months.",
+        description:    "Deletes daily backups in C and X drives after 7 days.",
     },
 
     data:
     {
-        schedule: `0 10 0 1 * *`,
+        schedule: `0 10 0 * * *`,
         argument: [],
         attempt: 3
     },
@@ -53,7 +54,7 @@ const task =
         reattempt: true,
     },
 
-    execute: cleanMonth,
+    execute: deleteDay,
 
 };
 

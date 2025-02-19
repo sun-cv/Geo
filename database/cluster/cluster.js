@@ -1,6 +1,6 @@
-import directory from '../../environment/directory.json' with { type: 'json' };
-import { log, Text } from '../../utility/index.js';
-import { MercyDatabase } from './config/mercyDatabase.js';
+import directory            from '../../configuration/environment/directory.json' with { type: 'json' };
+import { log, Text }        from '../../utility/index.js';
+import { MercyDatabase }    from '../configuration/mercyDatabase.js';
 
 
 class Cluster 

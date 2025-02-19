@@ -112,6 +112,8 @@ class Log
     }
 }
 
+
+
 const log = new Log();
 
 export { log };

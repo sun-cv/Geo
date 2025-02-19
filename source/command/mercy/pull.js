@@ -1,5 +1,4 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import Shards       from "./tracker/shards.json" with { type: "json" };
 import { Input }    from '../../../utility/index.js'
 import message      from '../mercy/tracker/message.js'
 
@@ -67,6 +66,16 @@ const command =
 	data: new SlashCommandBuilder()
 		.setName('pull')
 		.setDescription('Track and log shard pulls')
+        .addStringOption(option =>
+            option.setName('shard')
+                .setDescription('Shard type to pull')
+                .setRequired(true)
+                .addChoices(
+                    { name: 'ancient',  value: 'ancient' },
+                    { name: 'void',     value: 'void'    },
+                    { name: 'primal',   value: 'primal'  },
+                    { name: 'sacred',   value: 'sacred'  },
+                ))
 		.addIntegerOption(option =>
 			option.setName('count')
 				.setDescription('Number of shards to pull')
@@ -74,18 +83,8 @@ const command =
 				.setMinValue(-999)
 				.setMaxValue(999))
 		.addStringOption(option =>
-			option.setName('shard')
-				.setDescription('Shard type to pull')
-				.setRequired(true)
-				.addChoices(
-					{ name: 'ancient',  value: 'ancient' },
-					{ name: 'void',     value: 'void'    },
-					{ name: 'primal',   value: 'primal'  },
-					{ name: 'sacred',   value: 'sacred'  },
-				))
-		.addStringOption(option =>
 			option.setName('account_name')
-				.setDescription('Specify an account to pull shards')
+				.setDescription('Specify alternate account (if not \'main\')')
 				.setAutocomplete(true),
 		),
 

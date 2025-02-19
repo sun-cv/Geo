@@ -1,6 +1,4 @@
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js'
-import { RoleAssignment } from '../../interaction/handler/role.js';
-import Shards from '../mercy/tracker/shards.json' with { type: 'json' }
 
 async function testCommand(interaction = new CommandInteraction()) 
 {

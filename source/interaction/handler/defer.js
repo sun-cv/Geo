@@ -11,7 +11,7 @@ class DeferHandler
 
     async handle(interaction)
     {
-        if (!interaction.data.flag.defer)
+        if (!interaction.data.flag.defer || interaction.isAutocomplete())
         {
             return;
         }
@@ -25,7 +25,6 @@ class DeferHandler
         {
             return await interaction.deferReply();
         }
-        
         await interaction.deferReply({flags: MessageFlags.Ephemeral});
     }
 

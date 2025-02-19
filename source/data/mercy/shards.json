@@ -1,0 +1,75 @@
+{
+    "mercy": {
+        "ancient": 
+        {
+            "epic": 
+            {
+                "start": 20,
+                "base": 8,
+                "increase": 2
+            },
+            "legendary": 
+            {
+                "start": 200,
+                "base": 0.5,
+                "increase": 5
+            }
+        },
+        "void": 
+        {
+            "epic": 
+            {
+                "start": 20,
+                "base": 8,
+                "increase": 2
+            },
+            "legendary": 
+            {
+                "start": 200,
+                "base": 0.5,
+                "increase": 5
+            }
+        },
+        "primal": 
+        {
+            "legendary": {
+                "start": 75,
+                "base": 1,
+                "increase": 1
+            },
+            "mythical": {
+                "start": 200,
+                "base": 0.5,
+                "increase": 10
+            }
+        },
+        "sacred": 
+        {
+            "legendary": 
+            {
+                "start": 12,
+                "base": 6,
+                "increase": 2
+            }
+        },
+        "prism": 
+        {
+        }
+    },
+    "emoji":
+    {
+        "ancient": "<:Ancient:1184573482684661950>",
+        "void": "<:Void:1184573509037477999>",
+        "primal": "<:Primal:1184573522958364762>",
+        "sacred": "<:Sacred:1184573533037273258>",
+        "prism": ""
+
+
+    },
+    "flag": 
+    {
+        "ignore": true
+    }
+}
+
+

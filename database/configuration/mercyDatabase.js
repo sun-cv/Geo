@@ -1,7 +1,7 @@
-import Database                         from '../database.js';
-import Directory                        from '../../../environment/directory.json'               with { type: 'json' };
-import Shards                           from '../../../source/command/mercy/tracker/shards.json' with { type: 'json' };
-import { log, Text, Parser, Timestamp } from '../../../utility/index.js';
+import Database                         from './database.js';
+import Directory                        from '../../configuration/environment/directory.json'    with { type: 'json' };
+import Shards                           from '../../source/data/mercy/shards.json'               with { type: 'json' };
+import { log, Text, Parser, Timestamp } from '../../utility/index.js';
 
 
 class MercyDatabase extends Database
@@ -67,7 +67,7 @@ class MercyDatabase extends Database
         this.database.prepare(`INSERT INTO account(id, member, account) VALUES (?, ?, ?)`).run(member.id, member.member, accountName)
         log.trace(`Successfully generated database entry: account '${accountName}'`);
 
-        Object.entries(Shards.configuration).map(([shard, {rarity}]) => rarity.forEach((tier) => 
+        Object.entries(Shards.mercy).map(([ shard, rarities ]) => Object.keys(rarities).forEach((tier) => 
         {
             this.database.prepare(`INSERT INTO mercy (id, member, account, shard, rarity) VALUES (?, ?, ?, ?, ?)`).run(member.id, member.member, accountName, shard, tier);
             log.trace(`Successfully generated database entry: ${Text.set(tier).constrain(9)} ${Text.set(shard).constrain(7)} mercy for '${accountName}'`)
@@ -82,14 +82,14 @@ class MercyDatabase extends Database
         const data      = JSON.stringify(account.data);
         const settings  = JSON.stringify(account.settings)
         
-        this.database.prepare(`UPDATE account SET main = ?, data = ?, settings = ?, lastActive = ? WHERE id = ? AND account = ?`).run(Number(account.main), data, settings, account.lastActive, account.id, account.account );
+        this.database.prepare(`UPDATE account SET main = ?, data = ?, settings = ?, lastActive = ? WHERE id = ? AND account = ?`).run(Number(account.main), data, settings, Timestamp.iso(), account.id, account.account );
         log.trace(`Successfully updated database entry: account`)
 
     }
 
     updateAccountMercy(account)
     {
-        const dirtyEntries = Object.entries(Shards.configuration).flatMap(([shard, { rarity }]) => rarity.filter((tier) => account.flag.dirty[shard][tier]).map((rarity) => ({shard, rarity})));
+        const dirtyEntries = Object.entries(Shards.mercy).flatMap(([ shard, rarities ]) => Object.keys(rarities).filter((rarity) => account.flag.dirty[shard][rarity]).map((rarity) => ({shard, rarity})));
 
         for (const {shard, rarity} of dirtyEntries)
         {
@@ -119,7 +119,7 @@ class MercyDatabase extends Database
 
     updateAccountLogs(account)
     {
-        Object.entries(account.session.log).map(([type, array]) => array.filter((entry) => entry.write).forEach((entry) => 
+        Object.entries(account.session.log).map(([ type, array ]) => array.filter((entry) => entry.write).forEach((entry) => 
         {
             entry.write = false;
             logHandler[type](this.database, account, entry);
@@ -133,8 +133,8 @@ class MercyDatabase extends Database
 const logHandler = 
 {
     pull:       ((database, account, log) => { database.prepare(`INSERT INTO pull (id, member, account, shard, count, session) VALUES (?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.shard, log.count, log.session) }),
-    reset:      ((database, account, log) => { database.prepare(`INSERT INTO reset (id, member, account, shard, count, total, session) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.shard, log.count, log.total, log.session) }),
-    champion:   ((database, account, log) => { database.prepare(`INSERT INTO champion (id, member, account, shard, count, total, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.shard, log.count, log.total, log.champion, log.session) })
+    reset:      ((database, account, log) => { database.prepare(`INSERT INTO reset (id, member, account, shard, rarity, total, session) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.shard, log.rarity, log.total, log.session) }),
+    champion:   ((database, account, log) => { database.prepare(`INSERT INTO champion (id, member, account, shard, rarity, total, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.shard, log.rarity, log.total, log.champion, log.session) })
 }
 
 
@@ -235,7 +235,6 @@ async function create(database)
             account     TEXT        NOT NULL,            
             shard       TEXT        NOT NULL,
             rarity      TEXT        NOT NULL,            
-            count       INTEGER     DEFAULT 0,
             total       INTEGER     NOT NULL,
             session     TEXT        NOT NULL,
             timestamp   TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
@@ -253,8 +252,7 @@ async function create(database)
             account     TEXT        NOT NULL,            
             shard       TEXT        NOT NULL,
             rarity      TEXT        NOT NULL,
-            count       INTEGER     DEFAULT 0,
-            total       INTEGER     NOT NULL,
+            total       INTEGER     default 0,
             champion    TEXT        NOT NULL,
             session     TEXT        NOT NULL,
             timestamp   TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),

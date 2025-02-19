@@ -1,8 +1,7 @@
 import path from 'path'
-import envDirectory from '../../../../../../environment/directory.json' with { type: "json" }
+import envDirectory from '../../../../../configuration/environment/directory.json' with { type: "json" }
 
-import { Timestamp, FileManager } from '../../../../../../utility/index.js';
-
+import { Timestamp, FileManager, log } from '../../../../../utility/index.js';
 
 async function backupMonth() 
 {

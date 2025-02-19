@@ -85,6 +85,12 @@ class FileManager
     static async loadJSON(filePath, callbackFunction, ...args)
     {
         const data = fs.readFileSync(filePath,'utf8');
+        if (!data)
+        {
+            log.error(`File.JSON load failed (No data: ${filePath})`);
+            return;
+        }
+
         const json = JSON.parse(data);
         
         log.trace(`Loading .JSON (source: ${filePath})`);

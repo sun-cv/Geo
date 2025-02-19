@@ -1,0 +1,157 @@
+Folder PATH listing
+Volume serial number is 7066-87C7
+C:.
+�   .gitignore
+�   main.js
+�   README.md
+�   structure.txt
+�   
++---assets
++---configuration
++---database
+�   �   mercy.db
+�   �   
+�   +---cluster
+�   �       cluster.js
+�   �       
+�   +---configuration
+�           clanDatabase.js
+�           database.js
+�           mercyDatabase.js
+�           systemDatabase.js
+�           
++---documentation
+�       taskList.js
+�       
++---source
+�   �   bot.js
+�   �   
+�   +---autocomplete
+�   �       account_name.js
+�   �       champion.js
+�   �       
+�   +---command
+�   �   +---mercy
+�   �   �   �   pull.js
+�   �   �   �   reset.js
+�   �   �   �   
+�   �   �   +---tracker
+�   �   �           account.js
+�   �   �           cache.js
+�   �   �           member.js
+�   �   �           mercy.js
+�   �   �           message.js
+�   �   �           profile.js
+�   �   �           session.js
+�   �   �           
+�   �   +---moderator
+�   �           clean.js
+�   �           move.js
+�   �           test.js
+�   �           throwerror.js
+�   �           
+�   +---component
+�   �   +---button
+�   �   �   +---applications
+�   �   �   +---generic
+�   �   �   �       default.json
+�   �   �   �       
+�   �   �   +---mercy
+�   �   +---menu
+�   �   +---modal
+�   +---data
+�   �   +---autocomplete
+�   �   �       championListTrie.js
+�   �   �       
+�   �   +---mercy
+�   �           championList.json
+�   �           shards.json
+�   �           
+�   +---event
+�   �   �   dispatcher.js
+�   �   �   
+�   �   +---client
+�   �   �       ready.js
+�   �   �       
+�   �   +---system
+�   �           signalinterrupt.js
+�   �           uncaughtException.js
+�   �           unhandledRejection.js
+�   �           
+�   +---filter
+�   +---interaction
+�   �   �   interaction.js
+�   �   �   
+�   �   +---handler
+�   �           autocomplete.js
+�   �           button.js
+�   �           command.js
+�   �           cooldown.js
+�   �           defer.js
+�   �           permission.js
+�   �           role.js
+�   �           
+�   +---registry
+�   �       registry.js
+�   �       
+�   +---task
+�       �   taskManager.js
+�       �   
+�       +---community
+�       +---system
+�           �   test.js
+�           �   
+�           +---database
+�           �   +---create
+�           �   �       1backupDay.js
+�           �   �       2backupWeek.js
+�           �   �       3backupMonth.js
+�           �   �       
+�           �   +---delete
+�           �           1deleteDay.js
+�           �           2deleteWeek.js
+�           �           3deleteMonth.js
+�           �           
+�           +---mercy
+�                   updateChampionList.js
+�                   
++---utility
+�   �   index.js
+�   �   
+�   +---algorithm
+�   �   +---structure
+�   �           trie.js
+�   �           
+�   +---logger
+�   �       definitions.js
+�   �       log.js
+�   �       tracer.js
+�   �       
+�   +---toolkit
+�           fileManager.js
+�           input.js
+�           parser.js
+�           Text.js
+�           timestamp.js
+�           
++---?rchive
+    +---2-16 Champion auto complet backup
+    �       championAutocomplete.js
+    �       
+    +---2-2 Event Manager
+    �       eventManager.js
+    �       
+    +---2-3 Module Loader removed
+    �   +---module
+    �       �   moduleLoader.js
+    �       �   
+    �       +---type
+    �               command.js
+    �               commandDeploy.js
+    �               component.js
+    �               events.js
+    �               
+    +---2-8 Event Handler
+            event.js
+            tracer.js
+            

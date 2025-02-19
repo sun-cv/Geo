@@ -1,18 +1,17 @@
-import path from 'path';
-import fs from 'fs/promises';
-import envDirectory from '../../../../../../environment/directory.json' with { type: "json" };
-import { log } from '../../../../../../utility/index.js';
+import fs           from 'fs/promises';
+import path         from 'path'
+import envDirectory from '../../../../../configuration/environment/directory.json' with { type: "json" }
+import { log }      from '../../../../../utility/index.js';
 
 const RETENTION = 28;
-const DAY = 1000 * 60 * 60 * 24;
+const DAY       = 1000 * 60 * 60 * 24;
 
-async function cleanWeek() 
+async function deleteWeek() 
 {
     const now = Date.now();
 
     for (const backupPath of Object.values(envDirectory.path.backup)) 
     {
-
         const files = await fs.readdir(backupPath);
 
         for (const file of files) 
@@ -22,6 +21,7 @@ async function cleanWeek()
 
             const backupDate = new Date(dateMatch[0]).getTime();
             const fileAgeDays = (now - backupDate) / DAY;
+            
             if (fileAgeDays < RETENTION) continue;
 
             const filePath = path.join(backupPath, file);
@@ -36,7 +36,7 @@ const task =
 {
     meta: 
     {
-        id:             "cleanWeek",
+        id:             "deleteWeek",
         type:           "task",
         description:    "Deletes weekly backups in C and X drives after 28 days.",
     },
@@ -53,7 +53,7 @@ const task =
         reattempt: true,
     },
 
-    execute: cleanWeek,
+    execute: deleteWeek,
 
 };
 
