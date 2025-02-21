@@ -45,12 +45,12 @@ class Session
 
     lastPull()
     {
-        this.log.lastLog('pull');
+        return this.log.lastLog('pull');
     }
 
     lastReset()
     {
-        this.log.lastLog('reset');
+        return this.log.lastLog('reset');
     }
 
     lastChampion()

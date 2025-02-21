@@ -1,12 +1,11 @@
-
 {
-    "generic-test-1": 
+    "mercy-account-add": 
     {
         "meta": 
         {
-            "id":               "generic-test-1",
+            "id":               "mercy-account-add",
             "type":             "button",
-            "description":      "Test button"
+            "description":      "Mercy tracker account management: add account"
         },
 
         "access":
@@ -26,26 +25,26 @@
         "flag":
         {
             "ignore":           false,
-            "defer":            false,
+            "defer":            true,
             "maintenance":      false 
         },
 
         "button":
         {
-            "label":            "Test Button",
+            "label":            "Add account",
             "style":            "Primary"
         },
 
-        "execute":              "command-moderator-test.js"
+        "execute":              "mercy-account-add.js"
     },
 
-    "generic-test-2": 
+    "mercy-account-remove": 
     {
         "meta": 
         {
-            "id":               "generic-test-2",
+            "id":               "mercy-account-remove",
             "type":             "button",
-            "description":      "Test button"
+            "description":      "Mercy tracker account management: remove account"
         },
 
         "access":
@@ -65,16 +64,20 @@
         "flag":
         {
             "ignore":           false,
-            "defer":            false,
+            "defer":            true,
             "maintenance":      false 
         },
 
         "button":
         {
-            "label":            "Test Button",
+            "label":            "Add account",
             "style":            "Primary"
         },
 
-        "execute":              "command-moderator-test.js"
+        "execute":              "mercy-account-remove.js"
     }
+
+
+
+
 }

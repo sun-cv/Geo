@@ -5,11 +5,12 @@ import { fileURLToPath }    from 'url';
 import { log }              from '../../../../utility/index.js';
 import { updateChampionListTrieCache } from '../../../data/autocomplete/championListTrie.js';
 
+
 async function updateChampionList() 
 {
     const __filename    = fileURLToPath(import.meta.url);
     const __dirname     = path.dirname(__filename);
-    const filePath      = path.join(__dirname, '..', '..', '..', '..','..', 'assets', 'data', 'championList.json');
+    const filePath      = path.join(__dirname, '..', '..', '..', 'data', 'autocomplete', 'championList.json');
     const championList  = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
     const browser       = await puppeteer.launch({ headless: 'shell' });

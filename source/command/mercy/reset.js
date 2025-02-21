@@ -1,6 +1,7 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { Input }    from '../../../utility/index.js'
-import message      from '../mercy/tracker/message.js'
+import { Input }            from '../../../utility/index.js'
+import message              from '../mercy/tracker/message.js'
+import { getMercyChance }   from "./tracker/calculate.js";
 
 async function reset(interaction = new CommandInteraction())
 {
@@ -25,7 +26,7 @@ async function reset(interaction = new CommandInteraction())
 
     account.reset(shard, rarity, champion);
 
-    interaction.followUp({ content: message.reset(member, account.session.lastChampion())})
+    interaction.followUp({ content: message.reset(member, account.session.lastChampion(), getMercyChance(shard, rarity, account.session.lastReset().total))})
 
     mercy.update(member);
     

@@ -10,7 +10,6 @@ class Log
     constructor()
     {
         if (Log.instance) return Log.instance;
-        
         Log.instance    = this;
 
         this.logs       = new Collection();

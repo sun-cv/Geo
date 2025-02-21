@@ -40,7 +40,7 @@ class Bot
 
         this.mercy          = new Mercy(this.client, this.cluster, this.registry,)
 
-        this.deploy        = true; // Deploy commands?
+        this.deploy        = false; // Deploy commands?
     }
     
 

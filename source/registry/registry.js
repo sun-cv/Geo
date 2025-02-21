@@ -3,7 +3,7 @@ import config from '../../configuration/secret/credentials.json' with { type: 'j
 import { REST, Routes, Collection } from 'discord.js';
 import path                         from 'node:path';
 import lodash                       from 'lodash';
-import { log, FileManager }         from '../../utility/index.js'
+import { log, FileManager, Build }         from '../../utility/index.js'
 
 class Registry
 {
@@ -12,15 +12,17 @@ class Registry
         this.root       = process.cwd()
         this.directory  = 
         {
-            system:         path.join(this.root, "source", "system"),
-            event:          path.join(this.root, "source", "event"),
-            autocomplete:   path.join(this.root, "source", "autocomplete"),
-            command:        path.join(this.root, "source", "command"),
-            button:         path.join(this.root, "source", "component", "button"),
-            menu:           path.join(this.root, "source", "component", "menu"),
-            modal:          path.join(this.root, "source", "component", "modal"),
-            filter:         path.join(this.root, "source", "filter"),
-            task:           path.join(this.root, "source", "task")
+            system:         path.join(this.root, "source", "system"                 ),
+            event:          path.join(this.root, "source", "event"                  ),
+            autocomplete:   path.join(this.root, "source", "autocomplete"           ),
+            command:        path.join(this.root, "source", "command"                ),
+            button:         path.join(this.root, "source", "component"  , "button"  ),
+            menu:           path.join(this.root, "source", "component"  , "menu"    ),
+            modal:          path.join(this.root, "source", "component"  , "modal"   ),
+            embed:          path.join(this.root, "source", "element"    , "embed"   ),
+            row:            path.join(this.root, "source", "element"    , "row"     ),
+            filter:         path.join(this.root, "source", "filter"                 ),
+            task:           path.join(this.root, "source", "task"                   )
         }
 
         this.client         = client;
@@ -31,6 +33,8 @@ class Registry
         this.button         = new Collection();
         this.menu           = new Collection();
         this.modal          = new Collection();
+        this.embed          = new Collection();
+        this.row            = new Collection();
         this.filter         = new Collection();
         this.task           = new Collection();
 
@@ -42,67 +46,40 @@ class Registry
         this.member         = new Collection();
         this.account        = new Collection();
 
-        this.setClientContext(client);
+        client.registry     = this;
     }
 
-    async setClientContext(client)
-    {
-        client.registry = this;
-        log.admin(`Successfully set Registry context`);
-    }
 
     async registerModules()
     {
-        await this.loadAutocomplete();
-        await this.loadCommands();
-        await this.loadButtons()
-        await this.loadMenus();
-        await this.loadModals();
-        await this.loadFilters();
-        await this.loadTasks();
-
+        for (const module in this.directory)
+        {
+            await this.load(module);
+        }
         log.admin("Successfully loaded registry data")
     }
 
-    async loadAutocomplete()
+
+    async load(module)
     {
-        await FileManager.loadDirectory(this.directory.autocomplete, (data) => this.registerAutocomplete(data));
+        const method = `register${module.charAt(0).toUpperCase() + module.slice(1)}`;
+        
+        if (typeof this[method] === 'function') 
+        {
+            await FileManager.loadDirectory(this.directory[module], (data) => this[method](data));
+        } 
+        else 
+        {
+            log.debug(`No loader method found for module: ${module}`);
+        }
     }
 
-    async loadCommands()
-    {
-        await FileManager.loadDirectory(this.directory.command, (data) => this.registerCommand(data));
-    }
-
-    async loadButtons()
-    {
-        await FileManager.loadDirectory(this.directory.button,  (data) => this.registerComponent(data, "button"));
-    }
-
-    async loadMenus()
-    {
-        await FileManager.loadDirectory(this.directory.menu,    (data) => this.registerComponent(data, "menu"));
-    }
-
-    async loadModals()
-    {
-        await FileManager.loadDirectory(this.directory.modal,   (data) => this.registerComponent(data, "modal"));
-    }
-
-    async loadFilters()
-    {
-        await FileManager.loadDirectory(this.directory.filter,  (data) => this.registerFilter(data));
-    }
-
-    async loadTasks()
-    {
-        await FileManager.loadDirectory(this.directory.task, (data) => this.registerTask(data))
-    }
 
     async registerAutocomplete(autocomplete)
     {
         if (autocomplete.flag.ignore) 
         {
+            log.trace(`${command.meta.id} load flag set to ignore.`)
             return;
         }  
         this.autocomplete.set(autocomplete.meta.id, autocomplete);
@@ -121,23 +98,56 @@ class Registry
         }  
         this.command.set(command.meta.id, command);
 
-        log.debug(`Registered command: ${command.meta.id}`)
+        log.debug(`Registered command: ${command.meta.id}`);
     }
     
-    async registerComponent(components, type)
+    async registerButton(buttons)
     {
-        for (const [id, component] of Object.entries(components))
+        for (const button of Object.values(buttons))
         {
-            if (component.flag.ignore)
+            if (button.flag.ignore)
             {
-                log.trace(`${id} load flag set to ignore.`)
-                return;
+                log.trace(`${id} load flag set to ignore.`);
+                continue;
             }
-            this[type].set(id, component);
+            this.button.set(button.meta.id, { data: button, builder: Build.button(button) });
 
-            log.debug(`Registered component: ${id}`)
+            log.debug(`Registered button: ${button.meta.id}`);
         }
     }
+
+    async registerMenu(menus)
+    {
+
+    }
+
+    async registerModal(modals)
+    {
+
+    }
+
+
+    registerEmbed(embed)
+    {
+        if (embed.flag.igore)
+        {
+            log.trace(`${embed.meta.id} load flag set to ignore`);
+        }
+        this.embed.set(embed.meta.id, embed);
+    }
+
+    registerRow(rows)
+    {
+        for (const row of Object.values(rows))
+        {
+            if (row.flag.ignore)
+            {
+                log.trace(`${row.meta.id} load flag set to ignore`);
+            }
+            this.row.set(row.meta.id,{ data: row, builder: Build.row(this, row)});
+        }
+    }
+
 
     async registerFilter(filter)
     {
@@ -153,7 +163,7 @@ class Registry
         }
         this.task.set(task.meta.id, task);
 
-        log.debug(`Registered task: ${task.meta.id}`)
+        log.debug(`Registered task: ${task.meta.id}`);
     }
 
     async deployCommands(enabled)
@@ -217,6 +227,5 @@ class Registry
 
     
 }
-
 
 export { Registry }

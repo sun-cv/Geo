@@ -88,15 +88,25 @@ class Text {
 
 
     formatList(arr) {
-        if (arr.length === 0) {
+        if (arr.length === 0) 
+        {
             this.content = "";
-        } else if (arr.length === 1) {
+        } else if (arr.length === 1) 
+        {
             this.content = arr[0];
-        } else {
+        } else 
+        {
             this.content = arr.slice(0, -1).join(', ') + ' and ' + arr.at(-1);
         }
         return this;
     }
+    ordinal(number)
+    {
+        const suffixes  = ["th", "st", "nd", "rd"];
+        const variable  = number % 100;
+        this.content    = number + (suffixes[(variable - 20) % 10] || suffixes[variable] || suffixes[0]);
+        return this;
+    };
 
 }
 

@@ -1,0 +1,28 @@
+{
+    "mercy-account-management": 
+    {
+        "meta": 
+        {
+            "id":               "mercy-account-management",
+            "type":             "row",
+            "description":      "Mercy Tracker account management LandingPage row to add or remove account"
+        },
+
+        "flag":
+        {
+            "button":           true,
+            "menu":             false,
+            
+            "ignore":           false,
+            "defer":            true,
+            "maintenance":      false 
+        },
+
+        "button":               ["mercy-account-add", "mercy-account-remove"],
+
+        "menu":                 null
+    }
+
+
+    
+}

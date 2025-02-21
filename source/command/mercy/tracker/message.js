@@ -27,11 +27,16 @@ const pull = (member, count, shard) =>
     `;
 }
 
-const reset = (member, {shard, rarity, total, champion}) =>
+const reset = (member, {shard, rarity, total, champion}, chance) =>
 {
     return `
-    <@${member.id}> pulled the ${rarity} ${Text.set(champion).style(['bold'])} on ${Shards.emoji[shard]} shard #${total}!
+    <@${member.id}> pulled the ${rarity} ${Text.set(champion).style(['bold'])} on their ${Text.set(total).ordinal(total)} ${Shards.emoji[shard]} shard! (${chance}% chance)
     `;
+}
+
+const success = (member, initial, shard, rarity, count, successChance) => {
+    return `**<@${member.id}>**, you've pulled a total of **${initial}** ${Shards.emoji[shard]} shards.\n\n` + 
+    `Your chance of pulling a **${rarity}** from **${count}** ${shard} shards is **${successChance.toFixed(2)}%**.`
 }
 
 const error = 
@@ -45,4 +50,4 @@ const error =
     }
 }
 
-export default { welcome, pull, reset, error, flag: { ignore: true } };
+export default { welcome, pull, reset, success, error, flag: { ignore: true } };

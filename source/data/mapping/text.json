@@ -1,0 +1,49 @@
+{
+    "oddDifficultyMap": 
+    {
+        "N/A":              "N/A",
+        "Easy":             "EAZ",
+        "Normal":           "NOR",
+        "Hard":             "HRD",
+        "Brutal":           "BRT",
+        "Nightmare":        "NMR",
+        "Ultra-Nightmare":  "UNM"
+    },
+    "evenDifficultyMap": 
+    {
+        "Easy":             "EZ",
+        "Normal":           "NORM",
+        "Hard":             "HARD",
+        "Brutal":           "BRUT",
+        "Nightmare":        "NM",
+        "Ultra-Nightmare":  "U-NM"
+    },
+    "damageMap": 
+    {
+        "N/A":              "none",
+        "1-100K":           "-100k",
+        "100K-500K":        "100k+",
+        "500K-1M":          "500k+",
+        "1-2M":             "1M+",
+        "2-5M":             "2M+",
+        "5-10M":            "5M+",
+        "10-20M":           "10M+",
+        "20-30M":           "20M+",
+        "30-40M":           "30M+",
+        "40-50M":           "40M+",
+        "50-60M":           "50M+",
+        "60-70M":           "60M+",
+        "70-80M":           "70M+",
+        "80-90M":           "80M+",
+        "90M-100M":         "90M+",
+        "100M-200M":        "100M+",
+        "200M-300M":        "200M+",
+        "300M-400M":        "300M+",
+        "400M-500M":        "400M+",
+        "500M-750M":        "500M+",
+        "750M-1B":          "750M+",
+        "1-2B":             "1B+",
+        "2-5B":             "2B+",
+        "5B+":              "5B+"
+    }
+  }
