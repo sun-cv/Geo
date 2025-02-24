@@ -1,6 +1,6 @@
 import { log }              from '../../utility/index.js';
 import { Trie }             from '../../utility/algorithm/structure/trie.js';
-import championList         from '../../source/data/mercy/championList.json' with { type: 'json' };
+import championList         from '../../source/data/autocomplete/championList.json' with { type: 'json' };
 
 const trie = new Trie();
 championList.champions.forEach(name => trie.insert(name.toLowerCase()));

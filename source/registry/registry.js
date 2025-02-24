@@ -3,7 +3,7 @@ import config from '../../configuration/secret/credentials.json' with { type: 'j
 import { REST, Routes, Collection } from 'discord.js';
 import path                         from 'node:path';
 import lodash                       from 'lodash';
-import { log, FileManager, Build }         from '../../utility/index.js'
+import { log, FileManager }         from '../../utility/index.js'
 
 class Registry
 {
@@ -16,11 +16,10 @@ class Registry
             event:          path.join(this.root, "source", "event"                  ),
             autocomplete:   path.join(this.root, "source", "autocomplete"           ),
             command:        path.join(this.root, "source", "command"                ),
+            embed:          path.join(this.root, "source", "element"    , "embed"   ),
             button:         path.join(this.root, "source", "component"  , "button"  ),
             menu:           path.join(this.root, "source", "component"  , "menu"    ),
             modal:          path.join(this.root, "source", "component"  , "modal"   ),
-            embed:          path.join(this.root, "source", "element"    , "embed"   ),
-            row:            path.join(this.root, "source", "element"    , "row"     ),
             filter:         path.join(this.root, "source", "filter"                 ),
             task:           path.join(this.root, "source", "task"                   )
         }
@@ -54,6 +53,7 @@ class Registry
     {
         for (const module in this.directory)
         {
+            log.debug(`Loading registry module: ${module}`)
             await this.load(module);
         }
         log.admin("Successfully loaded registry data")
@@ -101,25 +101,43 @@ class Registry
         log.debug(`Registered command: ${command.meta.id}`);
     }
     
-    async registerButton(buttons)
+
+    registerEmbed(data)
     {
-        for (const button of Object.values(buttons))
+        for (const embed of Object.values(data.embed))
         {
+            if (embed.flag.igore)
+            {
+                log.trace(`${embed.meta.id} load flag set to ignore`);
+            }
+            this.embed.set(embed.meta.id, embed);
+
+            log.debug(`Registered embed: ${embed.meta.id}`);
+        }
+    }
+
+
+    async registerButton(data)
+    {
+        for (const button of Object.values(data.button))
+        {            
             if (button.flag.ignore)
             {
                 log.trace(`${id} load flag set to ignore.`);
                 continue;
             }
-            this.button.set(button.meta.id, { data: button, builder: Build.button(button) });
+            this.button.set(button.meta.id, button);
 
             log.debug(`Registered button: ${button.meta.id}`);
         }
     }
 
+
     async registerMenu(menus)
     {
 
     }
+
 
     async registerModal(modals)
     {
@@ -127,32 +145,11 @@ class Registry
     }
 
 
-    registerEmbed(embed)
-    {
-        if (embed.flag.igore)
-        {
-            log.trace(`${embed.meta.id} load flag set to ignore`);
-        }
-        this.embed.set(embed.meta.id, embed);
-    }
-
-    registerRow(rows)
-    {
-        for (const row of Object.values(rows))
-        {
-            if (row.flag.ignore)
-            {
-                log.trace(`${row.meta.id} load flag set to ignore`);
-            }
-            this.row.set(row.meta.id,{ data: row, builder: Build.row(this, row)});
-        }
-    }
-
-
     async registerFilter(filter)
     {
         // TBD
     }
+
 
     async registerTask(task)
     {
@@ -165,6 +162,7 @@ class Registry
 
         log.debug(`Registered task: ${task.meta.id}`);
     }
+
 
     async deployCommands(enabled)
     {

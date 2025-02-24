@@ -63,13 +63,13 @@ class FileManager
             return;
         }
 
-        if (object.flag.ignore)
+        if (object.flag?.ignore)
         {
             log.trace(`${object.meta?.id || fileURL} load flag set to ignore`)
             return;
         }
 
-        log.trace(`Loading ${object.meta.type} (source: ${fileURL})`);
+        log.trace(`Loading ${object.meta?.type} (source: ${fileURL})`);
             
         if (!object)
         {

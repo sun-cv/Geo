@@ -6,8 +6,8 @@ import { Timestamp }    from './toolkit/timestamp.js'
 import { Text }         from './toolkit/text.js'
 import { Parser }       from './toolkit/parser.js'
 import { Input }        from './toolkit/input.js'
-import { Build }        from './toolkit/build.js'
-import { Embed }        from './toolkit/embed.js'
+import { Embed }        from './toolkit/embedManager.js'
+import { EmbedManager } from './toolkit/embedManager.js'
 
 export
 {
@@ -19,6 +19,6 @@ export
     Text,
     Parser,
     Input,
-    Build,
     Embed,
+    EmbedManager,
 }
