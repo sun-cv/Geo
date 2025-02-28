@@ -8,17 +8,24 @@ class AutocompleteHandler
         this.registry   = registry;
     }
 
-    handle(interaction) 
+    async handle(interaction) 
     {
-        const { flag } = interaction.data;
+        const { data: { flag }} = interaction;
         
-        if (flag.handled || !flag.autocomplete || interaction.isChatInputCommand()) 
+        if (flag.handled || !flag.autocomplete || !interaction.isAutocomplete()) 
         {
             return;
         }
-    
+
+        try 
+        {
+            this.respond(interaction);
+        } 
+        catch (error) 
+        {
+            log.error(error);
+        }
         flag.handled = true;
-        this.respond(interaction);
     }
     
 

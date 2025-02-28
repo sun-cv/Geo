@@ -1,6 +1,6 @@
 import { EmbedBuilder }             from '@discordjs/builders';
-import { Embed, Text, Timestamp }   from '../../../../utility/index.js';
-import  indicator                   from '../../../data/mapping/indicator.json' with { type: 'json'}
+import { Embed, Text, Timestamp }   from '../../../utility/index.js';
+import  indicator                   from '../../data/mapping/indicator.json' with { type: 'json'}
 
 
 const data = 
@@ -31,11 +31,11 @@ const data =
             row:
             [
                 {
-                    button:     ['mercy-account-add', 'mercy-account-remove']
+                    menu:       'mercy-account-select'
                 },
-                // {
-                //     menu:       'account-selection'
-                // }
+                {
+                    button:     ['mercy-account-add', 'mercy-account-delete']
+                }
             ],
         
             flag:
@@ -43,7 +43,7 @@ const data =
                 ephemeral:      true
             },
 
-            execute:            (interaction) =>
+            load:            (interaction) =>
             {
                 const { mercy } = interaction.client  
 
@@ -63,7 +63,9 @@ const data =
                 Embed.set(embed).buffer(((3 - (sorted.length % 3)) % 3), 17, true)
                 
                 return embed;
-            }
+            },
+
+        execute: () => {}
         }
 
         

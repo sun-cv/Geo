@@ -97,7 +97,7 @@ class Log
             }
         }
 
-        interaction.options.data.forEach(appendOption);
+        interaction.options?.data.forEach(appendOption);
         return fullCommand;
     }
 

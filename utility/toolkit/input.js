@@ -2,7 +2,7 @@
 
 class Input
 {
-    static initialize(interaction)
+    static command(interaction)
     {
         const input = {}
 
@@ -10,6 +10,17 @@ class Input
         {
             input[option.name] = interaction.options.get(option.name).value;
         }
+        return input;
+    }
+
+    static modal(interaction)
+    {
+        const input = {}
+
+        interaction.fields.fields.forEach(option => 
+        {
+            input[option.customId] = option.value;
+        });
         return input;
     }
 }

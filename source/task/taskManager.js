@@ -127,11 +127,13 @@ function formatAMPM(date) {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
+    }) + ' ' + date.toLocaleDateString('en-US', {
         month: '2-digit',
         day: '2-digit',
         year: 'numeric',
     });
 }
+
 
 function getNextExecutionTime(schedule, timezone = 'America/New_York') 
 {

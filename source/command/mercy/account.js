@@ -1,9 +1,9 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { EmbedManager, Input }    from '../../../utility/index.js'
+import { EmbedManager, Input, navigate }    from '../../../utility/index.js'
 import message      from '../mercy/tracker/message.js'
 
-async function account(interaction = new CommandInteraction())
-{
+async function accountLanding(interaction = new CommandInteraction())
+{ 
 
     interaction.editReply(EmbedManager.set(interaction).load('mercy-account-landing'));
 
@@ -45,6 +45,7 @@ const command =
         access:         false,
         maintenance:    false,
         autocomplete:   true,
+        navigation:     true,
     },
 
     roleAssignment:     {},
@@ -53,7 +54,7 @@ const command =
 		.setName('account')
 		.setDescription('Manage Mercy Tracker accounts'),
 
-    execute: account
+    execute: accountLanding
 };
 
 export default command;

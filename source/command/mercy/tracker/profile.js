@@ -30,7 +30,6 @@ class ProfileManager
     }
     
 
-        
     get(iMember)
     {
         const exists = this.findMemberProfile(iMember);
@@ -76,6 +75,13 @@ class ProfileManager
             this.accountManager.updateAccount(account);
         })
     }
+
+    createAccount(account_name)
+    {
+        this.accountManager.createAccountProfile(this.memberManager.loadMember(iMember), account_name)
+    }
+
+
 }
 
 

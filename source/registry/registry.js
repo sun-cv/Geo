@@ -45,6 +45,10 @@ class Registry
         this.member         = new Collection();
         this.account        = new Collection();
 
+        // interaction cache
+        this.modal.cache    = new Collection();
+
+
         client.registry     = this;
     }
 
@@ -133,15 +137,35 @@ class Registry
     }
 
 
-    async registerMenu(menus)
+    async registerMenu(data)
     {
-
+        for (const menu of Object.values(data.menu))
+            {            
+                if (menu.flag.ignore)
+                {
+                    log.trace(`${id} load flag set to ignore.`);
+                    continue;
+                }
+                this.menu.set(menu.meta.id, menu);
+    
+                log.debug(`Registered menu: ${menu.meta.id}`);
+            }
     }
 
 
-    async registerModal(modals)
+    async registerModal(data)
     {
+        for (const modal of Object.values(data.modal))
+        {            
+            if (modal.flag.ignore)
+            {
+                log.trace(`${id} load flag set to ignore.`);
+                continue;
+            }
+            this.modal.set(modal.meta.id, modal);
 
+            log.debug(`Registered modal: ${modal.meta.id}`);
+        }
     }
 
 
@@ -189,7 +213,7 @@ class Registry
     }
 
     
-    async identify(interaction) {
+    async handle(interaction) {
         if (interaction.isAutocomplete()) 
         {
             interaction.data = lodash.cloneDeep(this.autocomplete.get(interaction.options._hoistedOptions.filter(option => option.focused).at(-1).name));
@@ -221,9 +245,6 @@ class Registry
         roles.map((role) => this.role.set(role.name, role))
     }
 
-
-
-    
 }
 
 export { Registry }

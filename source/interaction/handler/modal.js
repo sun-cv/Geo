@@ -1,0 +1,79 @@
+import { Collection, MessageFlags } from "discord.js";
+
+
+class ModalHandler
+{
+    constructor(client, registry)
+    {
+        this.client     = client;
+        this.registry   = registry;
+
+        this.cache      = new Collection();
+    }
+
+
+    async handle(interaction)
+    {
+        const { data: { flag } } = interaction;
+
+        if (flag.handled || !interaction.isModalSubmit || this.existingModal(interaction))
+        {
+            return;
+        }
+
+        try 
+        {
+            await this.modalInteraction(interaction);    
+        } 
+        catch (error) 
+        {
+            log.error(error);
+        }
+        flag.handled = true;
+
+        this.clearCache(interaction);
+    }
+
+
+
+    existingModal(interaction)
+    {
+        const modalID   = this.registry.modal.cache.get(interaction.member.id);
+        const existing  = interaction.customId === this.registry.modal.cache.get(interaction.member.id)?.meta?.id;
+
+        if (modalID && !existing)
+        {
+            this.clearCache(interaction);
+            return false;
+        }
+        return existing;
+    }
+    
+
+
+    async modalInteraction(interaction)
+    {
+        const modal = interaction.data
+        try 
+        {
+            modal.execute(interaction);
+        } 
+        catch (error) 
+        {
+            interaction.followUp({ content: 'Submission timed out, please try again', flags: MessageFlags.Ephemeral })
+        }
+
+    }
+
+
+    clearCache(interaction)
+    {
+        this.registry.modal.cache.delete(interaction.member.id);
+    }
+
+
+
+
+}
+
+export { ModalHandler } 

@@ -1,5 +1,5 @@
 import { ActionRowBuilder } from '@discordjs/builders';
-import { Text }             from '../toolkit/Text.js';
+import { Text }             from './text.js';
 import { log }              from '../logger/log.js'
 Text
 
@@ -36,7 +36,7 @@ class EmbedManager
 
     loadEmbed(embed)
     {
-        this.embeds.push(embed.execute(this.interaction));
+        this.embeds.push(embed.load(this.interaction));
         log.debug(`Successfully loaded embed ${embed.meta.id}`)
     }
 
@@ -90,8 +90,8 @@ class ComponentManager
         {
             const data = this.registry.button.get(buttonID);
 
-            this.button.addComponents(data.execute(this.interaction));
-            log.trace(`${buttonID} button load executed`)
+            this.button.addComponents(data.load(this.interaction));
+            log.trace(`${Text.set(buttonID).constrain(20)} button load executed`)
         }
 
         this.row.push(this.button);
@@ -103,8 +103,8 @@ class ComponentManager
         {
             const data = this.registry.menu.get(menuID)
             
-            this.menu.addComponents(data.execute(this.interaction));
-            log.trace(`${menuID} menu load executed: ${data.execute}`)
+            this.menu.addComponents(data.load(this.interaction));
+            log.trace(`${Text.set(menuID).constrain(20)} menu load executed`)
         }
 
         this.row.push(this.menu);

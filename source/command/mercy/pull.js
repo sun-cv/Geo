@@ -6,7 +6,7 @@ async function pull(interaction = new CommandInteraction())
 {
 
     const { mercy }                     = interaction.client
-    const { shard, count, account_name} = Input.initialize(interaction);
+    const { shard, count, account_name} = Input.command(interaction);
   
     const member                        = mercy.initialize(interaction);
     const account                       = member.getAccount(account_name);

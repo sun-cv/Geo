@@ -1,4 +1,5 @@
-import { Collection } from "discord.js";
+import { Collection }   from "discord.js";
+import { log }          from '../../../utility/index.js'
 
 
 class Session
@@ -9,9 +10,9 @@ class Session
         this.history = [];
     }
 
-    to(callbackFunction )
+    visit(callbackFunction )
     {
-        log.trace(`${this.member.user.username} is heading to ${callbackFunction}`);
+        log.trace(`Navigating ${this.member.user.username} to ${callbackFunction.name}`);
         this.history.push(callbackFunction)
         return this;
     }
@@ -24,12 +25,12 @@ class Session
         }
     }
 
-    back()
+    async back(interaction)
     {
         if (this.history.length > 1)
         {
-            this.buffer.push(this.history.pop());
-            return this.history.at(-1)
+            this.history.pop()
+            this.history.at(-1)(interaction);
         }
         log.debug('Navigation origin reached.')
     }
@@ -55,6 +56,18 @@ class Navigation
         }
 
         return this.session.get(member.id);
+    }
+
+    async handle(interaction)
+    {
+        const data = interaction.data;
+
+        if (data.flag.handled || !data.flag.navigation || (!data.flag.navigation && interaction.isChatInputCommand()))
+        {
+            return;
+        }
+
+        this.member(interaction.member).visit(data.execute);
     }
 }
 

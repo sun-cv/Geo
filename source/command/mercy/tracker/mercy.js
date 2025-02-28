@@ -45,6 +45,11 @@ class Mercy
         this.profileManager.update(member);
     }
 
+    createAccount(account_name)
+    {
+        this.profileManager.createAccount()
+    }
+
 }
 
 

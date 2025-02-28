@@ -1,7 +1,7 @@
 import { MessageFlags } from "discord.js";
 import { log } from '../../../utility/index.js'
 
-class CommandHandler
+class MenuHandler
 {
         constructor(client, registry)
     {
@@ -11,25 +11,25 @@ class CommandHandler
 
     async handle(interaction)
     {
-        const { data: command, data: { flag } } = interaction;
-
+        const { data: menu, data: { flag } } = interaction;
          
-        if (flag.handled || !interaction.isChatInputCommand())
+        if (flag.handled || !interaction.isAnySelectMenu())
         {
             return;
         }
 
         try
         {
-            await command.execute(interaction);
+            await menu.execute(interaction);
         } 
         catch (error) 
         {
             log.error(error);
-            await interaction.editReply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+            await interaction.editReply({ content: 'There was an error while loading this menu', flags: MessageFlags.Ephemeral });
         }
         flag.handled = true;
+        
     }
 }
 
-export { CommandHandler }
+export { MenuHandler }

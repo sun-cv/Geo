@@ -49,8 +49,8 @@ class Timestamp {
     static get monthDay()
     {
         return (pastStamp) => {
-            const { day, month } = this.formatDate(pastStamp);
-            return `${day}/${month}`;
+            const { month, day } = this.formatDate(pastStamp);
+            return `${month}/${day}`;
         };
     }
 

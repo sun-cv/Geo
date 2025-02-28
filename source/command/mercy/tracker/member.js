@@ -90,6 +90,11 @@ class Member
         return this.account.get(name);
     }
 
+    createAccount(name)
+    {
+        
+    }
+
 
 }
 

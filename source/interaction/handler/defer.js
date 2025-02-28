@@ -11,6 +11,7 @@ class DeferHandler
 
     async handle(interaction)
     {
+
         if (!interaction.data.flag.defer || interaction.isAutocomplete())
         {
             return;
@@ -36,7 +37,7 @@ class DeferHandler
 
     checkShare(interaction)
     {
-        this.ephemeral = interaction.options.getString('share') == 'true';
+        this.ephemeral = interaction.options?.getString('share') == 'true';
     }
 
 

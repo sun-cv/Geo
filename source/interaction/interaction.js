@@ -2,10 +2,14 @@ import { Events, MessageFlags } from 'discord.js'
 import { AutocompleteHandler }  from './handler/autocomplete.js';
 import { PermissionHandler }    from './handler/permission.js';
 import { CooldownHandler }      from './handler/cooldown.js';
+import { ModalHandler }         from './handler/modal.js'
+import { MenuHandler }          from './handler/menu.js';
+import { ButtonHandler }        from './handler/button.js';
 import { CommandHandler }       from './handler/command.js';
 import { DeferHandler }         from './handler/defer.js';
 import { RoleHandler }          from './handler/role.js';
-import { Tracer, log }          from '../../utility/index.js'
+import { Tracer, log, navigate }from '../../utility/index.js'
+
 
 class Interaction
 {
@@ -14,17 +18,17 @@ class Interaction
         this.client     = client
         this.registry   = registry;
         
-
         this.defer      = new DeferHandler();
+        this.navigation = navigate;
         this.permission = new PermissionHandler(client, registry);
         this.cooldown   = new CooldownHandler(client, registry);
 
+        
         this.autofill   = new AutocompleteHandler(client, registry);
+        this.modal      = new ModalHandler(client, registry);
+        this.button     = new ButtonHandler(client, registry);
+        this.menu       = new MenuHandler(client, registry);
         this.command    = new CommandHandler(client, registry);
-        // this.button     = new ButtonHandler(client, registry);
-        // this.modal      = new ModalHandler(client, registry);
-        // this.menu       = new MenuHandler(client, registry);
-
         this.role       = new RoleHandler(client, registry);
 
     }
@@ -50,22 +54,21 @@ class Interaction
 
     async controller(client, interaction)
     {
-        await this.registry     .identify(interaction);
+        await this.registry     .handle(interaction);
 
         await this.defer        .handle(interaction);
-
+        await this.navigation   .handle(interaction);
         await this.permission   .handle(interaction);
         await this.cooldown     .handle(interaction);
 
         await this.autofill     .handle(interaction);
+        await this.modal        .handle(interaction);
+        await this.button       .handle(interaction);
+        await this.menu         .handle(interaction);
         await this.command      .handle(interaction);
-        // await this.button       .handle(interaction);
-        // await this.modal        .handle(interaction);
-        // await this.menu         .handle(interaction);
         
         await this.role         .handle(interaction);
         await this              .finalize(interaction)
-
     }
 
 

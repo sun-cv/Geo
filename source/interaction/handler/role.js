@@ -15,7 +15,7 @@ class RoleHandler
     {
         const roleAssignment = interaction.data?.roleAssignment;
 
-        if (!Object.keys(roleAssignment).length)
+        if (!roleAssignment || !Object.keys(roleAssignment).length)
         {
             return;
         }
