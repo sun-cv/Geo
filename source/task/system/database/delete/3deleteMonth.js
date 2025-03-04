@@ -1,7 +1,7 @@
-import fs           from 'fs/promises';
-import path         from 'path'
-import envDirectory from '../../../../../configuration/environment/directory.json' with { type: "json" }
-import { log }      from '../../../../../utility/index.js';
+import fs               from 'fs/promises';
+import path             from 'path'
+import envDirectory     from '../../../../../configuration/environment/directory.json' with { type: "json" }
+import { log, Schema }  from '../../../../../utility/index.js';
 
 
 const RETENTION = 360;
@@ -33,30 +33,24 @@ async function deleteMonth()
     }
 }
 
-const task = 
-{
+
+const data = Schema.task
+({
     meta: 
     {
-        id:             "deleteMonth",
-        type:           "task",
-        description:    "Deletes Monthly backups in C and X drives after 12 months.",
+        id:             'GFS delete backup - month',
+        category:       'database',
+        description:    "Deletes weekly database backups from C and X drives.",
     },
 
     data:
     {
-        schedule: `0 10 0 1 * *`,
-        argument: [],
-        attempt: 3
-    },
-
-    flag:
-    {
-        reattempt: true,
+        schedule:       `0 10 0 1 * *`,
+        attempt:        3
     },
 
     execute: deleteMonth,
+})
 
-};
 
-
-export default task
+export default data;

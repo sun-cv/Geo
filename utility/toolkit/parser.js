@@ -2,7 +2,17 @@
 
 class Parser
 {
-    static mercyAccount(data)
+
+    static accountData(inputData) 
+    {
+        return {
+            ...inputData,
+            data: JSON.parse(inputData.data),
+            settings: JSON.parse(inputData.settings)
+        };
+    }
+    
+    static accountMercy(data)
     {     
         const buffer   = {};
 

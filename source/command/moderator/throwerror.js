@@ -1,6 +1,6 @@
 import fs   from 'node:fs';
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js';
-import { log } from '../../../utility/index.js'
+import { log, Schema } from '../../../utility/index.js'
 
 async function throwErrorCommand(interaction = new CommandInteraction()) {
 	try {
@@ -39,7 +39,9 @@ async function throwErrorCommand(interaction = new CommandInteraction()) {
 
 
 
-const command = {
+const command = Schema.command
+({
+
     meta: 
     {
         id:             "throwerror",
@@ -75,25 +77,27 @@ const command = {
     },
 
     data: new SlashCommandBuilder()
-	.setName('throwerror')
-	.setDescription('Throws an error for testing error handling.')
-	.addStringOption(option =>
-		option.setName('type')
-			.setDescription('Type of error to throw')
-			.setRequired(true)
-			.addChoices(
-				{ name: 'TypeError', value: 'TypeError' },
-				{ name: 'RangeError', value: 'RangeError' },
-				{ name: 'ReferenceError', value: 'ReferenceError' },
-				{ name: 'SyntaxError', value: 'SyntaxError' },
-				{ name: 'URIError', value: 'URIError' },
-				{ name: 'EvalError', value: 'EvalError' },
-				{ name: 'DatabaseError', value: 'DatabaseError' },
-				{ name: 'FileSystemError', value: 'FileSystemError' },
-				{ name: 'APIError', value: 'APIError' },
-				{ name: 'Generic Error', value: 'GenericError' },
-			)),
+    .setName('throwerror')
+    .setDescription('Throws an error for testing error handling.')
+    .addStringOption(option =>
+    	option.setName('type')
+    		.setDescription('Type of error to throw')
+    		.setRequired(true)
+    		.addChoices(
+    			{ name: 'TypeError', value: 'TypeError' },
+    			{ name: 'RangeError', value: 'RangeError' },
+    			{ name: 'ReferenceError', value: 'ReferenceError' },
+    			{ name: 'SyntaxError', value: 'SyntaxError' },
+    			{ name: 'URIError', value: 'URIError' },
+    			{ name: 'EvalError', value: 'EvalError' },
+    			{ name: 'DatabaseError', value: 'DatabaseError' },
+    			{ name: 'FileSystemError', value: 'FileSystemError' },
+    			{ name: 'APIError', value: 'APIError' },
+    			{ name: 'Generic Error', value: 'GenericError' },
+    		)),
+            
     execute: throwErrorCommand // Execution function
-};
+});
+
 
 export default command;

@@ -1,7 +1,7 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { Input }    from '../../../utility/index.js'
-import message      from '../mercy/tracker/message.js'
-import Shards       from '../../data/mercy/shards.json' with { type: 'json' }
+import { Input, Schema }    from '../../../utility/index.js'
+import message              from '../mercy/tracker/message.js'
+import Shards               from '../../data/mercy/shards.json' with { type: 'json' }
 
 async function success(interaction = new CommandInteraction())
 {
@@ -36,8 +36,8 @@ async function success(interaction = new CommandInteraction())
 }
 
 
-const command = 
-{
+const command = Schema.command
+({
     meta: 
     {
         id:             "success",
@@ -76,9 +76,9 @@ const command =
 
     roleAssignment:     {},
 
-	data: new SlashCommandBuilder()
-		.setName('success')
-		.setDescription('Calculate success chance of pulling a provided number of shards (and more!)')
+    data: new SlashCommandBuilder()
+    	.setName('success')
+    	.setDescription('Calculate success chance of pulling a provided number of shards (and more!)')
         .addStringOption(option =>
             option.setName('shard')
                 .setDescription('Shard type to pull')
@@ -96,31 +96,32 @@ const command =
                 .setMinValue(-999)
                 .setMaxValue(999))
         .addIntegerOption(option =>
-			option.setName('start')
-				.setDescription('Specify your own starting count.')
-				.setRequired(false)
-				.setMinValue(0)
-				.setMaxValue(999))
-		.addStringOption(option =>
-			option.setName('event')
-				.setDescription('Is it a 2x event?')
-				.setRequired(false)
-				.addChoices(
-					{ name: 'true',     value: 'true'   },
-					{ name: 'false',    value: 'false'  },
-				))
+    		option.setName('start')
+    			.setDescription('Specify your own starting count.')
+    			.setRequired(false)
+    			.setMinValue(0)
+    			.setMaxValue(999))
+    	.addStringOption(option =>
+    		option.setName('event')
+    			.setDescription('Is it a 2x event?')
+    			.setRequired(false)
+    			.addChoices(
+    				{ name: 'true',     value: 'true'   },
+    				{ name: 'false',    value: 'false'  },
+    			))
         .addStringOption(option =>
             option.setName('account_name')
                 .setDescription('Specify alternate account (if not \'main\')')
                 .setAutocomplete(true))
-		.addStringOption(option =>
-			option.setName('share')
-				.setDescription('Share your calculation')
-				.addChoices(
-					{ name: 'true',     value: 'true'   }
+    	.addStringOption(option =>
+    		option.setName('share')
+    			.setDescription('Share your calculation')
+    			.addChoices(
+    				{ name: 'true',     value: 'true'   }
                 )),
 
     execute: success
-};
+});
 
-export default command;
+
+export default command

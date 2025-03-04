@@ -45,7 +45,9 @@ class MercyDatabase extends Database
 
     loadAccountProfile(member, accountName)
     {
-        return this.database.prepare("SELECT * FROM account WHERE id = ? and account = ?").get(member.id, accountName);
+        const data = this.database.prepare("SELECT * FROM account WHERE id = ? and account = ?").get(member.id, accountName);
+    
+        return Parser.accountData(data)
     }
 
     loadAccountData(member, accountName)
@@ -54,7 +56,7 @@ class MercyDatabase extends Database
         log.trace(`Found mercy for '${accountName}' (${data.length} records)`);
         
         
-        return Parser.mercyAccount(data);
+        return Parser.accountMercy(data);
     }
     
     loadAccountSession(member, accountName)
@@ -62,9 +64,9 @@ class MercyDatabase extends Database
         return this.database.prepare(`SELECT * FROM session WHERE id = ? AND account = ? AND session = ?`).get(member.id, accountName, Timestamp.session())
     }
 
-    createAccount(member, accountName)
+    createAccount(member, accountName, main = 0)
     {
-        this.database.prepare(`INSERT INTO account(id, member, account) VALUES (?, ?, ?)`).run(member.id, member.member, accountName)
+        this.database.prepare(`INSERT INTO account(id, member, account, main) VALUES (?, ?, ?, ?)`).run(member.id, member.member, accountName, Number(main))
         log.trace(`Successfully generated database entry: account '${accountName}'`);
 
         Object.entries(Shards.mercy).map(([ shard, rarities ]) => Object.keys(rarities).forEach((tier) => 
@@ -72,6 +74,12 @@ class MercyDatabase extends Database
             this.database.prepare(`INSERT INTO mercy (id, member, account, shard, rarity) VALUES (?, ?, ?, ?, ?)`).run(member.id, member.member, accountName, shard, tier);
             log.trace(`Successfully generated database entry: ${Text.set(tier).constrain(9)} ${Text.set(shard).constrain(7)} mercy for '${accountName}'`)
         }));
+    }
+
+    deleteAccount(member, accountName)
+    {
+        this.database.prepare(`DELETE FROM account WHERE id = ? AND account = ?`).run(member.id, accountName);
+        log.trace(`Successfully deleted database entry for: account '${accountName}'`)
     }
 
 
@@ -89,7 +97,7 @@ class MercyDatabase extends Database
 
     updateAccountMercy(account)
     {
-        const dirtyEntries = Object.entries(Shards.mercy).flatMap(([ shard, rarities ]) => Object.keys(rarities).filter((rarity) => account.flag.dirty[shard][rarity]).map((rarity) => ({shard, rarity})));
+        const dirtyEntries = Object.entries(Shards.mercy).flatMap(([ shard, rarities ]) => Object.keys(rarities).filter((rarity) => account.flag.mercy[shard][rarity].dirty.get()).map((rarity) => ({shard, rarity})));
 
         for (const {shard, rarity} of dirtyEntries)
         {
@@ -97,7 +105,7 @@ class MercyDatabase extends Database
             
             this.database.prepare(`UPDATE mercy SET total = ?, session = ?, lifetime = ?, lastAdded = ?, lastReset = ?, lastChampion = ? WHERE id = ? AND account = ? AND shard = ? AND rarity = ?`).run(mercy.total, Timestamp.session(), mercy.lifetime, mercy.lastAdded, mercy.lastReset, mercy.lastChampion, account.id, account.account, shard, rarity);
             log.trace(`Successfully updated database entry: ${Text.set(rarity).constrain(9)} ${Text.set(shard).constrain(7)}`)
-            account.flag.dirty[shard][rarity] = false;
+            account.flag.mercy[shard][rarity].dirty.clear();
         }
     }
 
@@ -127,6 +135,17 @@ class MercyDatabase extends Database
         log.trace(`Successfully updated database logs`)
     }
 
+    getAccountLogs(account)
+    {
+        const logs      = {};
+
+        logs.pull       = this.database.prepare(`SELECT * FROM pull     WHERE id = ? AND account = ?`).all(account.id, account.account)
+        logs.reset      = this.database.prepare(`SELECT * FROM reset    WHERE id = ? AND account = ?`).all(account.id, account.account)
+        logs.champion   = this.database.prepare(`SELECT * FROM champion WHERE id = ? AND account = ?`).all(account.id, account.account)
+
+        return logs;
+    }
+
 }
 
 
@@ -149,7 +168,7 @@ async function create(database)
         (
             id          TEXT        PRIMARY KEY,
             member      TEXT        NOT NULL,
-            accounts    TEXT        DEFAULT '["main"]',
+            accounts    TEXT        DEFAULT '["Main"]',
             data        TEXT        DEFAULT '{}',
             settings    TEXT        DEFAULT '{}',
             lastActive  TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
@@ -164,7 +183,7 @@ async function create(database)
             id          TEXT        NOT NULL,
             member      TEXT        NOT NULL,
             account     TEXT        NOT NULL,
-            main        INTEGER     DEFAULT 1,
+            main        INTEGER     DEFAULT 0,
             data        TEXT        DEFAULT '{}',
             settings    TEXT        DEFAULT '{}',
             lastActive  TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),

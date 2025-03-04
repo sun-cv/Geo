@@ -81,7 +81,7 @@ class Registry
 
     async registerAutocomplete(autocomplete)
     {
-        if (autocomplete.flag.ignore) 
+        if (autocomplete.flag.ignore)
         {
             log.trace(`${command.meta.id} load flag set to ignore.`)
             return;
@@ -108,9 +108,9 @@ class Registry
 
     registerEmbed(data)
     {
-        for (const embed of Object.values(data.embed))
+        for (const embed of Object.values(data))
         {
-            if (embed.flag.igore)
+            if (embed.flag.ignore)
             {
                 log.trace(`${embed.meta.id} load flag set to ignore`);
             }
@@ -123,7 +123,7 @@ class Registry
 
     async registerButton(data)
     {
-        for (const button of Object.values(data.button))
+        for (const button of Object.values(data))
         {            
             if (button.flag.ignore)
             {
@@ -139,7 +139,7 @@ class Registry
 
     async registerMenu(data)
     {
-        for (const menu of Object.values(data.menu))
+        for (const menu of Object.values(data))
             {            
                 if (menu.flag.ignore)
                 {
@@ -155,7 +155,7 @@ class Registry
 
     async registerModal(data)
     {
-        for (const modal of Object.values(data.modal))
+        for (const modal of Object.values(data))
         {            
             if (modal.flag.ignore)
             {
@@ -184,7 +184,7 @@ class Registry
         }
         this.task.set(task.meta.id, task);
 
-        log.debug(`Registered task: ${task.meta.id}`);
+        log.debug(`Registered ${task.meta.category} task: ${task.meta.id}`);
     }
 
 

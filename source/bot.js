@@ -1,24 +1,22 @@
-import config from "../configuration/secret/credentials.json" with { type: "json" };
-
-import { Client, GatewayIntentBits, Options }   from 'discord.js';
-
-import { log }                                  from "../utility/logger/log.js";
-import { Registry }                             from './registry/registry.js'
-import { Dispatcher }                           from './event/dispatcher.js'
-import { Interaction }                          from "./interaction/interaction.js";
-import { TaskManager }                          from "./task/taskManager.js";
-import { Cluster }                              from "../database/cluster/cluster.js";
-import { Mercy }                                from "./command/mercy/tracker/mercy.js";
+import config                       from '../configuration/secret/credentials.json' with { type: 'json' };
+import { Client, GatewayIntentBits} from 'discord.js';
+import { log }                      from '../utility/index.js'
+import { Registry }                 from '../source/registry/registry.js'
+import { Dispatcher }               from '../source/event/dispatcher.js'
+import { Interaction }              from '../source/interaction/interaction.js'
+import { TaskManager }              from '../source/task/taskManager.js'
+import { Mercy }                    from '../source/command/mercy/tracker/mercy.js'
+import { Cluster }                  from '../database/cluster/cluster.js'
 
 
-log.admin("Initiating startup sequence");
+log.admin('Initiating startup sequence');
 
 
 class Bot
 {
     constructor()
     {
-        log.setLevel("Trace")
+        log.setLevel('Trace')
 
         this.client     = new Client(
         {
@@ -40,7 +38,7 @@ class Bot
 
         this.mercy          = new Mercy(this.client, this.cluster, this.registry,)
 
-        this.deploy        = false; // Deploy commands?
+        this.deploy         = false; // Deploy commands?
     }
     
 
@@ -71,7 +69,7 @@ class Bot
 
     shutdown()
     {
-        log.admin("Powering down..")
+        log.admin('Powering down..')
     }
 
 

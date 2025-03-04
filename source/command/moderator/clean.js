@@ -1,4 +1,5 @@
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js'
+import { Schema } from '../../../utility/index.js';
 
 async function cleanCommand(interaction = new CommandInteraction()) {
 
@@ -11,8 +12,9 @@ async function cleanCommand(interaction = new CommandInteraction()) {
 	await interaction.editReply({ content : `Deleted ${deletedMessages.size} messages!`, ephemeral : true });
 }
 
-const command = {
-    
+
+const command = Schema.command
+({
     meta: 
     {
         id:             "clean",
@@ -37,6 +39,7 @@ const command = {
             roles:      []
         }
     },
+
     flag: 
     {
         ignore:         false,
@@ -44,16 +47,17 @@ const command = {
         maintenance:    false
     },
 
-	data: new SlashCommandBuilder()
-		.setName('clean')
-		.setDescription('Removes the last x number of messages in the channel.')
-		.addIntegerOption(option =>
-			option.setName('count')
-				.setDescription('Number of messages to delete')
-				.setRequired(true)
-				.setMinValue(0)
-				.setMaxValue(100)),
-	execute: cleanCommand,
-};
+    data: new SlashCommandBuilder()
+    	.setName('clean')
+    	.setDescription('Removes the last x number of messages in the channel.')
+    	.addIntegerOption(option =>
+    		option.setName('count')
+    			.setDescription('Number of messages to delete')
+    			.setRequired(true)
+    			.setMinValue(0)
+    			.setMaxValue(100)),
+    execute: cleanCommand,
+});
 
-export default command;
+
+export default command

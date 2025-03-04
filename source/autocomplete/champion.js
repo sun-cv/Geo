@@ -1,6 +1,7 @@
-import { log }              from '../../utility/index.js';
+import { log, Schema }              from '../../utility/index.js';
 import { Trie }             from '../../utility/algorithm/structure/trie.js';
 import championList         from '../../source/data/autocomplete/championList.json' with { type: 'json' };
+
 
 const trie = new Trie();
 championList.champions.forEach(name => trie.insert(name.toLowerCase()));
@@ -30,8 +31,9 @@ function champion(interaction)
     return combined;
 }
 
-const autocomplete = 
-{
+
+const data = Schema.autocomplete
+({
     meta: 
     {
         id:             "champion",
@@ -39,19 +41,7 @@ const autocomplete =
         description:    "Mercy champion autocomplete. Returns all currently known champions for logging autocompletes.",
     },
 
-    flag: 
-    {
-        handled:        false,
-        ignore:         false,
-        defer:          false,
-        ephemeral:      false,
-        access:         false,
-        maintenance:    false,
-        autocomplete:   true,
-    },
-
-    roleAssignment:     {},
     execute: champion
-};
+})
 
-export default autocomplete;
+export default data;

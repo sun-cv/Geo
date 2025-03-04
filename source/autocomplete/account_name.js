@@ -1,4 +1,4 @@
-import { log } from "../../utility/index.js";
+import { log, Schema } from "../../utility/index.js";
 
 function account_name(interaction)
 {
@@ -10,9 +10,8 @@ function account_name(interaction)
     return member.accounts;
 }
 
-
-const autocomplete = 
-{
+const data = Schema.autocomplete
+({
     meta: 
     {
         id:             "account_name",
@@ -20,19 +19,8 @@ const autocomplete =
         description:    "Mercy member account autocomplete. Returns all existing account names.",
     },
 
-    flag: 
-    {
-        handled:        false,
-        ignore:         false,
-        defer:          false,
-        ephemeral:      false,
-        access:         false,
-        maintenance:    false,
-        autocomplete:   true,
-    },
-
-    roleAssignment:     {},
     execute: account_name
-};
+})
 
-export default autocomplete;
+
+export default data;

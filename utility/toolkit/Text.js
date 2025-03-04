@@ -17,7 +17,8 @@ class Text {
 
     style(...styles) 
     {
-        const formatMap = {
+        const formatMap = 
+        {
             bold: "**", italic: "*", underline: "__",
             strikethrough: "~~", spoiler: "||",
             block_code: "```", code: "`",
@@ -29,7 +30,11 @@ class Text {
             if (style === "block_code") 
             {
                 this.content = `\`\`\`\n${this.content}\n\`\`\``;
-            } 
+            }
+            else if (style === "block_quote")
+            {
+                this.content = `>>> ${this.content}`
+            }
             else if (formatMap[style])
             {
                 this.content = `${formatMap[style]}${this.content}${formatMap[style]}`;

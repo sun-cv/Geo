@@ -1,5 +1,5 @@
 import { Collection, MessageFlags } from "discord.js";
-
+import { log } from "../../../utility/index.js";
 
 class ModalHandler
 {
@@ -60,7 +60,8 @@ class ModalHandler
         } 
         catch (error) 
         {
-            interaction.followUp({ content: 'Submission timed out, please try again', flags: MessageFlags.Ephemeral })
+            log.error(error)
+            await interaction.editReply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
         }
 
     }

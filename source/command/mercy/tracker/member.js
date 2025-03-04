@@ -1,100 +1,110 @@
-import { Collection, MessageFlags } from 'discord.js'
 import { log, Timestamp }           from '../../../../utility/index.js';
+import { AccountManager } from './account.js';
 import { MemberCache }              from './cache.js';
 
 class MemberManager
 {
     constructor(mercy)
     {
-        this.cache      = new MemberCache(mercy.registry);
+        this.mercy      = mercy;
         this.database   = mercy.database;
+
+        this.cache      = new MemberCache(mercy);
+        
     }
 
-    searchCache(iMember)
+    findMember(iMember)
     {
-        return this.cache.has(iMember);
+        const exists = { cache: this.cache.has(iMember) };
+    
+        if (!exists.cache)
+        {
+            exists.database = this.database.has('member', 'id', iMember.id);
+        }
+    
+        return exists;
     }
 
-    searchDatabase(iMember)
+
+    get(iMember)
     {
-        return this.database.has('member', 'id', iMember.id);
+        const exists = this.findMember(iMember);
+
+        if (exists.cache)
+        {
+            return this.cache.get(iMember);
+        }
+
+        if (exists.database)
+        {
+            return this.loadMember(iMember);
+        }
+        
+        return this.createMember(iMember);
     }
 
-    getCache(iMember)
-    {
-        return this.cache.get(iMember);
-    }
 
     loadMember(iMember)
     {
         log.trace(`Loading ${iMember.user.username}'s member profile`);
 
-        if (this.searchCache(iMember))
-        {
-            return this.getCache(iMember);
-        }
-
         const profile = this.database.loadMember(iMember);
-        const member  = new Member(profile);
+        const member  = new Member(this.mercy, profile);
 
         this.cache.set(member);
 
         return member;
     }
 
-    createMemberProfile(iMember)
+    createMember(iMember)
     {
         log.debug(`Creating new member profile for ${iMember.user.username}`);
 
         this.database.createMember(iMember);
+
+        const member = this.loadMember(iMember);
+              member.account.create('Main', true)
+
+        return Object.assign(member, { new: true });
     }
 
-    updateMember(member)
+    update(member)
     {
         log.trace(`Updating member ${member.member}`);
 
         this.database.updateMember(member);
+        member.account.updateAccounts();
+
     }
+    
 }
 
 
 
 class Member
 {
-    constructor(profile)
+    constructor(mercy, profile)
     {
+        this.mercy      = mercy
+
         this.id         = profile.id;
         this.member     = profile.member;
-        this.accounts   = [];
+        this.accounts   = JSON.parse(profile.accounts)   || [];
         this.data       = JSON.parse(profile.data)       || {};
         this.settings   = JSON.parse(profile.settings)   || new MemberSettings();
         
-        this.account    = new Collection();
-        
+        this.account    = new AccountManager(this);
+
         this.lastActive = Timestamp.iso();
         this.registered = profile.registered;
 
         log.debug(`Instantiated ${this.member}'s member profile`);
     }
-    
-    getAccount(name)
-    {
-        if (!name)
-        {
-            return this.account.find((account) => account.main == true);
-        }
-        if (!this.account.has(name))
-        {
-            return;
-        }
-        return this.account.get(name);
-    }
 
-    createAccount(name)
+    update()
     {
-        
-    }
-
+        this.mercy.memberManager.update(this);
+    }  
 
 }
 

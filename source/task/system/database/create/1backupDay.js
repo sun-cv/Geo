@@ -1,7 +1,7 @@
-import path         from 'path'
-import envDirectory from '../../../../../configuration/environment/directory.json' with { type: "json" }
+import path                                     from 'path'
+import envDirectory                             from '../../../../../configuration/environment/directory.json' with { type: "json" }
 
-import { Timestamp, FileManager, log } from '../../../../../utility/index.js';
+import { Timestamp, FileManager, log, Schema }  from '../../../../../utility/index.js';
 
 
 async function backupDay() 
@@ -23,30 +23,29 @@ async function backupDay()
     }
 }
 
-const task = 
-{
+
+const data = Schema.task
+({
     meta: 
     {
-        id:             "backupDay",
-        type:           "task",
-        description:    "Creates daily database backups to C and X drives.",
+        id:             'GFS create backup - day',
+        category:       'database',
+        description:    "Creates monthly database backups to C and X drives.",
     },
 
     data:
     {
-        schedule: `0 0 0 * * *`,
-        argument: [],
-        attempt: 3
+        schedule:       `0 0 0 * * *`,
+        attempt:        3
     },
 
     flag:
     {
-        reattempt: true,
+        reattempt:      true,
     },
 
     execute: backupDay,
+});
 
-};
 
-
-export default task
+export default data;

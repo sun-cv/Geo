@@ -1,7 +1,7 @@
 import { ActionRowBuilder } from '@discordjs/builders';
 import { Text }             from './text.js';
 import { log }              from '../logger/log.js'
-Text
+import lodash               from 'lodash';
 
 class EmbedManager
 {
@@ -14,6 +14,7 @@ class EmbedManager
 
         this.component      = new ComponentManager(interaction);
         
+        this.data           = null;
         this.embeds         = [];
         this.components     = [];
 
@@ -26,12 +27,22 @@ class EmbedManager
 
     load(embedID)
     {
-        const data          = this.registry.embed.get(embedID);
+        this.data           = lodash.cloneDeep(this.registry.embed.get(embedID));
+        return this;
+    }
+    
+    modify(modifier)
+    {
+        modifier(this.data)
+        return this;
+    }
 
-        this.loadEmbed(data);
-        this.loadComponents(data);
-
-        return { embeds: this.embeds , components: this.components, ephemeral: data.flag.ephemeral };
+    create()
+    {
+        this.loadEmbed(this.data);
+        this.loadComponents(this.data);
+   
+        return { embeds: this.embeds , components: this.components, ephemeral: this.data.flag.ephemeral };
     }
 
     loadEmbed(embed)
@@ -44,6 +55,12 @@ class EmbedManager
     {
         this.components = this.component.load(embed);
         log.debug(`Successfully loaded embed ${embed.meta.id} components`)
+    }
+
+    modifyComponents(modifier) 
+    {
+        modifier(this.data);
+        return this;
     }
 
 }
@@ -70,15 +87,23 @@ class ComponentManager
         log.trace(`Loading embed ${embed.meta.id} components`)
         for (const row of embed.row) 
         {
-            const [type, value] = Object.entries(row)[0]
-
-            if (this[`load${type.charAt(0).toUpperCase() + type.slice(1)}`]) 
+            try 
             {
-                this[`load${type.charAt(0).toUpperCase() + type.slice(1)}`](value);
-                log.trace(`Loading ${type} component`)
-                continue;
+                const [type, value] = Object.entries(row)[0]
+
+                if (this[`load${type.charAt(0).toUpperCase() + type.slice(1)}`]) 
+                {
+                    this[`load${type.charAt(0).toUpperCase() + type.slice(1)}`](value);
+                    log.trace(`Loading ${type} component`)
+                    continue;
+                }
+
+                log.debug(`No component loader found for type: ${type}`);
+            } 
+            catch (error) 
+            {
+                load.error(`Attempted to load invalid row: ${row}`)
             }
-            log.debug(`No component loader found for type: ${type}`);
         }
 
         return this.row
@@ -88,10 +113,18 @@ class ComponentManager
     {
         for (const buttonID of buttons)
         {
-            const data = this.registry.button.get(buttonID);
+            try 
+            {
+                const data = this.registry.button.get(buttonID);
+                
+                this.button.addComponents(data.load(this.interaction));
+                log.trace(`${Text.set(buttonID).constrain(20)} button load executed`)
 
-            this.button.addComponents(data.load(this.interaction));
-            log.trace(`${Text.set(buttonID).constrain(20)} button load executed`)
+            } 
+            catch (error) 
+            {
+                log.error(`Attempted to create invalid button: ${buttonID}`, error)
+            }
         }
 
         this.row.push(this.button);
@@ -101,10 +134,17 @@ class ComponentManager
     loadMenu(menuID)
     {
         {
-            const data = this.registry.menu.get(menuID)
+            try 
+            {
+                const data = this.registry.menu.get(menuID)
             
-            this.menu.addComponents(data.load(this.interaction));
-            log.trace(`${Text.set(menuID).constrain(20)} menu load executed`)
+                this.menu.addComponents(data.load(this.interaction));
+                log.trace(`${Text.set(menuID).constrain(20)} menu load executed`)
+            } 
+            catch (error) 
+            {
+                log.error(`Attempted to create invalid menu: ${menuID}`)
+            }
         }
 
         this.row.push(this.menu);

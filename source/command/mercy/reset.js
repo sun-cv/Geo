@@ -1,18 +1,18 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { Input }            from '../../../utility/index.js'
+import { Input, Schema }            from '../../../utility/index.js'
 import message              from '../mercy/tracker/message.js'
 import { getMercyChance }   from "./tracker/calculate.js";
 
 async function reset(interaction = new CommandInteraction())
 {
     const { mercy }                         = interaction.client
-    const input                             = Input.initialize(interaction);
+    const input                             = Input.command(interaction);
     const { champion, count, account_name } = input;
     
     const [shard, rarity = 'legendary']     = input.shard.split('.');
     
     const member                            = mercy.initialize(interaction);
-    const account                           = member.getAccount(account_name);
+    const account                           = member.account.get(account_name)
 
     if  (!account) 
     {
@@ -33,8 +33,8 @@ async function reset(interaction = new CommandInteraction())
 }
 
 
-const command = 
-{
+const command = Schema.command
+({
     meta: 
     {
         id:             "reset",
@@ -72,7 +72,7 @@ const command =
     },
 
     roleAssignment:     {},
-
+    
     data: new SlashCommandBuilder()
     .setName('reset')
     .setDescription('Reset shard mercy and log your pull!')
@@ -89,10 +89,10 @@ const command =
                 { name: 'prism',            value: 'prism'              }
             ))
     .addStringOption(option =>
-		option.setName('champion')
-			.setDescription('Record your champion pull')
-			.setRequired(true)
-			.setAutocomplete(true))
+    	option.setName('champion')
+    		.setDescription('Record your champion pull')
+    		.setRequired(true)
+    		.setAutocomplete(true))
     .addStringOption(option =>
         option.setName('account_name')
             .setDescription('Specify alternate account (if not \'main\')')
@@ -104,8 +104,8 @@ const command =
             .setRequired(false)
             .setMinValue(-999)
             .setMaxValue(999)),
-
     execute: reset
-};
+});
 
-export default command;
+
+export default command

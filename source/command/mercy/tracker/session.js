@@ -9,11 +9,23 @@ class Session
         this.pull       = existing?.pull         || false;
         this.reset      = existing?.reset        || false;
         this.champion   = existing?.champion     || false;
-        this.session    = existing?.sessiom      || Timestamp.session();
+        this.session    = existing?.session      || Timestamp.session();
         this.timestamp  = existing?.timestamp    || Timestamp.iso();
 
         this.log        = new Logs();
     }
+
+    valid()
+    {
+        if (this.session == Timestamp.session())
+        {
+            return true;
+        }
+
+        log.debug(`Invalid session: ${this.session.session}. Refreshing session`);
+        return false;
+    }    
+        
 
     logPull(shard, count)
     {
@@ -21,17 +33,17 @@ class Session
         this.log.addPull({shard, count});
     }
 
-    logReset(shard, rarity, total)
+    logReset(shard, rarity, champion, total)
     {
         this.reset      = true;
         this.log.addReset({shard, rarity, total});
-
+        this.logChampion(shard, rarity, champion, total)
     };
 
-    logChampion(shard, rarity, total, champion)
+    logChampion(shard, rarity, champion, total)
     {
         this.champion   = true;
-        this.log.addChampion({shard, rarity, total, champion});
+        this.log.addChampion({shard, rarity, champion, total});
     };
 
     refresh()

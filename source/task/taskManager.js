@@ -65,7 +65,7 @@ class TaskManager
             this.runTask();
         })
         
-        log.debug(`Task "${Text.set(`${task.meta.id}`).constrain(11)}" scheduled. Next execution at: ${getNextExecutionTime(task.data.schedule)}`);
+        log.debug(`task ${Text.set(`${task.meta.id}`).constrain(25)} scheduled. Next execution at: ${getNextExecutionTime(task.data.schedule)}`);
      }
 
 

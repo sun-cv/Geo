@@ -3,43 +3,44 @@ import { MessageFlags } from "discord.js";
 
 class DeferHandler
 {
-
     constructor()
     {
-        this.ephemeral = false;
+        this.flag       = MessageFlags.Ephemeral
+        this.ephemeral  = MessageFlags.Ephemeral;
     }
 
     async handle(interaction)
     {
 
-        if (!interaction.data.flag.defer || interaction.isAutocomplete())
+        const { data: { flag } } = interaction;
+
+        if (flag.update)
+        {
+            return interaction.deferUpdate();
+        }
+
+        if (!flag.defer || interaction.isAutocomplete())
         {
             return;
         }
 
-        this.ephemeral = false;
+        this.clear()
+        this.check(interaction);
 
-        this.checkFlag(interaction);
-        this.checkShare(interaction);
-
-        if (!this.ephemeral)
-        {
-            return await interaction.deferReply();
-        }
-        await interaction.deferReply({flags: MessageFlags.Ephemeral});
+        await interaction.deferReply({flags: this.ephemeral});
     }
 
 
-    checkFlag(interaction)
+    clear()
     {
-        this.ephemeral = interaction.data.flag.ephemeral
+        this.ephemeral = this.flag;
     }
 
-    checkShare(interaction)
+    check(interaction)
     {
-        this.ephemeral = interaction.options?.getString('share') == 'true';
+        this.ephemeral = (interaction.data.flag.ephemeral || (interaction.options?.getString('share') === 'true')) ? 
+        this.flag : 0;
     }
-
 
 }
 

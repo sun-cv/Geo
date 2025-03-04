@@ -17,6 +17,7 @@ class Component
     {
         return Modal.create(customID);
     }
+
 }
 
 class Button 
@@ -78,8 +79,13 @@ class Menu
     {
         options.slice(0, 25).forEach(option => 
         {
-            this.menu.addOptions(new StringSelectMenuOptionBuilder().setLabel(option).setValue(option));
+             this.menu.addOptions(new StringSelectMenuOptionBuilder().setLabel(option).setValue(option));
         });
+
+        if (options.length == 0)
+        {
+            this.menu.addOptions(new StringSelectMenuOptionBuilder().setLabel('No options!').setValue('false'))
+        }
         return this.menu;
     }
 

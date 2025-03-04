@@ -1,9 +1,9 @@
-import fs                   from 'node:fs';
-import path                 from 'node:path';
-import puppeteer            from 'puppeteer';
-import { fileURLToPath }    from 'url';
-import { log }              from '../../../../utility/index.js';
-import { updateChampionListTrieCache } from '../../../data/autocomplete/championListTrie.js';
+import fs                               from 'node:fs';
+import path                             from 'node:path';
+import puppeteer                        from 'puppeteer';
+import { fileURLToPath }                from 'url';
+import { log, Schema }                  from '../../../../utility/index.js';
+import { updateChampionListTrieCache }  from '../../../data/autocomplete/championListTrie.js';
 
 
 async function updateChampionList() 
@@ -87,30 +87,24 @@ async function updateChampionList()
 
 
 
-const task = 
-{
+const data = Schema.task
+({
     meta: 
     {
-        id:             "updateChampionAutocomplete",
-        type:           "task",
+        id:             'Update Champion list',
+        category:       'mercy',
         description:    "Searches hellhades.com to pull the lastest champion releases for mercy autocomplete.",
     },
 
     data:
     {
-        schedule: `0 15 0 * * 3,7`,
-        argument: [],
-        attempt: 3
+        schedule:       `0 15 0 * * 3,7`,
+        attempt:        3
     },
-
-    flag:
-    {
-        reattempt: true,
-    },
-
-    execute: updateChampionList
-
-};
+    
+    execute: updateChampionList,
+});
 
 
-export default task
+
+export default data;

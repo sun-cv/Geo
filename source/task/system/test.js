@@ -1,4 +1,4 @@
-import { log } from '../../../utility/index.js'
+import { log, Schema } from '../../../utility/index.js'
 
 async function test(interaction)
 {   
@@ -7,30 +7,25 @@ async function test(interaction)
 
 };
 
-const task = 
-{
+
+const data = Schema.task
+({
     meta: 
     {
-        id:             "test",
-        type:           "task",
+        id:             'Test task',
+        category:       'test',
         description:    "Test task.",
     },
 
     data:
     {
-        schedule: `10 0 * * * *`,
-        argument: ['client'],
-        attempt: 3
-    },
-
-    flag:
-    {
-        reattempt: true,
+        schedule:       `10 0 * * * *`,
+        argument:       ['client'],
+        attempt:        3
     },
 
     execute: test,
+})
 
-};
 
-
-export default task
+export default data;

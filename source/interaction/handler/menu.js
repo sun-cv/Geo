@@ -20,6 +20,8 @@ class MenuHandler
 
         try
         {
+            throw new Error('tesdt')
+
             await menu.execute(interaction);
         } 
         catch (error) 

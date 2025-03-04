@@ -14,7 +14,8 @@ class Session
     {
         log.trace(`Navigating ${this.member.user.username} to ${callbackFunction.name}`);
         this.history.push(callbackFunction)
-        return this;
+
+        return this;        
     }
 
     with(...args)
@@ -25,14 +26,25 @@ class Session
         }
     }
 
-    async back(interaction)
+    return(interaction)
     {
-        if (this.history.length > 1)
+        return this.history.at(-1)(interaction);
+    }
+
+    back(interaction) 
+    {
+        if (this.history.length > 1) 
         {
-            this.history.pop()
-            this.history.at(-1)(interaction);
-        }
-        log.debug('Navigation origin reached.')
+            this.history.pop();
+            return this.history.at(-1)(interaction);
+        } 
+
+        if (this.history.length === 1) 
+        {
+            return this.history.at(0)(interaction);
+        } 
+
+        log.debug('Navigation origin reached.');
     }
 
 }

@@ -1,7 +1,7 @@
-import fs           from 'fs/promises';
-import path         from 'path'
-import envDirectory from '../../../../../configuration/environment/directory.json' with { type: "json" }
-import { log }      from '../../../../../utility/index.js';
+import fs               from 'fs/promises';
+import path             from 'path'
+import envDirectory     from '../../../../../configuration/environment/directory.json' with { type: "json" }
+import { log, Schema }  from '../../../../../utility/index.js';
 
 
 const RETENTION = 7;
@@ -33,30 +33,24 @@ async function deleteDay()
     }
 }
 
-const task = 
-{
+
+const data = Schema.task
+({
     meta: 
     {
-        id:             "deleteDay",
-        type:           "task",
-        description:    "Deletes daily backups in C and X drives after 7 days.",
+        id:             'GFS delete backup - day',
+        category:       'database',
+        description:    "Deletes daily database backups from C and X drives.",
     },
 
     data:
     {
-        schedule: `0 10 0 * * *`,
-        argument: [],
-        attempt: 3
+        schedule:       `0 10 0 * * *`,
+        attempt:        3
     },
-
-    flag:
-    {
-        reattempt: true,
-    },
-
+    
     execute: deleteDay,
+})
 
-};
 
-
-export default task
+export default data;

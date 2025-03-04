@@ -9,6 +9,10 @@ import { Input }        from './toolkit/input.js'
 import { Embed }        from './toolkit/embedManager.js'
 import { EmbedManager } from './toolkit/embedManager.js'
 import { Component }    from './toolkit/component.js'
+import { Flag }         from './toolkit/flag.js'
+import { Flags }        from './toolkit/flag.js'
+import { FlagBuilder }  from './toolkit/flag.js'
+import { Schema }       from './toolkit/schema.js'
 
 
 export
@@ -24,4 +28,8 @@ export
     Embed,
     EmbedManager,
     Component,
+    Flag,
+    Flags,
+    FlagBuilder,
+    Schema,
 }

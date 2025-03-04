@@ -1,4 +1,5 @@
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js'
+import { Schema } from '../../../utility/index.js';
 
 async function testCommand(interaction = new CommandInteraction()) 
 {
@@ -13,7 +14,8 @@ async function testCommand(interaction = new CommandInteraction())
 
 }
 
-const command = {
+const command = Schema.command
+({
     meta: 
     {
         id:             "test",
@@ -51,19 +53,20 @@ const command = {
     },
 
     roleAssignment:     {},
-
+    
     data: new SlashCommandBuilder()
     .setName('test')
     .setDescription('Command for testing purposes.')
     		.addStringOption(option =>
-			option.setName('testing')
-				.setDescription('Specify an alt account to pull shards')
-				.setAutocomplete(true))
+    		option.setName('testing')
+    			.setDescription('Specify an alt account to pull shards')
+    			.setAutocomplete(true))
             .addStringOption(option =>
-			option.setName('testing2')
-				.setDescription('test')
-				.setAutocomplete(true)),
+    		option.setName('testing2')
+    			.setDescription('test')
+    			.setAutocomplete(true)),
     execute: testCommand
-};
+});
 
-export default command;
+
+export default command

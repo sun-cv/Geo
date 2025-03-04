@@ -1,7 +1,9 @@
 import { log, Text }        from '../../../../utility/index.js'
-import { ProfileManager }   from './profile.js';
+import { ProfileManager }   from '../../../../Αrchive/2-28 Mercy/profile.js';
 import message              from './message.js';
 import { RoleAssignment }   from '../../../interaction/handler/role.js';
+import { MemberManager } from './member.js';
+import { MessageFlags } from 'discord.js';
 
 class Mercy
 {
@@ -10,7 +12,7 @@ class Mercy
         this.registry       = registry;
         this.database       = cluster.mercy;
 
-        this.profileManager = new ProfileManager(this);
+        this.memberManager  = new MemberManager(this)
 
         this.setClientContext(client);
     }
@@ -24,30 +26,25 @@ class Mercy
 
     initialize(interaction)
     {
-        const member = this.profileManager.get(interaction.member);
+        const member = this.memberManager.get(interaction.member);
         
         if (member.new)
         {
-            this.greetNewMember(interaction, member);
+            setTimeout(() =>{ this.greetMember(interaction, member)}, 2000)
+            delete member.new;
         }
         return member
     }
 
-    greetNewMember(interaction, member)
+    greetMember(interaction, member)
     {
         RoleAssignment.set(interaction).addRole('Mercy')
-        interaction.followUp({ content: message.welcome(member.id) });
-        delete member.new;
+        interaction.followUp({ content: message.welcome(member.id), flags: MessageFlags.Ephemeral });
     }
 
     update(member)
     {
-        this.profileManager.update(member);
-    }
-
-    createAccount(account_name)
-    {
-        this.profileManager.createAccount()
+        this.memberManager.update(member);
     }
 
 }

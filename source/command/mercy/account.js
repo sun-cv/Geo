@@ -1,16 +1,17 @@
-import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { EmbedManager, Input, navigate }    from '../../../utility/index.js'
-import message      from '../mercy/tracker/message.js'
+import { CommandInteraction, SlashCommandBuilder }  from "discord.js";
+import { EmbedManager, Schema }                             from '../../../utility/index.js'
 
 async function accountLanding(interaction = new CommandInteraction())
 { 
 
-    interaction.editReply(EmbedManager.set(interaction).load('mercy-account-landing'));
+    interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-home').create());
+    interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-home').create());
+
 
 }
 
-const command = 
-{
+const command = Schema.command
+({
     meta: 
     {
         id:             "account",
@@ -53,8 +54,8 @@ const command =
 	data: new SlashCommandBuilder()
 		.setName('account')
 		.setDescription('Manage Mercy Tracker accounts'),
-
     execute: accountLanding
-};
+});
 
-export default command;
+
+export default command
