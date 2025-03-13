@@ -46,7 +46,7 @@ class Schema
             execute:            () => {}
         };
     
-        return lodash.cloneDeep({ ...defaultSchema, ...overrides });
+        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
     }
 
 
@@ -100,7 +100,7 @@ class Schema
             execute:            () => {}
         };
     
-        return lodash.cloneDeep({ ...defaultSchema, ...overrides });
+        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
     }
 
 
@@ -153,7 +153,7 @@ class Schema
             execute:            () => {}
         };
     
-        return lodash.cloneDeep({ ...defaultSchema, ...overrides });
+        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
     }    
     
     static menu(overrides)
@@ -205,7 +205,7 @@ class Schema
             execute:            () => {}
         };
     
-        return lodash.cloneDeep({ ...defaultSchema, ...overrides });
+        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
     }
 
 
@@ -258,7 +258,7 @@ class Schema
             execute:            () => {}
         };
     
-        return lodash.cloneDeep({ ...defaultSchema, ...overrides });
+        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
     }
 
     static embed(overrides)
@@ -312,7 +312,7 @@ class Schema
             execute:            () => {}
         };
     
-        return lodash.cloneDeep({ ...defaultSchema, ...overrides });
+        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
     }
 
     static task(overrides)
@@ -342,7 +342,7 @@ class Schema
             execute:            () => {}
         };
     
-        return lodash.cloneDeep({ ...defaultSchema, ...overrides });
+        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
     }
 }
 

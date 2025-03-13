@@ -95,7 +95,7 @@ class Registry
     async registerCommand(command) 
     {
 
-        if (command.flag.ignore) 
+        if (command?.flag?.ignore) 
         {
             log.trace(`${command.meta.id} load flag set to ignore.`)
             return;

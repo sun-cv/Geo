@@ -38,6 +38,12 @@ class Button
         return this;
     }
 
+    setEmoji(value)
+    {
+        this.button.setEmoji(value);
+        return this;
+    }
+
     style(value) 
     {
         this.button.setStyle(value);

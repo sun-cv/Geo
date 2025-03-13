@@ -4,13 +4,13 @@ import { log } from '../../../../utility/index.js'
 
 class MemberCache extends Collection
 {
-    constructor(mercy)
+    constructor(tracker)
     {
         super();
         
-        if (!mercy.registry.member) 
+        if (!tracker.registry.member) 
         {
-            mercy.registry.member = this;
+            tracker.registry.member = this;
         }
     }
 

@@ -29,7 +29,7 @@ const data =
         execute: function(interaction) 
         {
             const { mercy }         = interaction.client;
-            const account_name      = Input.modal(interaction);
+            const [account_name]    = Input.menu(interaction);
         
             const member            = mercy.initialize(interaction);
             const account           = member.account.get(account_name);

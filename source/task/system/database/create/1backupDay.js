@@ -6,20 +6,20 @@ import { Timestamp, FileManager, log, Schema }  from '../../../../../utility/ind
 
 async function backupDay() 
 {
-
-    for (const directory of Object.values(envDirectory.database))
+    for (const database of Object.values(envDirectory.cluster))
     {
+        for (const directory of Object.values(database.backup))
+            {
+            const databaseDirectory = database.path;
             
-        const databaseDirectory = envDirectory.path.database;
-        
-        const backupDirectory   = path.join(directory, 'day')
-        const backupFilePath    = path.join(backupDirectory, Timestamp.backup());
+            const backupDirectory   = path.join(directory, 'day')
+            const backupFilePath    = path.join(backupDirectory, Timestamp.backup());
 
+            await FileManager.createDirectory(backupDirectory);
+            await FileManager.copyFile(databaseDirectory, backupFilePath)
 
-        await FileManager.createDirectory(backupDirectory);
-        await FileManager.copyFile(databaseDirectory, backupFilePath)
-
-        log.admin(`Daily database back up to ${backupFilePath} complete.`);
+            log.admin(`Daily database back up to ${backupFilePath} complete.`);
+        }
     }
 }
 

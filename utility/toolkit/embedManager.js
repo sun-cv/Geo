@@ -84,7 +84,8 @@ class ComponentManager
 
     load(embed)
     {
-        log.trace(`Loading embed ${embed.meta.id} components`)
+        log.trace(`Loading ${embed.meta.id}'s components`)
+
         for (const row of embed.row) 
         {
             try 
@@ -116,7 +117,7 @@ class ComponentManager
             try 
             {
                 const data = this.registry.button.get(buttonID);
-                
+               
                 this.button.addComponents(data.load(this.interaction));
                 log.trace(`${Text.set(buttonID).constrain(20)} button load executed`)
 
@@ -137,7 +138,7 @@ class ComponentManager
             try 
             {
                 const data = this.registry.menu.get(menuID)
-            
+
                 this.menu.addComponents(data.load(this.interaction));
                 log.trace(`${Text.set(menuID).constrain(20)} menu load executed`)
             } 

@@ -1,10 +1,12 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { Input, Schema }    from '../../../utility/index.js'
-import message      from '../mercy/tracker/message.js'
+import message      from '../mercy/system/message.js'
+
+
 
 async function pull(interaction = new CommandInteraction())
 {
-
+    
     const { mercy }                     = interaction.client
     const { shard, count, account_name} = Input.command(interaction);
   
@@ -16,9 +18,10 @@ async function pull(interaction = new CommandInteraction())
         return interaction.followUp({ content: message.error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
     }
     
+    
     account.pull(shard, count);
    
-    interaction.followUp({ content: message.pull(member, count, shard)});
+    interaction.followUp({ content: message.mercy.pull(member, count, shard)});
 
     mercy.update(member);
 }
@@ -92,3 +95,4 @@ const command = Schema.command
 });
 
 export default command;
+

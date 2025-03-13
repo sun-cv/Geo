@@ -7,8 +7,8 @@ class Parser
     {
         return {
             ...inputData,
-            data: JSON.parse(inputData.data),
-            settings: JSON.parse(inputData.settings)
+            data:       JSON.parse(inputData.data),
+            settings:   JSON.parse(inputData.settings)
         };
     }
     
@@ -25,6 +25,23 @@ class Parser
         }
         return buffer;
     }
+
+    static clanData(data)
+    {
+        const recruitment = JSON.parse(data.recruitment);
+        recruitment.clanTag = !!recruitment.clanTag
+
+        return {
+            ...data,
+            channel:        JSON.parse(data.channel),
+            leadership:     JSON.parse(data.leadership),
+            member:         JSON.parse(data.member),
+            settings:       JSON.parse(data.settings),
+            statistics:     JSON.parse(data.statistics),
+            recruitment,
+        }        
+    }
+
 }
 
 

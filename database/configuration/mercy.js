@@ -4,7 +4,7 @@ import Shards                           from '../../source/data/mercy/shards.jso
 import { log, Text, Parser, Timestamp } from '../../utility/index.js';
 
 
-class MercyDatabase extends Database
+class Mercy extends Database
 {
     constructor()
     {
@@ -282,4 +282,4 @@ async function create(database)
 }
 
 
-export { MercyDatabase }
+export { Mercy }

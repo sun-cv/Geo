@@ -23,6 +23,11 @@ class Input
         });
         return input;
     }
+
+    static menu(interaction)
+    {
+        return interaction.values
+    }
 }
 
 

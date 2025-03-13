@@ -8,9 +8,9 @@ class AccountManager
 {
     constructor(member)
     {
-        this.mercy      = member.mercy
-        this.registry   = member.mercy.registry;
-        this.database   = member.mercy.database;
+        this.tracker      = member.tracker
+        this.registry   = member.tracker.registry;
+        this.database   = member.tracker.database;
 
         this.cache      = new AccountCache(this.registry, member);
 
@@ -65,7 +65,7 @@ class AccountManager
         log.trace(`Loading account '${accountName}'`)
 
         const account = new Account(
-            this.mercy,
+            this.tracker,
             this.database.loadAccountProfile(this.member, accountName),
             this.database.loadAccountData   (this.member, accountName),
             this.database.loadAccountSession(this.member, accountName)
@@ -168,11 +168,12 @@ const format =
 }
 
 
+
 class Account 
 {
-    constructor(mercy, profile, data, session)
+    constructor(tracker, profile, data, session)
     {
-        this.mercy      = mercy;
+        this.tracker    = tracker;
 
         this.id         = profile.id;
         this.member     = profile.member;
@@ -223,7 +224,7 @@ class Account
 
     setActive()
     {
-        this.mercy.memberManager.accountManager.setActive(this);
+        this.tracker.memberManager.cache.get({ id:this.id, user: { username: this.member }}).account.setActive(this);
     }
 
 }

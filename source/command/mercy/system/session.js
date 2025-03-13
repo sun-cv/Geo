@@ -1,5 +1,6 @@
 import { Timestamp } from "../../../../utility/index.js";
 
+
 class Session
 {
     constructor(account, existing)

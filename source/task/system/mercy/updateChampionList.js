@@ -101,7 +101,6 @@ const data = Schema.task
         schedule:       `0 15 0 * * 3,7`,
         attempt:        3
     },
-    
     execute: updateChampionList,
 });
 

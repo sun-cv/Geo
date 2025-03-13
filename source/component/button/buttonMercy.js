@@ -38,7 +38,7 @@ const data =
         {
             return Component
                 .button (this.meta.id)
-                .label  (`${Text.set('Accounts').constrain(16, {align: 'center', paddingChar: '⠀'})}`)
+                .label  (`${Text.set('Accounts').constrain(17, {align: 'center', paddingChar: '⠀'})}`)
                 .style  ('Primary')
         },
     
@@ -79,7 +79,7 @@ const data =
             defer:  false
         },
 
-        load: () => 
+        load: function(interaction)
         {
             return Component
                 .button (this.meta.id)
@@ -102,7 +102,12 @@ const data =
     ({
         meta: { id: 'button-mercy-accounts-select' },
 
-        load: () => 
+        flag: 
+        {
+            update: true,
+        },
+
+        load: function(interaction)
         {
             return Component
                 .button (this.meta.id)
@@ -112,8 +117,12 @@ const data =
     
         execute: async function (interaction) 
         {
-            const modifier = (data) => data.row.push({menu: 'menu-mercy-account-account-landing-select'});
-            interaction.editReply(EmbedManager.set(interaction).load('mercy-account-account-settings').modify(modifier).create());
+            const modifier = (data) => 
+                {
+                    data.row.pop()
+                    data.row.push({menu: 'menu-mercy-select-account'});
+                }
+            interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-accounts-home').modify(modifier).create());
         }
     }),
 
@@ -121,11 +130,16 @@ const data =
     ({
         meta: { id: 'button-mercy-accounts-delete' },
 
-        load:() => 
+        flag: 
+        {
+            defer: false
+        },
+
+        load:function(interaction)
         {
             return Component
                 .button (this.meta.id)
-                .label  (`${Text.set('Delete').constrain(6, {align: 'center', paddingChar: '⠀'})}`)
+                .label  (`${Text.set('Delete').constrain(16, {align: 'center', paddingChar: '⠀'})}`)
                 .style  ('Danger')
         },
 

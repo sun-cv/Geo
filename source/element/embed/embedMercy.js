@@ -1,6 +1,6 @@
 import { EmbedBuilder }                             from '@discordjs/builders';
 import { Embed, Input, Schema, Text, Timestamp }    from '../../../utility/index.js';
-import message                                      from '../../command/mercy/tracker/message.js';
+import message                                      from '../../command/mercy/system/message.js';
 
 
 const data = 
@@ -15,7 +15,7 @@ const data =
         row:
         [
             {
-                button:     ['button-mercy-account-landing-profile', 'button-mercy-account-landing-account', 'button-mercy-account-landing-data']
+                button:     ['button-mercy-home-profile', 'button-mercy-home-accounts', 'button-mercy-home-data']
             }
         ],
 
@@ -31,7 +31,7 @@ const data =
         
             sorted.forEach((account) =>
             {
-                embed.addFields({ name: ' ', value: message.accountLandingMercy(account), inline: true });
+                embed.addFields({ name: ' ', value: message.mercy.accountLanding(account), inline: true });
             })
             
             Embed.set(embed).buffer(((3 - (sorted.length % 3)) % 3), 17, true);
@@ -56,8 +56,12 @@ const data =
         row:
         [
             {
-                button: ['button-mercy-accounts-add','button-mercy-accounts-select', 'button-mercy-accounts-delete', 'button-back-small']
+                button: ['button-mercy-accounts-add','button-mercy-accounts-select', 'button-mercy-accounts-delete'],
             },
+            {
+                button:['button-back-small-single']
+            }
+
         ],
             
         load: (interaction) =>

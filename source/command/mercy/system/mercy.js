@@ -5,7 +5,7 @@ import { RoleAssignment }   from '../../../interaction/handler/role.js';
 import { MemberManager } from './member.js';
 import { MessageFlags } from 'discord.js';
 
-class Mercy
+class MercyTracker
 {
     constructor(client, cluster, registry)
     {
@@ -39,7 +39,7 @@ class Mercy
     greetMember(interaction, member)
     {
         RoleAssignment.set(interaction).addRole('Mercy')
-        interaction.followUp({ content: message.welcome(member.id), flags: MessageFlags.Ephemeral });
+        interaction.followUp({ content: message.mercy.welcome(member.id), flags: MessageFlags.Ephemeral });
     }
 
     update(member)
@@ -52,4 +52,4 @@ class Mercy
 
 
 
-export { Mercy }
+export { MercyTracker }

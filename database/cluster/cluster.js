@@ -1,6 +1,7 @@
 import directory            from '../../configuration/environment/directory.json' with { type: 'json' };
 import { log, Text }        from '../../utility/index.js';
-import { MercyDatabase }    from '../configuration/mercyDatabase.js';
+import { Mercy }            from '../configuration/mercy.js';
+import { Clan }             from '../configuration/clan.js';
 
 
 class Cluster 
@@ -9,7 +10,8 @@ class Cluster
     {
         this.databases   =
         {
-            mercy: MercyDatabase,
+            mercy: Mercy,
+            clan: Clan,
         }
 
         this.system;

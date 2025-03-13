@@ -1,6 +1,6 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { Input, Schema }    from '../../../utility/index.js'
-import message              from '../mercy/tracker/message.js'
+import message              from '../mercy/system/message.js'
 import Shards               from '../../data/mercy/shards.json' with { type: 'json' }
 
 async function success(interaction = new CommandInteraction())
@@ -32,7 +32,7 @@ async function success(interaction = new CommandInteraction())
 
     const successChance = Math.min(100, (1 - totalFailChance) * 100);
 
-    return interaction.followUp({ content:message.success(member, initial, shard, rarity, count, successChance) });
+    return interaction.followUp({ content:message.mercy.success(member, initial, shard, rarity, count, successChance) });
 }
 
 

@@ -1,3 +1,6 @@
+import { log } from "../../../utility/index.js";
+
+
 class ButtonHandler
 {
     constructor(client, registry)

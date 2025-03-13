@@ -1,15 +1,15 @@
 import { log, Timestamp }           from '../../../../utility/index.js';
-import { AccountManager } from './account.js';
+import { AccountManager }           from './account.js';
 import { MemberCache }              from './cache.js';
 
 class MemberManager
 {
-    constructor(mercy)
+    constructor(tracker)
     {
-        this.mercy      = mercy;
-        this.database   = mercy.database;
+        this.tracker    = tracker;
+        this.database   = tracker.database;
 
-        this.cache      = new MemberCache(mercy);
+        this.cache      = new MemberCache(tracker);
         
     }
 
@@ -49,7 +49,7 @@ class MemberManager
         log.trace(`Loading ${iMember.user.username}'s member profile`);
 
         const profile = this.database.loadMember(iMember);
-        const member  = new Member(this.mercy, profile);
+        const member  = new Member(this.tracker, profile);
 
         this.cache.set(member);
 
@@ -83,9 +83,9 @@ class MemberManager
 
 class Member
 {
-    constructor(mercy, profile)
+    constructor(tracker, profile)
     {
-        this.mercy      = mercy
+        this.tracker    = tracker
 
         this.id         = profile.id;
         this.member     = profile.member;
@@ -103,7 +103,7 @@ class Member
 
     update()
     {
-        this.mercy.memberManager.update(this);
+        this.tracker.memberManager.update(this);
     }  
 
 }

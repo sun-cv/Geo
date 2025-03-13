@@ -16,7 +16,7 @@ class ModalHandler
     {
         const { data: { flag } } = interaction;
 
-        if (flag.handled || !interaction.isModalSubmit || this.existingModal(interaction))
+        if (flag.handled || !interaction.isModalSubmit() || this.existingModal(interaction))
         {
             return;
         }

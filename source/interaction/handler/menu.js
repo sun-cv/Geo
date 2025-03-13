@@ -18,10 +18,10 @@ class MenuHandler
             return;
         }
 
+        console.log('menu')
+
         try
         {
-            throw new Error('tesdt')
-
             await menu.execute(interaction);
         } 
         catch (error) 

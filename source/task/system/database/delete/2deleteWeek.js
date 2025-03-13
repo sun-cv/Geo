@@ -9,25 +9,26 @@ const DAY       = 1000 * 60 * 60 * 24;
 async function deleteWeek() 
 {
     const now = Date.now();
-
-    for (const backupPath of Object.values(envDirectory.path.backup)) 
+    
+    for (const database of Object.values(envDirectory.cluster)) 
     {
-        const files = await fs.readdir(backupPath);
-
-        for (const file of files) 
-        {
-            const dateMatch = file.match(/\d{4}-\d{2}-\d{2}/);
-            if (!dateMatch) continue;
-
-            const backupDate = new Date(dateMatch[0]).getTime();
-            const fileAgeDays = (now - backupDate) / DAY;
+        for (const directory of Object.values(database.backup))
+            {
+            const files = await fs.readdir(directory);
+        
+            for (const file of files) 
+            {
+                const dateMatch = file.match(/\d{4}-\d{2}-\d{2}/);
+                if (!dateMatch) continue;
+                const backupDate = new Date(dateMatch[0]).getTime();
+                const fileAgeDays = (now - backupDate) / DAY;
             
-            if (fileAgeDays < RETENTION) continue;
-
-            const filePath = path.join(backupPath, file);
-            await fs.unlink(filePath);
-
-            log.admin(`Deleted backup: ${filePath}`);
+                if (fileAgeDays < RETENTION) continue;
+                const filePath = path.join(directory, file);
+                await fs.unlink(filePath);
+            
+                log.admin(`Deleted backup: ${filePath}`);
+            }
         }
     }
 }

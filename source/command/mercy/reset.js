@@ -1,7 +1,7 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { Input, Schema }            from '../../../utility/index.js'
-import message              from '../mercy/tracker/message.js'
-import { getMercyChance }   from "./tracker/calculate.js";
+import message                      from '../mercy/system/message.js'
+import { getMercyChance }           from "./system/calculate.js";
 
 async function reset(interaction = new CommandInteraction())
 {
