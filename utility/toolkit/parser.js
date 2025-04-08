@@ -3,12 +3,12 @@
 class Parser
 {
 
-    static accountData(inputData) 
+    static accountData(data) 
     {
         return {
-            ...inputData,
-            data:       JSON.parse(inputData.data),
-            settings:   JSON.parse(inputData.settings)
+            ...data,
+            data:       JSON.parse(data.data),
+            settings:   JSON.parse(data.settings)
         };
     }
     
@@ -42,6 +42,24 @@ class Parser
         }        
     }
 
+    static applicationData(data) {
+        return data.map((application) => 
+        ({ 
+            ...application,
+            selection:  JSON.parse(application.selection),
+            clanboss:   JSON.parse(application.clanboss),
+            hydra:      JSON.parse(application.hydra),
+            chimera:    JSON.parse(application.chimera),
+            siege:      JSON.parse(application.siege),
+            cvc:        JSON.parse(application.cvc),
+            data:       JSON.parse(application.data),
+            setting:    JSON.parse(application.setting),
+            admin:      JSON.parse(application.admin),
+            meta:       JSON.parse(application.meta),
+        }));
+    }
+    
+    
 }
 
 

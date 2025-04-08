@@ -34,8 +34,8 @@ class RoleHandler
             
             roleAssignment[memberID].add = roleAssignment[memberID].add.filter(roleName => 
             {
-                const role  = this.registry.role.get(roleName);
-                const hasRole = member.roles.cache.has(role.id);
+                const role      = this.registry.role.get(roleName);
+                const hasRole   = member.roles.cache.has(role.id);
 
                 if (hasRole) log.trace(`${member.user.username} already has role ${roleName}, removing from add list`);
                 return !hasRole;
@@ -43,8 +43,8 @@ class RoleHandler
     
             roleAssignment[memberID].remove = roleAssignment[memberID].remove.filter(roleName => 
             {
-                const role  = this.registry.role.get(roleName);
-                const hasRole = member.roles.cache.has(role.id);
+                const role      = this.registry.role.get(roleName);
+                const hasRole   = member.roles.cache.has(role.id);
 
                 if (!hasRole) log.trace(`${member.user.username} does not have role ${roleName}, removing from remove list`);
                 return hasRole;
@@ -138,16 +138,19 @@ class RoleAssignment
     requireRole(...args)
     {
         this.require.push(...args);
+        return this;
     }
 
     removeRole(...args)
     {
         this.remove.push(...args);
+        return this;
     }
 
     addRole(...args)
     {
         this.add.push(...args);
+        return this;
     }
 }
 

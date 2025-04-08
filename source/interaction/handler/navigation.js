@@ -13,8 +13,8 @@ class Session
     visit(callbackFunction )
     {
         log.trace(`Navigating ${this.member.user.username} to ${callbackFunction.name}`);
-        this.history.push(callbackFunction)
 
+        this.history.push(callbackFunction)
         return this;        
     }
 
@@ -54,7 +54,7 @@ class Navigation
 {
     constructor()
     {
-        if (Navigation.instance) return Log.instance;
+        if (Navigation.instance) return Navigation.instance;
         Navigation.instance = this;
 
         this.session        = new Collection();

@@ -1,4 +1,15 @@
 {
+    "difficultyMap": 
+    {
+        "None":             "None",
+        "Easy":             "Easy",
+        "Normal":           "Normal",
+        "Hard":             "Hard",
+        "Brutal":           "Brutal",
+        "Nightmare":        "Nightmare",
+        "Ultra-Nightmare":  "Ultra-Nightmare"
+    },
+
     "oddDifficultyMap": 
     {
         "N/A":              "N/A",
@@ -9,6 +20,7 @@
         "Nightmare":        "NMR",
         "Ultra-Nightmare":  "UNM"
     },
+
     "evenDifficultyMap": 
     {
         "Easy":             "EZ",
@@ -18,9 +30,10 @@
         "Nightmare":        "NM",
         "Ultra-Nightmare":  "U-NM"
     },
+
     "damageMap": 
     {
-        "N/A":              "none",
+        "None":             "None",
         "1-100K":           "-100k",
         "100K-500K":        "100k+",
         "500K-1M":          "500k+",
@@ -45,5 +58,39 @@
         "1-2B":             "1B+",
         "2-5B":             "2B+",
         "5B+":              "5B+"
+    },
+
+    "pointsMap":
+    {
+        "0k":               "0k",
+        "25k":              "25k",
+        "50k":              "50k",
+        "75k":              "75k",
+        "100k":             "100k",
+        "125k":             "125k",
+        "150k":             "150k",
+        "175k":             "175k",
+        "200k":             "200k",
+        "225k":             "225k",
+        "250k":             "250k",
+        "275k":             "275k",
+        "300k":             "300k",
+        "325k":             "325k",
+        "350k":             "350k",
+        "375k":             "375k",
+        "400k":             "400k",
+        "425k":             "425k",
+        "450k":             "450k",
+        "475k":             "475k",
+        "500k":             "500k",
+        "600k":             "600k",
+        "700k":             "700k",
+        "800k":             "800k",
+        "900k":             "900k",
+        "1m":               "1m",
+        "2m":               "2m",
+        "5m":               "5m"
     }
-  }
+
+
+}

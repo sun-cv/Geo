@@ -5,6 +5,7 @@ import { Tracer }       from './logger/tracer.js'
 import { Timestamp }    from './toolkit/timestamp.js'
 import { Text }         from './toolkit/text.js'
 import { Parser }       from './toolkit/parser.js'
+import { Serializer }   from './toolkit/serializer.js'
 import { Input }        from './toolkit/input.js'
 import { Embed }        from './toolkit/embedManager.js'
 import { EmbedManager } from './toolkit/embedManager.js'
@@ -24,6 +25,7 @@ export
     Timestamp,
     Text,
     Parser,
+    Serializer,
     Input,
     Embed,
     EmbedManager,

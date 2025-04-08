@@ -57,8 +57,8 @@ class Schema
             meta: 
             {
                 id:             '',
-                type:           'Command',
-                category:       'Command'
+                type:           'command',
+                category:       'command'
             },
 
             permission: 
@@ -67,12 +67,14 @@ class Schema
                 access:         [],
                 require:
                 {
+                    message:    '',
                     active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
+                    message:    '',
                     active:     false,
                     channels:   [],
                     roles:      []
@@ -111,8 +113,8 @@ class Schema
             meta: 
             {
                 id:             '',
-                type:           'Button',
-                description:    'Button'
+                type:           'button',
+                description:    'button'
             },
 
             permission: 
@@ -121,12 +123,14 @@ class Schema
                 access:         [],
                 require:
                 {
+                    message:    '',
                     active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
+                    message:    '',
                     active:     false,
                     channels:   [],
                     roles:      []
@@ -163,7 +167,7 @@ class Schema
             meta: 
             {
                 id:             '',
-                type:           'Menu',
+                type:           'menu',
                 description:    'Menu'
             },
 
@@ -173,12 +177,14 @@ class Schema
                 access:         [],
                 require:
                 {
+                    message:    '',
                     active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
+                    message:    '',
                     active:     false,
                     channels:   [],
                     roles:      []
@@ -187,8 +193,8 @@ class Schema
 
             flag: 
             {
-                defer:          true,
-                update:         false,
+                defer:          false,
+                update:         true,
                 ephemeral:      true,
                 permission:     false,
                 maintenance:    false,
@@ -216,8 +222,8 @@ class Schema
             meta: 
             {
                 id:             '',
-                type:           'Modal',
-                description:    'Modal'
+                type:           'modal',
+                description:    'modal'
             },
 
             permission: 
@@ -226,12 +232,14 @@ class Schema
                 access:         [],
                 require:
                 {
+                    message:    '',
                     active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
+                    message:    '',
                     active:     false,
                     channels:   [],
                     roles:      []
@@ -268,8 +276,8 @@ class Schema
             meta: 
             {
                 id:             '',
-                type:           'Embed',
-                description:    'Embed'
+                type:           'embed',
+                description:    'embed'
             },
 
             permission: 
@@ -278,12 +286,14 @@ class Schema
                 access:         [],
                 require:
                 {
+                    message:    '',
                     active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
+                    message:    '',
                     active:     false,
                     channels:   [],
                     roles:      []

@@ -13,10 +13,6 @@ class PermissionHandler
     {
         const {flag, permission: { require = {}, exclude = {} } = {}} = interaction.data;
 
-        if (!flag.permission)
-        {
-            return;    
-        }        
         if (require.active)
         {
             this.require(interaction);
@@ -37,14 +33,20 @@ class PermissionHandler
 
     async require(interaction)
     {
-        const { member, data: { meta, flag, permission: { require: { channels = {}, roles = {}}}}} = interaction
+        const { member, data: { meta, flag, permission: { require: { channels = {}, roles = {}, message}}}} = interaction
+
+        const content = message ? message: `You do not have permissions to use this ${meta.type} here.`
 
         if (channels.length)
         {
             if (!channels.includes(interaction.channel.name))
             {
                 flag.handled = true;
-                await interaction.editReply({content: `You do not have permissions to use this ${meta.type} here.`, flags: MessageFlags.Ephemeral});
+                if (!flag.defer)
+                {
+                    return interaction.reply({content: content, flags: MessageFlags.Ephemeral}) 
+                }
+                return interaction.editReply({content: content, flags: MessageFlags.Ephemeral});
             }
         }
 
@@ -56,22 +58,31 @@ class PermissionHandler
             if (!permissions)
             {
                 flag.handled = true;
-                await interaction.editReply({content: `You do not have permissions to use this ${meta.type}.`, flags: MessageFlags.Ephemeral});
+                if (!flag.defer)
+                {
+                    return interaction.reply({content: content, flags: MessageFlags.Ephemeral}) 
+                }
+                return interaction.editReply({content: content, flags: MessageFlags.Ephemeral});
             }
         }
     }
 
     async exclude(interaction)
     {
-        const { member, data: { meta, flag, permission: { exclude: { channels, roles}}}} = interaction
+        const { member, data: { meta, flag, permission: { exclude: { channels, roles, message}}}} = interaction
+
+        const content = message ? message: `You do not have permissions to use this ${meta.type} here.`
 
         if (channels.length)
         {
             if (channels.includes(interaction.channel.name))
             {
                 flag.handled = true;
-                await interaction.editReply({content: `You do not have permissions to use this ${meta.type} here.`, flags: MessageFlags.Ephemeral});
-                return;
+                if (!flag.defer)
+                {
+                    return interaction.reply({content: content, flags: MessageFlags.Ephemeral}) 
+                }
+                return interaction.editReply({content: content, flags: MessageFlags.Ephemeral});
             }
         }
 
@@ -83,21 +94,26 @@ class PermissionHandler
             if (restriction)
             {
                 flag.handled = true;
-                await interaction.editReply({content: `You do not have permissions to use this ${meta.type} here.`, flags: MessageFlags.Ephemeral});
-                return;
+                if (!flag.defer)
+                {
+                    return interaction.reply({content: content, flags: MessageFlags.Ephemeral}) 
+                }
+                return interaction.editReply({content: content, flags: MessageFlags.Ephemeral});
             }
         }
     }
 
     async maintenance(interaction)
     {
-        interaction.data.flag.handled = true;
+        const { data: { flag }} = interaction;
+
+        flag.handled = true;
         await interaction.editReply({content: "This command is currently under maintenance. Please try again later", flags: MessageFlags.Ephemeral});
     }
 
     async log(interaction)
     {
-        log.push(interaction, `${interaction.member.user.username} was denied access to ${interaction.data.meta.type} ${interaction.data.meta.id} in ${interaction.channel.name}`)
+        log.push(interaction, `${interaction.member.user.username} was denied access to ${interaction.data.meta.id} in ${interaction.channel.name}`)
     }
 
 }

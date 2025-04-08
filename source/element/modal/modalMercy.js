@@ -8,7 +8,6 @@ const data =
     ({
         meta: { id: `modal-mercy-account-add` },
 
-
         flag:
         {
             update:             true,

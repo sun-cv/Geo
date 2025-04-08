@@ -2,6 +2,7 @@ import { Collection } from 'discord.js';
 import { Timestamp } from '../toolkit/timestamp.js';
 import { logEnum, logString } from './definitions.js';
 import { Text } from '../toolkit/text.js';
+import { Input } from '../toolkit/input.js';
 
 class Log 
 {
@@ -65,7 +66,7 @@ class Log
             command:        `${logPrefix} used ${await this.constructCommand(interaction)}`,
             button:         `${logPrefix} is navigating ${meta.id}`,
             menu:           `${logPrefix} selected ${values}`,
-            modal:          `${logPrefix} submitted modal`,
+            modal: `${logPrefix} submitted modal ${meta.id}: ${interaction.isModalSubmit() ? JSON.stringify(Input.modal(interaction)) : ''}`,
             message:        `${tracer.endTime}: ${member.user.username} {} > {}`,
         };
 

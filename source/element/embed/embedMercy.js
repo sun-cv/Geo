@@ -1,6 +1,7 @@
-import { EmbedBuilder }                             from '@discordjs/builders';
-import { Embed, Input, Schema, Text, Timestamp }    from '../../../utility/index.js';
-import message                                      from '../../command/mercy/system/message.js';
+import { EmbedBuilder }         from '@discordjs/builders';
+import { Embed,Schema, Text }   from '../../../utility/index.js';
+import { template }             from '../../data/template/mercy.js';
+
 
 
 const data = 
@@ -15,15 +16,17 @@ const data =
         row:
         [
             {
-                button:     ['button-mercy-home-profile', 'button-mercy-home-accounts', 'button-mercy-home-data']
+                button: ['button-mercy-home-profile', 'button-mercy-home-accounts', 'button-mercy-home-data']
             }
         ],
 
         load: function(interaction)
         {
-            const { mercy } = interaction.client  
+            const { mercy } = interaction.client
+
             const member    = mercy.initialize(interaction);
             const sorted    = [...member.account.cache.values()].sort((a,b) => b.main - a.main);
+
             const embed     = new EmbedBuilder().setColor(0xED8223).addFields
             (
                 { name: ' ', value: `${Text.set(`${member.member}'s Accounts`).constrain(58, { align: 'center', style: ['block_code']})}`, inline: false }
@@ -31,10 +34,11 @@ const data =
         
             sorted.forEach((account) =>
             {
-                embed.addFields({ name: ' ', value: message.mercy.accountLanding(account), inline: true });
+                embed.addFields({ name: ' ', value: template.accountLanding(account), inline: true });
             })
             
             Embed.set(embed).buffer(((3 - (sorted.length % 3)) % 3), 17, true);
+            
             embed.addFields
             (
                 {name: ' ', value: `${Text.set('Manage:').constrain(58, { align: 'center', style: ['block_code']})}`,  inline: false},
@@ -55,41 +59,36 @@ const data =
 
         row:
         [
-            {
-                button: ['button-mercy-accounts-add','button-mercy-accounts-select', 'button-mercy-accounts-delete'],
-            },
-            {
-                button:['button-back-small-single']
-            }
-
+            { button: ['button-mercy-accounts-add','button-mercy-accounts-select', 'button-mercy-accounts-delete'] },
+            { button: ['button-back-small'] },
         ],
             
         load: (interaction) =>
+        {
+            const { mercy } = interaction.client
+
+            const member    = mercy.initialize(interaction);
+            const sorted    = [...member.account.cache.values()].sort((a,b) => b.main - a.main);
+
+            const embed     = new EmbedBuilder().setColor(0xED8223).addFields
+            (
+                { name: ' ', value: `${Text.set(`${member.member}'s Accounts`).constrain(58, { align: 'center', style: ['block_code']})}`, inline: false }
+            )
+        
+            sorted.forEach((account) =>
             {
-                const { mercy } = interaction.client  
-
-                const member    = mercy.initialize(interaction);
-                const sorted    = [...member.account.cache.values()].sort((a,b) => b.main - a.main);
-
-                const embed     = new EmbedBuilder().setColor(0xED8223).addFields
-                (
-                    { name: ' ', value: `${Text.set(`${member.member}'s Accounts`).constrain(58, { align: 'center', style: ['block_code']})}`, inline: false }
-                )
+                embed.addFields({ name: ' ', value: template.accountLanding(account), inline: true });
+            })
             
-                sorted.forEach((account) =>
-                {
-                    embed.addFields({ name: ' ', value: message.accountLandingMercy(account), inline: true });
-                })
-                
-                Embed.set(embed).buffer(((3 - (sorted.length % 3)) % 3), 17, true);
+            Embed.set(embed).buffer(((3 - (sorted.length % 3)) % 3), 17, true);
 
-                embed.addFields
-                (
-                    {name: ' ', value: `${Text.set('Options:').constrain(58, { align: 'center', style: ['block_code']})}`,  inline: false},
-                )              
-                
-                return embed;
-            },
+            embed.addFields
+            (
+                {name: ' ', value: `${Text.set('Options:').constrain(58, { align: 'center', style: ['block_code']})}`,  inline: false},
+            )              
+            
+            return embed;
+        },
         execute: () => {}
     })
 }

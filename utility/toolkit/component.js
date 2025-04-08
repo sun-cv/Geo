@@ -1,5 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputBuilder } from '@discordjs/builders';
 import { TextInputStyle } from 'discord.js';
+import { object } from 'zod';
 
 class Component 
 {
@@ -90,17 +91,23 @@ class Menu
 
         if (options.length == 0)
         {
-            this.menu.addOptions(new StringSelectMenuOptionBuilder().setLabel('No options!').setValue('false'))
+            this.menu.addOptions(new StringSelectMenuOptionBuilder().setLabel('Nothing to see here!').setValue('false'))
         }
         return this.menu;
     }
 
-    mapOptions(options) 
+    objectOptions(options) 
     {
-        Array.from(options).slice(0, 25).forEach(([key, value]) => 
+        Object.entries(options).slice(0, 25).forEach(([key, value]) => 
         {
             this.menu.addOptions(new StringSelectMenuOptionBuilder().setLabel(String(key)).setValue(String(value)));
         });
+
+        if (Object.entries(options).length == 0)
+        {
+            this.menu.addOptions(new StringSelectMenuOptionBuilder().setLabel(`Nothing to see here!`).setValue('false'))
+        }
+
         return this.menu;
     }
 

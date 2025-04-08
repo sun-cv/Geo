@@ -1,8 +1,19 @@
 {
     "xor":
     {
-        "true":     "✓",
-	    "false":    "X"
+        "true":     "✔",
+	    "false":    "✖"
+    },
+
+    "onoff":
+    {
+        "true":     "On",
+        "false":    "Off"
+    },
+    "yesno":
+    {
+        "true":     "Yes",
+        "false":    "No"
     },
 
   "color": 

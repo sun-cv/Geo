@@ -30,7 +30,7 @@ const command = Schema.command
         {
             active:     true,
             channels:   [],
-            roles:      ["moderator"],
+            roles:      ["Moderator"],
         },
         exclude:
         {

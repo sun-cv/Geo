@@ -2,6 +2,7 @@ import { ActionRowBuilder } from '@discordjs/builders';
 import { Text }             from './text.js';
 import { log }              from '../logger/log.js'
 import lodash               from 'lodash';
+import { MessageFlags } from 'discord.js';
 
 class EmbedManager
 {
@@ -42,7 +43,7 @@ class EmbedManager
         this.loadEmbed(this.data);
         this.loadComponents(this.data);
    
-        return { embeds: this.embeds , components: this.components, ephemeral: this.data.flag.ephemeral };
+        return { embeds: this.embeds , components: this.components, flags: this.data.flag.ephemeral ? MessageFlags.Ephemeral : 0 };
     }
 
     loadEmbed(embed)
@@ -132,24 +133,25 @@ class ComponentManager
         this.button = new ActionRowBuilder();
     }
 
-    loadMenu(menuID)
+    loadMenu(menus)
     {
-        {
+        for (const menuID of menus)
+        {    
             try 
             {
                 const data = this.registry.menu.get(menuID)
 
                 this.menu.addComponents(data.load(this.interaction));
                 log.trace(`${Text.set(menuID).constrain(20)} menu load executed`)
+
+                this.row.push(this.menu);        
+                this.menu = new ActionRowBuilder();
             } 
             catch (error) 
             {
-                log.error(`Attempted to create invalid menu: ${menuID}`)
+                log.error(`Attempted to create invalid menu: ${menuID}`, error)
             }
         }
-
-        this.row.push(this.menu);
-        this.menu = new ActionRowBuilder();
     }
 
 }

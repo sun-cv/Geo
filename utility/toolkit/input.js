@@ -16,7 +16,6 @@ class Input
     static modal(interaction)
     {
         const input = {}
-
         interaction.fields.fields.forEach(option => 
         {
             input[option.customId] = option.value;

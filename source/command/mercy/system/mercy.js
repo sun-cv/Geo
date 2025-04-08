@@ -1,9 +1,8 @@
-import { log, Text }        from '../../../../utility/index.js'
-import { ProfileManager }   from '../../../../Αrchive/2-28 Mercy/profile.js';
-import message              from './message.js';
+import { log }              from '../../../../utility/index.js'
+import { template }         from '../../../data/template/mercy.js';
 import { RoleAssignment }   from '../../../interaction/handler/role.js';
-import { MemberManager } from './member.js';
-import { MessageFlags } from 'discord.js';
+import { MemberManager }    from './member.js';
+import { MessageFlags }     from 'discord.js';
 
 class MercyTracker
 {
@@ -39,7 +38,7 @@ class MercyTracker
     greetMember(interaction, member)
     {
         RoleAssignment.set(interaction).addRole('Mercy')
-        interaction.followUp({ content: message.mercy.welcome(member.id), flags: MessageFlags.Ephemeral });
+        interaction.followUp({ content: template.welcome(member.id), flags: MessageFlags.Ephemeral });
     }
 
     update(member)

@@ -1,18 +1,19 @@
-import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { EmbedManager, Input, Schema }    from '../../../utility/index.js'
+import { CommandInteraction,  SlashCommandBuilder } from "discord.js";
+import { EmbedManager, Schema }    from '../../../utility/index.js'
 
 
 
-async function clanHome(interaction = new CommandInteraction())
+async function applicationLanding(interaction = new CommandInteraction())
 {
-    interaction.editReply(EmbedManager.set(interaction).load('embed-clan-home').create())
+    const channel = await interaction.client.channels.fetch(interaction.client.clanManagement.applications.channel);
+    channel.send(EmbedManager.set(interaction).load('embed-clan-application-landing').create())
 }
 
 const command = Schema.command
 ({
     meta: 
     {
-        id:             "clanhome",
+        id:             "application_landing",
         type:           "command",
         description:    "Creates Clan Applications home embed",
     },
@@ -49,10 +50,10 @@ const command = Schema.command
     roleAssignment:     {},
 
     data: new SlashCommandBuilder()
-    	.setName('clanhome')
-    	.setDescription('Create the Clan Application Home'),
+    	.setName('application_landing')
+    	.setDescription('Create the Clan Application landing'),
         
-    execute: clanHome
+    execute: applicationLanding
 });
 
 export default command;

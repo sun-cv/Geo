@@ -1,8 +1,8 @@
-import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { Input, Schema }    from '../../../utility/index.js'
-import message              from '../mercy/system/message.js'
-import Shards               from '../../data/mercy/shards.json' with { type: 'json' }
-
+import { CommandInteraction, MessageFlags, SlashCommandBuilder }    from "discord.js";
+import { Input, Schema }                                            from '../../../utility/index.js'
+import { template }                                                 from "../../data/template/mercy.js";
+import { error }                                                    from "../../data/template/generic.js";
+import Shards                                                       from '../../data/mercy/shards.json' with { type: 'json' }
 async function success(interaction = new CommandInteraction())
 {
     const { mercy }                                     = interaction.client
@@ -16,7 +16,7 @@ async function success(interaction = new CommandInteraction())
 
     if  (!account) 
     {
-        return interaction.followUp({ content: message.error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
+        return interaction.followUp({ content: error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
     }
     
     const { base, start: mercyStart, increase } = Shards.mercy[shard][rarity];
@@ -28,11 +28,12 @@ async function success(interaction = new CommandInteraction())
     {
         const current = initial + i;
         return 1 - (adjustedBaseChance + Math.max(0, current - mercyStart + 1) * increase) / 100;
+
     }).reduce((acc, failChance) => acc * Math.max(failChance, 0.01), 1);
 
     const successChance = Math.min(100, (1 - totalFailChance) * 100);
 
-    return interaction.followUp({ content:message.mercy.success(member, initial, shard, rarity, count, successChance) });
+    return interaction.followUp({ content: template.success(member, initial, shard, rarity, count, successChance) });
 }
 
 

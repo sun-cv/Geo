@@ -1,6 +1,7 @@
 import Database                         from './database.js';
 import Directory                        from '../../configuration/environment/directory.json'    with { type: 'json' };
-import { log, Text, Parser, Timestamp } from '../../utility/index.js';
+import { log, Text, Parser, Timestamp, Serializer } from '../../utility/index.js';
+import { serialize } from 'v8';
 
 
 
@@ -22,6 +23,57 @@ class Clan extends Database
     {
         const data = this.database.prepare(`SELECT * FROM clan WHERE clan = ?`).get(clanName);
         return Parser.clanData(data);
+    }
+
+    updateClan(clanData)
+    {
+        const data = Serializer.clanData(clanData)
+        this.database.prepare(`UPDATE clan SET tier = ?, tag = ?, level = ?, role = ?, channel = ?, leadership = ?, member = ?, settings = ?, statistics = ?, recruitment = ? WHERE clan =?`).run(data.tier, data.tag, data.level, data.role, data.channel, data.leadership, data.member, data.settings, data.statistics, data.recruitment, data.clan)
+        
+        log.trace(`Successfully updated database entry: clan (${data.clan})`)
+    }
+
+    getApplications()
+    {
+        const data = this.database.prepare(`SELECT * FROM application WHERE status = ?`).all('pending')
+        return Parser.applicationData(data);
+    }
+
+    getApplicationRecord(member)
+    {
+        const data = this.database.prepare(`SELECT * FROM application WHERE status = ? AND id = ? ORDER BY timestamp DESC LIMIT 1`).get('accepted', member.id)
+        return Parser.applicationData([data]);
+    }
+
+    submitApplication(application) {
+        const { system, id, member, account, request, clan, status, timestamp, ...nestedObjects }   = application;
+        const { selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta}        = Object.fromEntries(Object.entries(nestedObjects).map(([key, value]) => [key, JSON.stringify(value)]));
+    
+        this.database.prepare(`INSERT INTO application(id, member, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+            .run(id, member, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp);
+        
+            log.trace(`Successfully submitted database entry: application '${account}'`);
+    }
+
+    updateApplication(application)
+    {
+        const { system, id, member, account, request, clan, status, timestamp, ...nestedObjects } = application;
+        const { selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta} = Object.fromEntries(Object.entries(nestedObjects).map(([key, value]) => [key, JSON.stringify(value)]));
+    
+        this.database.prepare(`UPDATE application SET member = ?, account = ?, request = ?, clan = ?, status = ?, selection = ?, clanboss = ?, hydra = ?, chimera = ?, siege = ?, cvc = ?, data = ?, setting = ?, admin = ?, meta = ?, timestamp = ? WHERE id = ?`)
+            .run(member, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp, id);
+
+        log.trace(`Successfully updated database entry: application '${account}'`);
+    }
+    
+    addMember(application) {
+        const { system, id, member, account, request, clan, status, timestamp, ...nestedObjects }   = application;
+        const { clanboss, hydra, chimera, siege, cvc, data, setting, admin}        = Object.fromEntries(Object.entries(nestedObjects).map(([key, value]) => [key, JSON.stringify(value)]));
+    
+        this.database.prepare(`INSERT INTO member(id, member, account, clan, clanboss, hydra, chimera, siege, cvc, data, setting, admin, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+            .run(id, member, account, clan, clanboss, hydra, chimera, siege, cvc, data, setting, admin, timestamp);
+        
+            log.trace(`Successfully submitted database entry: member '${account}'`);
     }
 
 }
@@ -56,7 +108,7 @@ async function create(database)
             member      TEXT        NOT NULL,
             account     TEXT        NOT NULL,
             clan        TEXT        NOT NULL,
-            clanBoss    TEXT        DEFAULT '{}',
+            clanboss    TEXT        DEFAULT '{}',
             hydra       TEXT        DEFAULT '{}',
             chimera     TEXT        DEFAULT '{}',
             siege       TEXT        DEFAULT '{}',
@@ -78,10 +130,10 @@ async function create(database)
             member      TEXT        NOT NULL,
             account     TEXT        NOT NULL,
             request     TEXT        NOT NULL,
-            selection   TEXT        NOT NULL,
+            clan        TEXT        NOT NULL,
             status      TEXT        DEFAULT 'pending',
-            clan        TEXT        DEFAULT '{}',
-            clanBoss    TEXT        DEFAULT '{}',
+            selection   TEXT        DEFAULT '{}',
+            clanboss    TEXT        DEFAULT '{}',
             hydra       TEXT        DEFAULT '{}',
             chimera     TEXT        DEFAULT '{}',
             siege       TEXT        DEFAULT '{}',
@@ -89,6 +141,7 @@ async function create(database)
             data        TEXT        DEFAULT '{}',
             setting     TEXT        DEFAULT '{}',
             admin       TEXT        DEFAULT '{}',
+            meta        TEXT        DEFAULT '{}',
             timestamp   TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
             FOREIGN KEY (clan) REFERENCES clan(clan) ON DELETE CASCADE
         )

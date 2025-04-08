@@ -18,8 +18,6 @@ class MenuHandler
             return;
         }
 
-        console.log('menu')
-
         try
         {
             await menu.execute(interaction);

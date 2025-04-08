@@ -1,7 +1,8 @@
-import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-import { Input, Schema }            from '../../../utility/index.js'
-import message                      from '../mercy/system/message.js'
-import { getMercyChance }           from "./system/calculate.js";
+import { CommandInteraction, MessageFlags, SlashCommandBuilder }    from "discord.js";
+import { Input, Schema }                                            from '../../../utility/index.js'
+import { template }                                                 from "../../data/template/mercy.js";
+import { getMercyChance }                                           from "./system/calculate.js";
+import { error }                                                    from "../../data/template/generic.js";
 
 async function reset(interaction = new CommandInteraction())
 {
@@ -16,7 +17,7 @@ async function reset(interaction = new CommandInteraction())
 
     if  (!account) 
     {
-        return interaction.followUp({ content: message.error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
+        return interaction.followUp({ content: error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
     }
     
     if (count)
@@ -26,7 +27,7 @@ async function reset(interaction = new CommandInteraction())
 
     account.reset(shard, rarity, champion);
 
-    interaction.followUp({ content: message.reset(member, account.session.lastChampion(), getMercyChance(shard, rarity, account.session.lastReset().total))})
+    interaction.followUp({ content: template.reset(member, account.session.lastChampion(), getMercyChance(shard, rarity, account.session.lastReset().total))})
 
     mercy.update(member);
     

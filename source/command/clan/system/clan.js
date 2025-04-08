@@ -1,17 +1,28 @@
+import { Collection } from "discord.js";
 import { log }                  from "../../../../utility/index.js";
 import { ApplicationSystem }    from "./application.js";
+import lodash                               from 'lodash';
 
 
-class ClanCluster
+class ClanManagement
 {
     constructor(client, cluster, registry)
     {      
         this.registry       = registry;
         this.database       = cluster.clan;
 
-        this.applications   = new ApplicationSystem(cluster, registry);
+        this.clan           = {};
+        this.clans          = [];
+        this.officersLounge = '1253926801600811069'
+       
+        this.applications   = new ApplicationSystem(this);
 
-        this.clan = {};
+        this.cache          =
+        {
+            active:         new Collection(),
+            clones:         new Collection(),
+            selection:      new Collection(),
+        } 
 
         this.setClientContext(client);
     }
@@ -20,7 +31,7 @@ class ClanCluster
     async setClientContext(client)
     {
         this.initialize();
-        client.clanCluster = this;
+        client.clanManagement = this;
         log.admin(`Successfully initialized Clan Cluster`);
     }
 
@@ -32,16 +43,42 @@ class ClanCluster
         for (const clan of cluster) 
         {
             this.loadClan(clan)
+            this.clans.push(clan)
         }
     }
     
     loadClan(clanName)
     {
-        log.trace(`Loading ${clanName}'s clan data`)
+        log.debug(`Loading ${clanName}'s clan data`)
 
-        this.clan[clanName] = new Clan(this.database.loadClan(clanName));
+        this.clan[clanName] = new Clan(this.database.loadClan(clanName), this.applications);
     }
 
+    cloneClan(clanName)
+    {
+        return lodash.cloneDeepWith(this.clan[clanName], (val, key) => { if (key === 'applications') return val });
+    }
+
+    updateClan(data)
+    {
+        log.debug(`Updating ${data.clan}'s clan data`)
+
+        this.database.updateClan(data);
+    }
+
+    resetCache(clan)
+    {
+        this.loadClan(clan)
+    }
+
+    addMember(application)
+    {
+        log.debug(`Adding member ${application.account} to clan: ${application.clan}`)
+        
+        this.clan[application.clan].member.count++;
+        this.updateClan(this.clan[application.clan]);
+        this.database.addMember(application)
+    }
 
 }
 
@@ -50,7 +87,7 @@ class ClanCluster
 
 class Clan 
 {
-    constructor(data) 
+    constructor(data, applications) 
     {
         this.clan               = data.clan
         this.tier               = data.tier
@@ -64,11 +101,13 @@ class Clan
         this.settings           = data.settings
         this.statistics         = data.statistics
         this.recruitment        = data.recruitment
+
+        this.applications       = applications;
     }
 };
 
 
-export { ClanCluster }
+export { ClanManagement }
 
 
 
@@ -114,20 +153,21 @@ export { ClanCluster }
 
 //         this.statistics         = 
 //         {
-//             clanBoss:           { pushing: false, clearing: [], difficulty: null },
-//             hydra:              { pushing: false, clearing: [], difficulty: null },
-//             chimera:           { pushing: false, clearing: [], difficulty: null },
-//             cvc:                { pushing: false, tier: 0, points: 0, average: 0 },
-//             siege:              { pushing: false, tier: 0,  }
+//             clanboss:           { clearing: [] },
+//             hydra:              { clearing: [] },
+//             chimera:            { clearing: [] },
+//             cvc:                { tier: 0, points: 0, average: 0 },
+//             siege:              { tier: 0  }
 //         };
 
 //         this.recruitment        = 
 //         {
 //             clanTag:            false,
-//             clanBoss:           { custom: '', clearing: [], difficulty: null, keys: 0 },
-//             hydra:              { custom: '', clearing: [], difficulty: null, keys: 0  },
-//             chimera:           { custom: '', clearing: [], difficulty: null, keys: 0  },
-//             cvc:                { custom: '', tier: 0, points: 0, average: 0 },
+//             message:            '',
+//             clanboss:           { custom: '', difficulty: null, keys: 0  },
+//             hydra:              { custom: '', difficulty: null, keys: 0  },
+//             chimera:            { custom: '', difficulty: null, keys: 0  },
+//             cvc:                { custom: '', required: false, tier: 0, points: 0, average: 0 },
 //             siege:              { custom: '', required: false }
 //         };
 //     }

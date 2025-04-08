@@ -7,7 +7,7 @@ import { Interaction }              from '../source/interaction/interaction.js'
 import { TaskManager }              from '../source/task/taskManager.js'
 import { MercyTracker }             from '../source/command/mercy/system/mercy.js'
 import { Cluster }                  from '../database/cluster/cluster.js'
-import { ClanCluster }              from '../source/command/clan/system/clan.js'
+import { ClanManagement }              from '../source/command/clan/system/clan.js'
 
 log.admin('Initiating startup sequence');
 
@@ -37,7 +37,7 @@ class Bot
         this.scheduler      = new TaskManager(this.client, this.registry);
 
         this.mercyTracker   = new MercyTracker(this.client, this.cluster, this.registry);
-        this.clanCluster    = new ClanCluster(this.client, this.cluster, this.registry);
+        this.clanManagement = new ClanManagement(this.client, this.cluster, this.registry);
         this.deploy         = false; // Deploy commands?
     }
     

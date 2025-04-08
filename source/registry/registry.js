@@ -12,16 +12,16 @@ class Registry
         this.root       = process.cwd()
         this.directory  = 
         {
-            system:         path.join(this.root, "source", "system"                 ),
-            event:          path.join(this.root, "source", "event"                  ),
-            autocomplete:   path.join(this.root, "source", "autocomplete"           ),
-            command:        path.join(this.root, "source", "command"                ),
-            embed:          path.join(this.root, "source", "element"    , "embed"   ),
-            button:         path.join(this.root, "source", "component"  , "button"  ),
-            menu:           path.join(this.root, "source", "component"  , "menu"    ),
-            modal:          path.join(this.root, "source", "component"  , "modal"   ),
-            filter:         path.join(this.root, "source", "filter"                 ),
-            task:           path.join(this.root, "source", "task"                   )
+            system:         path.join(this.root, "source", "system"             ),
+            event:          path.join(this.root, "source", "event"              ),
+            autocomplete:   path.join(this.root, "source", "autocomplete"       ),
+            command:        path.join(this.root, "source", "command"            ),
+            embed:          path.join(this.root, "source", "element"  , "embed" ),
+            button:         path.join(this.root, "source", "element"  , "button"),
+            menu:           path.join(this.root, "source", "element"  , "menu"  ),
+            modal:          path.join(this.root, "source", "element"  , "modal" ),
+            filter:         path.join(this.root, "source", "filter"             ),
+            task:           path.join(this.root, "source", "task"               )
         }
 
         this.client         = client;
