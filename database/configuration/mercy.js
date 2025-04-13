@@ -26,8 +26,6 @@ class Mercy extends Database
         log.trace(`Successfully created database profile entry`);
     }
     
-        // Update
-
     updateMember(member)
     {
         const accounts  = JSON.stringify(member.accounts);
@@ -83,8 +81,7 @@ class Mercy extends Database
     }
 
 
-        // Update
-
+    // Update
     updateAccount(account)
     {
         const data      = JSON.stringify(account.data);
@@ -108,7 +105,6 @@ class Mercy extends Database
             account.flag.mercy[shard][rarity].dirty.clear();
         }
     }
-
 
     updateAccountSession(account)
     {
@@ -153,7 +149,7 @@ const logHandler =
 {
     pull:       ((database, account, log) => { database.prepare(`INSERT INTO pull (id, member, account, shard, count, session) VALUES (?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.shard, log.count, log.session) }),
     reset:      ((database, account, log) => { database.prepare(`INSERT INTO reset (id, member, account, shard, rarity, total, session) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.shard, log.rarity, log.total, log.session) }),
-    champion:   ((database, account, log) => { database.prepare(`INSERT INTO champion (id, member, account, shard, rarity, total, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.shard, log.rarity, log.total, log.champion, log.session) })
+    champion:   ((database, account, log) => { database.prepare(`INSERT INTO champion (id, member, account, source, shard, rarity, total, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.source, log.shard, log.rarity, log.total, log.champion, log.session) })
 }
 
 
@@ -268,9 +264,10 @@ async function create(database)
         (
             id          TEXT        NOT NULL,
             member      TEXT        NOT NULL,
-            account     TEXT        NOT NULL,            
-            shard       TEXT        NOT NULL,
-            rarity      TEXT        NOT NULL,
+            account     TEXT        NOT NULL,
+            source      TEXT,                    
+            shard       TEXT,        
+            rarity      TEXT,        
             total       INTEGER     default 0,
             champion    TEXT        NOT NULL,
             session     TEXT        NOT NULL,

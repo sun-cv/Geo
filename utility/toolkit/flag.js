@@ -1,4 +1,4 @@
-import Shards               from '../../source/data/mercy/shards.json' with { type: 'json' };
+
 
 class Flag 
 {
@@ -26,53 +26,71 @@ class Flag
     {
         this.value = !this.value;
     }
+
+    valueOf() 
+    {
+        return this.value;
+    }
+
+    toJSON() 
+    {
+        return this.value;
+    }
 }
 
 
-class Flags
+
+class Flags 
 {
-    constructor(flags = []) 
+    constructor(flags = {}) 
     {
-        for (const flag of flags) 
+        if (Array.isArray(flags)) 
         {
-            this[flag] = new Flag();
+            for (const key of flags) 
+            {
+                this[key] = new Flag(false);
+            }
+        } 
+        else 
+        {
+            for (const [key, value] of Object.entries(flags)) 
+            {
+                this[key] = new Flag(value);
+            }
         }
     }
 
     all() 
     {
-        return Object.fromEntries(
+        return Object.fromEntries
+        (
             Object.entries(this).map(([key, flag]) => [key, flag.get()])
         );
     }
-}
 
-class FlagBuilder
-{
-    
-    static account()
+    load(data) 
     {
-        const flags      = { mercy: {} }
-
-        flags.account    = new Flags(['dirty', 'active'])
-
-        for (const [shard, rarities] of Object.entries(Shards.mercy))
+        for (const [key, value] of Object.entries(data)) 
         {
-            flags.mercy[shard] = {};
-
-            for (const rarity in rarities)
+            if (this[key]) 
             {
-                flags.mercy[shard][rarity] = new Flags(['dirty']);
+                this[key].set(value);
             }
         }
+    }
 
-        return flags
+    static from(input, defaults) 
+    {
+        const flags = new Flags(defaults);
+
+        if (input) 
+        {
+            flags.load(input);
+        }
+        return flags;
     }
 }
 
 
-export { Flag, Flags, FlagBuilder }
 
-
-
-
+export { Flag, Flags }

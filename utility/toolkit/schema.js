@@ -1,7 +1,6 @@
 import lodash                       from 'lodash';
 
 
-
 class Schema
 {
     static autocomplete(overrides)

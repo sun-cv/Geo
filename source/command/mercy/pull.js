@@ -1,7 +1,7 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder }    from "discord.js";
 import { Input, Schema }                                            from '../../../utility/index.js'
-import { error } from '../../data/template/generic.js'
-
+import { error }                                                    from '../../data/template/generic.js'
+import { template }                                                 from "../../data/template/mercy.js";
 
 async function pull(interaction = new CommandInteraction())
 {
@@ -16,13 +16,11 @@ async function pull(interaction = new CommandInteraction())
     {
         return interaction.followUp({ content: error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
     }
-    
-    
+   
     account.pull(shard, count);
+    account.update();
    
     interaction.followUp({ content: template.pull(member, count, shard)});
-
-    mercy.update(member);
 }
 
 const command = Schema.command

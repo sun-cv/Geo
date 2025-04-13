@@ -2,7 +2,8 @@ import { ActionRowBuilder } from '@discordjs/builders';
 import { Text }             from './text.js';
 import { log }              from '../logger/log.js'
 import lodash               from 'lodash';
-import { MessageFlags } from 'discord.js';
+import { MessageFlags }     from 'discord.js';
+
 
 class EmbedManager
 {

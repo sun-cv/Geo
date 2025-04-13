@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputBuilder } from '@discordjs/builders';
-import { TextInputStyle } from 'discord.js';
-import { object } from 'zod';
+import { TextInputStyle }   from 'discord.js';
+import { object }           from 'zod';
 
 class Component 
 {

@@ -1,16 +1,15 @@
-import Shards                           from '../../../data/mercy/shards.json' with { type: 'json' };
-import { log, Timestamp, FlagBuilder }  from '../../../../utility/index.js'
-import { Session }                      from './session.js';
-import { AccountCache }                 from './cache.js';
+import { log, Timestamp, Flags, MercyUtil } from '../../../../utility/index.js'
+import { Session }                          from './session.js';
+import { AccountCache }                     from './cache.js';
 
 
 class AccountManager
 {
     constructor(member)
     {
-        this.tracker      = member.tracker
-        this.registry   = member.tracker.registry;
-        this.database   = member.tracker.database;
+        this.tracker    = member.manager.tracker
+        this.registry   = member.manager.tracker.registry;
+        this.database   = member.manager.tracker.database;
 
         this.cache      = new AccountCache(this.registry, member);
 
@@ -65,7 +64,7 @@ class AccountManager
         log.trace(`Loading account '${accountName}'`)
 
         const account = new Account(
-            this.tracker,
+            this,
             this.database.loadAccountProfile(this.member, accountName),
             this.database.loadAccountData   (this.member, accountName),
             this.database.loadAccountSession(this.member, accountName)
@@ -126,7 +125,7 @@ class AccountManager
 
     // Feed
 
-    allFeed()
+    allAccountsFeed()
     {
         const feed = []
 
@@ -171,21 +170,20 @@ const format =
 
 class Account 
 {
-    constructor(tracker, profile, data, session)
+    constructor(manager, profile, mercy, session)
     {
-        this.tracker    = tracker;
+        this.manager    = manager;
 
         this.id         = profile.id;
         this.member     = profile.member;
         this.account    = profile.account;
         this.main       = !!profile.main;
 
-        this.data       = new AccountData(profile.data);
-        this.settings   = new AccountSettings(profile.settings);
-        this.flag       = FlagBuilder.account()
-
-        this.mercy      = new AccountMercy   (this, data);
-        this.session    = new Session        (this, session);
+        this.data       = new AccountData       (profile.data);
+        this.settings   = new AccountSettings   (profile.settings);
+        this.flag       = new AccountFlags      (profile.flags)
+        this.mercy      = new AccountMercy      (this, mercy);
+        this.session    = new Session           (this, session);
 
         this.lastActive = Timestamp.iso();
         this.registered = profile.registered;
@@ -208,7 +206,28 @@ class Account
         this.validateSession();
 
         this.session.logReset(shard, rarity, champion, this.mercy[shard][rarity].total);
-        this.mercy  .reset(shard, rarity, champion);
+        this.session.logChampion(shard, rarity, champion, this.mercy[shard][rarity].total);
+
+        this.mercy.reset(shard, rarity);
+        this.mercy.lastChampion(champion)
+
+        this.flag.account.dirty.set();
+    }
+
+    log(source, rarity, champion, count)
+    {
+        this.validateSession();
+
+        
+        if (MercyUtil.isShard(source))
+        {
+            this.mercy.lastChampion(source, rarity, champion)
+            this.session.logChampion(source, rarity, champion, total)
+        }
+        else
+        {
+            this.session.logSourceChampion(source, rarity, champion, count);
+        }
 
         this.flag.account.dirty.set();
     }
@@ -227,51 +246,109 @@ class Account
         this.tracker.memberManager.cache.get({ id:this.id, user: { username: this.member }}).account.setActive(this);
     }
 
+    update()
+    {
+        this.manager.updateAccount(this);
+    }
 }
 
 
 class AccountData
 {
+    constructor(data)
+    {
+        this.template = data?.template ||
+        {   
+            selection:
+            {
+                static:         ['wukong'],
+                rotate:         [],
+                custom:         [],
+            },
+        }
+    }
 }
+
 
 class AccountSettings
 {
+    constructor(data)
+    {
+        this.template = 
+        {   
+            options: Flags.from(data?.template?.options,
+            {   
+                static:         true,
+                rotate:         false,
+                random:         false,
+                custom:         false,
+                text:           false,
+            }),
+
+            display: Flags.from(data?.template?.display,
+            {
+                total:          true,
+                mercy:          true,
+                lastAdded:      true,
+                lastReset:      true,
+                lastChampion:   true,
+                lifetime:       true,
+                session:        true,
+
+                prism:          false, // TBD
+            }),
+        }
+    }
 }
+
+class AccountFlags {
+    constructor(data = {}) 
+    {
+        this.account = Flags.from(data.account, 
+        {
+            dirty:  false,
+            active: false,
+        });
+
+        this.mercy = {};
+
+        MercyUtil.forEachShard((shard, rarity) => 
+        {
+            this.mercy[shard] = {};
+        })
+
+        MercyUtil.forEachShard((shard, rarity) => 
+        {
+            this.mercy[shard][rarity] = Flags.from(data?.mercy?.[shard]?.[rarity],
+            { 
+                dirty: false
+            })
+        })
+    }
+}
+
+
 
 class AccountMercy
 {
-    constructor(account, data = {},)
+    constructor(account, data = {}) 
     {
+        this.flag = account.flag.mercy;
 
-        this.account    = account;
-        this.flag       = account.flag.mercy;
-
-        for (const [shard, rarities ] of Object.entries(Shards.mercy))
+        MercyUtil.forEachShard((shard, rarity) => 
         {
-            this[shard] = {};
-
-            for (const rarity in rarities)
+            this[shard] ??= {};
+            this[shard][rarity] = 
             {
-                this[shard][rarity] = 
-                {
-                    total: 0,
-                    session: 0,
-                    lifetime: 0,
-                    lastAdded: null,
-                    lastReset: null,
-                    lastChampion: null
-                };
-
-                if (data[shard] && data[shard][rarity])
-                {
-                    this[shard][rarity] = 
-                    {
-                        ...this[shard][rarity], 
-                        ...data[shard][rarity]
-                    };
-                }
-            }
-        }
+                total: 0,
+                session: null,
+                lifetime: 0,
+                lastAdded: 0,
+                lastReset: null,
+                lastChampion: null,
+                ...(data[shard]?.[rarity] || {})
+            };
+        });
     }
 
     pull(shard, count)
@@ -306,21 +383,17 @@ class AccountMercy
     }
 
 
-    refresh()
+    refresh() 
     {
-        for (const [shard, rarities ] of Object.entries(Shards.mercy))
+        MercyUtil.forEachShard((shard, rarity) => 
         {
-            for (const rarity in rarities)
-            {
-                this[shard][rarity].lastAdded = 0;
-            }
-        }
-        log.trace('Refreshed mercy lastAdded session data')
-    }
-    
+            this[shard][rarity].lastAdded = 0;
+        });
 
+        log.trace('Refreshed mercy lastAdded session data');
+    }
 }
 
 
 
-export { AccountManager, Account, AccountSettings }
+export { AccountManager, Account, AccountSettings, AccountData, AccountMercy }

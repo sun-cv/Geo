@@ -6,6 +6,44 @@ import { template }             from '../../data/template/mercy.js';
 
 const data = 
 {
+
+    'mercy-greeting': Schema.embed
+    ({
+        meta: 
+        {
+            id: "embed-mercy-greeting"
+        },
+
+        load: function(interaction)
+        {
+            const { mercy } = interaction.client
+
+            
+            const member    = mercy.initialize(interaction);
+            const account   = member.account.get();
+                
+            const embed     = new EmbedBuilder().setColor(0xED8223).addFields
+            (
+                { name: ' ', value: template.greeting.welcome(interaction), inline: false   },
+                { name: ' ', value: template.greeting.leftbreakdown(),      inline: true    },
+                { name: ' ', value: template.accountLanding(account),       inline: true    },
+                { name: ' ', value: template.greeting.rightbreakdown(),     inline: true    },
+            )
+                        
+            embed.addFields
+            (
+                { name: ' ', value: template.greeting.options(), inline: false },
+                { name: ' ', value: '- Custom metrics', inline: true},
+                { name: ' ', value: '- Custom backgrounds', inline: true},
+                { name: ' ', value: '- Text based Mercy', inline: true},
+                { name: ' ', value: template.greeting.signoff(), inline: false},
+            )            
+
+            return embed;
+        },
+
+        execute: function() {}
+    }),
     'mercy-home': Schema.embed
     ({
         meta: 

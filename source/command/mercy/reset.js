@@ -25,12 +25,12 @@ async function reset(interaction = new CommandInteraction())
         account.pull(shard, count); // Optionally updates pull count for accurate record keeping before reset.
     }
 
+    console.log(account.mercy.ancient)
+
     account.reset(shard, rarity, champion);
-
-    interaction.followUp({ content: template.reset(member, account.session.lastChampion(), getMercyChance(shard, rarity, account.session.lastReset().total))})
-
-    mercy.update(member);
+    account.update();    
     
+    interaction.followUp({ content: template.reset(member, account.session.lastChampion(), getMercyChance(shard, rarity, account.session.lastReset().total))})
 }
 
 

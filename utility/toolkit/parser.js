@@ -1,8 +1,8 @@
 
 
+
 class Parser
 {
-
     static accountData(data) 
     {
         return {

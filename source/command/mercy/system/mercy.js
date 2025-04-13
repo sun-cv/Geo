@@ -1,8 +1,7 @@
-import { log }              from '../../../../utility/index.js'
-import { template }         from '../../../data/template/mercy.js';
-import { RoleAssignment }   from '../../../interaction/handler/role.js';
-import { MemberManager }    from './member.js';
-import { MessageFlags }     from 'discord.js';
+import { EmbedManager, log }    from '../../../../utility/index.js'
+import { RoleAssignment }       from '../../../interaction/handler/role.js';
+import { MemberManager }        from './member.js';
+import { MessageFlags }         from 'discord.js';
 
 class MercyTracker
 {
@@ -29,23 +28,17 @@ class MercyTracker
         
         if (member.new)
         {
-            setTimeout(() =>{ this.greetMember(interaction, member)}, 2000)
             delete member.new;
+            setTimeout(() =>{ this.greetMember(interaction, member)}, 2000)
         }
-        return member
+        return member;
     }
 
     greetMember(interaction, member)
     {
         RoleAssignment.set(interaction).addRole('Mercy')
-        interaction.followUp({ content: template.welcome(member.id), flags: MessageFlags.Ephemeral });
+        interaction.followUp(EmbedManager.set(interaction).load('embed-mercy-greeting').create());
     }
-
-    update(member)
-    {
-        this.memberManager.update(member);
-    }
-
 }
 
 

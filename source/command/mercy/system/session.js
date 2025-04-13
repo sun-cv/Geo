@@ -5,8 +5,6 @@ class Session
 {
     constructor(account, existing)
     {
-        this.account    = account;
-
         this.pull       = existing?.pull         || false;
         this.reset      = existing?.reset        || false;
         this.champion   = existing?.champion     || false;
@@ -38,7 +36,6 @@ class Session
     {
         this.reset      = true;
         this.log.addReset({shard, rarity, total});
-        this.logChampion(shard, rarity, champion, total)
     };
 
     logChampion(shard, rarity, champion, total)
@@ -46,6 +43,13 @@ class Session
         this.champion   = true;
         this.log.addChampion({shard, rarity, champion, total});
     };
+
+    logSourceChampion(source, rarity, champion, count)
+    {
+        this.champion   = true;
+        const total     = count
+        this.log.addChampion({source, rarity, champion, count, total});
+    }
 
     refresh()
     {
@@ -108,6 +112,7 @@ class Log
 {
     constructor(data, write)
     {
+        this.source     = data?.source      || null;
         this.shard      = data?.shard       || null;
         this.rarity     = data?.rarity      || null;
         this.count      = data?.count       ?? null;

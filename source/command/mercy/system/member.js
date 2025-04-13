@@ -49,7 +49,7 @@ class MemberManager
         log.trace(`Loading ${iMember.user.username}'s member profile`);
 
         const profile = this.database.loadMember(iMember);
-        const member  = new Member(this.tracker, profile);
+        const member  = new Member(this, profile);
 
         this.cache.set(member);
 
@@ -71,10 +71,13 @@ class MemberManager
     update(member)
     {
         log.trace(`Updating member ${member.member}`);
-
         this.database.updateMember(member);
+    }
+    
+    updateAccounts(member)
+    {
+        log.trace(`Updating member ${member.member}'s accounts`);
         member.account.updateAccounts();
-
     }
     
 }
@@ -83,9 +86,9 @@ class MemberManager
 
 class Member
 {
-    constructor(tracker, profile)
+    constructor(manager, profile)
     {
-        this.tracker    = tracker
+        this.manager    = manager
 
         this.id         = profile.id;
         this.member     = profile.member;
@@ -103,8 +106,13 @@ class Member
 
     update()
     {
-        this.tracker.memberManager.update(this);
-    }  
+        this.manager.update(this);
+    }
+
+    updateAccounts()
+    {
+        this.manager.updateAccounts(this);
+    }
 
 }
 

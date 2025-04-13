@@ -1,24 +1,69 @@
-import { Text }         from "../../../utility/index.js";
-import indicator        from "../mapping/indicator.json"    with { type: 'json'}
-import Shards           from "../mercy/shards.json"         with { type: 'json'}
-import { Timestamp }    from "../../../utility/index.js";
+import indicator            from "../mapping/indicator.json"                        with { type: 'json'}
+import Shards               from "../mercy/shards.json"                             with { type: 'json'}
+import config               from '../../../configuration/secret/credentials.json'   with { type: 'json' }
+import { Text, Timestamp }  from "../../../utility/index.js";
+
+
 
 const template = 
 {
-    welcome: (id) => `
-## Welcome to the Mercy Tracker, <@${id}>!
+    greeting:
+    {
+        welcome: (interaction) =>
+        {
+            const message = 
+`
+${Text.set(`Welcome to the Mercy Tracker ${interaction.member.user.username}!`).constrain(58, { align: 'center', style: ['block_code']})}${Text.set(`A default 'Main' account has been created for you`).constrain(58, { align: 'center', style: ['block_code']})}
+`
+            return message;
+        },
 
-A default **'Main'** account has been created for you.  
+        rightbreakdown: () =>
+        {
+            const message =
+` 
+⠀
 
-Unless you specify otherwise, all Mercy Tracker commands will apply to your designated **'Main'** account by default.
+⠀
+Use \`account_name\` in commands to specify an added alt account.
+`
+            return message
+    },
 
-Feel free to create new accounts, rename your new **'Main'** account, update your settings, or switch your default **'Main'** account anytime using: ${Text.set('/accounts').style(['code'])}
+    leftbreakdown: () =>
+        {
+            const message =
+` 
+⠀
 
+⠀
+Mercy commands use your designated **'Main'** account by default
+`
+            return message
+    },
+
+        options: () =>
+        {
+            const message = 
+`
+${Text.set('Manage and personalize your account!').constrain(58, { align: 'center', style: ['block_code']})}
+Use ${Text.set('/account').style(['code'])} to add additional accounts, change or rename your new **'Main'** account - and access all of the settings to customize your mercy tracking.
+
+`
+            return message
+
+        },
+
+        signoff: () =>
+        {
+            const message = 
+`
+⠀
 For a full list of commands, check out <#1197726332604383232>.
-
-If you have any questions, don't hesitate to reach out!
-    ⎯ <@${config.admin}>
-    `,
+`
+            return message;
+        }
+    },
 
     pull: (member, count, shard) => `<@${member.id}> pulled ${count} ${Shards.emoji[shard]}'s`,
 

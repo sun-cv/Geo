@@ -1,9 +1,8 @@
+import fs                   from 'node:fs';
+import path                 from 'node:path';
+import { pathToFileURL }    from 'node:url';
+import { log }              from "../logger/log.js"
 
-import fs   from 'node:fs';
-import path from 'node:path';
-import { pathToFileURL } from 'node:url';
-
-import { log } from "../logger/log.js"
 
 class FileManager
 {

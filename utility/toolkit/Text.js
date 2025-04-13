@@ -1,4 +1,5 @@
-class Text {
+class Text 
+{
     constructor(content = "") 
     {
         this.content = String(content);
