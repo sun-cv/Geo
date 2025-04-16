@@ -27,6 +27,7 @@ class AccountManager
 
         this.database.createAccount(this.member, accountName, main);
         this.loadAccount(accountName);
+        this.member.accounts.push(accountName)
     }
 
     delete(accountName)
@@ -40,13 +41,32 @@ class AccountManager
 
     get(accountName)
     {
-        if (accountName)
+        const account = accountName ? this.cache.get(accountName) : this.cache.find(account => account.main);
+        
+        account.flag.account.active.set();
+    
+        for (const [name, cache] of this.cache)
         {
-            return this.cache.get(accountName);
+
+            if (cache !== account)
+            {
+                cache.flag.account.active.clear();
+            }
         }
-        return this.cache.find((account) => account.main);
+        return account;
     }
 
+    getActive()
+    {
+        for (const [name, account] of this.cache)
+        {
+            if (account.flag.account.active.get())
+            {
+                return account
+            }
+        }
+    }
+    
     // Load Account
 
     loadAccounts()
@@ -96,31 +116,16 @@ class AccountManager
     {
         log.trace(`Updating account '${account.account}'`);
 
+        await this.database.updateAccount(account),
+
+
         await Promise.all([
-            this.database.updateAccount(account),
             this.database.updateAccountMercy(account),
             this.database.updateAccountSession(account),
             this.database.updateAccountLogs(account)
         ]);
 
         account.flag.account.dirty.clear()
-    }
-
-    // Active account
-
-    setActive(account)
-    {
-        this.active = account;
-    }
-
-    getActive()
-    {
-        return this.active;
-    }
-
-    clearActive()
-    {
-        this.active = null;
     }
 
     // Feed
@@ -161,9 +166,9 @@ class AccountManager
 
 const format =
 {
-    pull:       (entry) => { return {log: `${entry.session}: ${entry.account} pulled ${entry.count} ${entry.shard} ${entry.count == 1 ? 'shard' : 'shards'}`,    timestamp: entry.timestamp }},
-    reset:      (entry) => { return {log: `${entry.session}: ${entry.account} reset ${entry.shard} shards on shard ${entry.total}`,                             timestamp: entry.timestamp }},
-    champion:   (entry) => { return {log: `${entry.session}: ${entry.account} pulled ${entry.rarity} champion ${entry.champion}`,                                timestamp: entry.timestamp }}
+    pull:       (entry) => { return {log: `${entry.session}: ${entry.account} pulled ${entry.count} ${entry.source} ${entry.count == 1 ? 'shard' : 'shards'}`,  timestamp: entry.timestamp }},
+    reset:      (entry) => { return {log: `${entry.session}: ${entry.account} reset ${entry.source} shards on shard ${entry.total}`,                            timestamp: entry.timestamp }},
+    champion:   (entry) => { return {log: `${entry.session}: ${entry.account} pulled ${entry.rarity} champion ${entry.champion}`,                               timestamp: entry.timestamp }}
 }
 
 
@@ -175,8 +180,9 @@ class Account
         this.manager    = manager;
 
         this.id         = profile.id;
-        this.member     = profile.member;
+        this.member     = profile.member; // username, id
         this.account    = profile.account;
+        this.name       = profile.name;
         this.main       = !!profile.main;
 
         this.data       = new AccountData       (profile.data);
@@ -209,7 +215,7 @@ class Account
         this.session.logChampion(shard, rarity, champion, this.mercy[shard][rarity].total);
 
         this.mercy.reset(shard, rarity);
-        this.mercy.lastChampion(champion)
+        this.mercy.lastChampion(shard, rarity, champion)
 
         this.flag.account.dirty.set();
     }
@@ -218,22 +224,19 @@ class Account
     {
         this.validateSession();
 
-        
         if (MercyUtil.isShard(source))
         {
             this.mercy.lastChampion(source, rarity, champion)
-            this.session.logChampion(source, rarity, champion, total)
         }
-        else
-        {
-            this.session.logSourceChampion(source, rarity, champion, count);
-        }
+
+        this.session.logChampion(source, rarity, champion, count)
 
         this.flag.account.dirty.set();
     }
 
     validateSession()
     {
+
         if (!this.session.valid())
         {
             this.session.refresh();
@@ -241,14 +244,14 @@ class Account
         }
     }
 
-    setActive()
-    {
-        this.tracker.memberManager.cache.get({ id:this.id, user: { username: this.member }}).account.setActive(this);
-    }
-
     update()
     {
         this.manager.updateAccount(this);
+    }
+
+    feed()
+    {
+        return this.manager.accountFeed(this);
     }
 }
 
@@ -265,6 +268,10 @@ class AccountData
                 rotate:         [],
                 custom:         [],
             },
+        }
+        this.historical = data?.account ||
+        {
+            name: [],
         }
     }
 }
@@ -283,7 +290,7 @@ class AccountSettings
                 random:         false,
                 custom:         false,
                 text:           false,
-            }),
+            }, { exclusive: true}),
 
             display: Flags.from(data?.template?.display,
             {
@@ -297,6 +304,11 @@ class AccountSettings
 
                 prism:          false, // TBD
             }),
+        },
+
+        this.embed = 
+        {
+            color:              0xED8223,  
         }
     }
 }
@@ -315,7 +327,7 @@ class AccountFlags {
         MercyUtil.forEachShard((shard, rarity) => 
         {
             this.mercy[shard] = {};
-        })
+        }, { prism: true })
 
         MercyUtil.forEachShard((shard, rarity) => 
         {
@@ -323,7 +335,7 @@ class AccountFlags {
             { 
                 dirty: false
             })
-        })
+        }, { prism: true})
     }
 }
 
@@ -338,17 +350,27 @@ class AccountMercy
         MercyUtil.forEachShard((shard, rarity) => 
         {
             this[shard] ??= {};
-            this[shard][rarity] = 
-            {
-                total: 0,
-                session: null,
+        
+            const total = data[shard]?.[rarity]?.total || 0;
+        
+            const entry = {
+                total,
+                mercy: null,
+                session: 0,
                 lifetime: 0,
                 lastAdded: 0,
                 lastReset: null,
                 lastChampion: null,
                 ...(data[shard]?.[rarity] || {})
             };
-        });
+        
+            Object.defineProperty(entry, 'mercy', {
+                get: () => MercyUtil.calculateMercy(shard, rarity, entry.total),
+                enumerable: true
+            });
+        
+            this[shard][rarity] = entry;
+        }, { prism: true });
     }
 
     pull(shard, count)
@@ -380,14 +402,17 @@ class AccountMercy
     lastChampion(shard, rarity, champion)
     {
         this[shard][rarity].lastChampion        = champion
-    }
 
+        this.flag[shard][rarity].dirty.set();
+    }
 
     refresh() 
     {
         MercyUtil.forEachShard((shard, rarity) => 
         {
             this[shard][rarity].lastAdded = 0;
+            
+            this.flag[shard][rarity].dirty.set();
         });
 
         log.trace('Refreshed mercy lastAdded session data');

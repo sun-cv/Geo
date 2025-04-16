@@ -90,8 +90,8 @@ class Timestamp {
     {
         return (pastStamp) => 
         {
-            const { month, day, year} = this.formatDate(pastStamp);
-            return `${month}/${day}/${year}`;
+            const { month, day} = this.formatDate(pastStamp);
+            return `${month}/${day}`;
         }
     }
 

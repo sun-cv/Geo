@@ -1,7 +1,7 @@
 import Database                         from './database.js';
 import Directory                        from '../../configuration/environment/directory.json'    with { type: 'json' };
 import Shards                           from '../../source/data/mercy/shards.json'               with { type: 'json' };
-import { log, Text, Parser, Timestamp } from '../../utility/index.js';
+import { log, Text, Parser, Timestamp, MercyUtil } from '../../utility/index.js';
 
 
 class Mercy extends Database
@@ -51,9 +51,9 @@ class Mercy extends Database
     loadAccountData(member, accountName)
     {
         const data = this.database.prepare(`SELECT * FROM mercy WHERE id = ? AND account = ?`).all(member.id, accountName);
+
         log.trace(`Found mercy for '${accountName}' (${data.length} records)`);
-        
-        
+
         return Parser.accountMercy(data);
     }
     
@@ -67,11 +67,12 @@ class Mercy extends Database
         this.database.prepare(`INSERT INTO account(id, member, account, main) VALUES (?, ?, ?, ?)`).run(member.id, member.member, accountName, Number(main))
         log.trace(`Successfully generated database entry: account '${accountName}'`);
 
-        Object.entries(Shards.mercy).map(([ shard, rarities ]) => Object.keys(rarities).forEach((tier) => 
+        MercyUtil.forEachShard((shard, rarity) =>
         {
-            this.database.prepare(`INSERT INTO mercy (id, member, account, shard, rarity) VALUES (?, ?, ?, ?, ?)`).run(member.id, member.member, accountName, shard, tier);
-            log.trace(`Successfully generated database entry: ${Text.set(tier).constrain(9)} ${Text.set(shard).constrain(7)} mercy for '${accountName}'`)
-        }));
+            this.database.prepare(`INSERT INTO mercy (id, member, account, source, rarity) VALUES (?, ?, ?, ?, ?)`).run(member.id, member.member, accountName, shard, rarity);
+            log.trace(`Successfully generated database entry: ${Text.set(rarity).constrain(9)} ${Text.set(shard).constrain(7)} mercy for '${accountName}'`)
+        })
+
     }
 
     deleteAccount(member, accountName)
@@ -86,9 +87,17 @@ class Mercy extends Database
     {
         const data      = JSON.stringify(account.data);
         const settings  = JSON.stringify(account.settings)
+        const original  = account.accountChange ?? account.account
         
-        this.database.prepare(`UPDATE account SET main = ?, data = ?, settings = ?, lastActive = ? WHERE id = ? AND account = ?`).run(Number(account.main), data, settings, Timestamp.iso(), account.id, account.account );
+        this.database.prepare(`UPDATE account SET main = ?, data = ?, settings = ?, lastActive = ? WHERE id = ? AND account = ?`).run(Number(account.main), data, settings, Timestamp.iso(), account.id, original );
         log.trace(`Successfully updated database entry: account`)
+
+        delete account.accountChange
+    }
+
+
+    updateAccountName(account)
+    {
 
     }
 
@@ -100,11 +109,12 @@ class Mercy extends Database
         {
             const mercy = account.mercy[shard][rarity];
             
-            this.database.prepare(`UPDATE mercy SET total = ?, session = ?, lifetime = ?, lastAdded = ?, lastReset = ?, lastChampion = ? WHERE id = ? AND account = ? AND shard = ? AND rarity = ?`).run(mercy.total, Timestamp.session(), mercy.lifetime, mercy.lastAdded, mercy.lastReset, mercy.lastChampion, account.id, account.account, shard, rarity);
+            this.database.prepare(`UPDATE mercy SET total = ?, session = ?, lifetime = ?, lastAdded = ?, lastReset = ?, lastChampion = ? WHERE id = ? AND account = ? AND source = ? AND rarity = ?`).run(mercy.total, Timestamp.session(), mercy.lifetime, mercy.lastAdded, mercy.lastReset, mercy.lastChampion, account.id, account.account, shard, rarity);
             log.trace(`Successfully updated database entry: ${Text.set(rarity).constrain(9)} ${Text.set(shard).constrain(7)}`)
             account.flag.mercy[shard][rarity].dirty.clear();
         }
     }
+    
 
     updateAccountSession(account)
     {
@@ -147,136 +157,124 @@ class Mercy extends Database
 
 const logHandler = 
 {
-    pull:       ((database, account, log) => { database.prepare(`INSERT INTO pull (id, member, account, shard, count, session) VALUES (?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.shard, log.count, log.session) }),
-    reset:      ((database, account, log) => { database.prepare(`INSERT INTO reset (id, member, account, shard, rarity, total, session) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.shard, log.rarity, log.total, log.session) }),
-    champion:   ((database, account, log) => { database.prepare(`INSERT INTO champion (id, member, account, source, shard, rarity, total, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.source, log.shard, log.rarity, log.total, log.champion, log.session) })
+    pull:       ((database, account, log) => { database.prepare(`INSERT INTO pull       (id, member, account, source, count, session) VALUES (?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.source, log.count, log.session) }),
+    reset:      ((database, account, log) => { database.prepare(`INSERT INTO reset      (id, member, account, source, rarity, total, session) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.source, log.rarity, log.total, log.session) }),
+    champion:   ((database, account, log) => { database.prepare(`INSERT INTO champion   (id, member, account, source, rarity, total, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.source, log.rarity, log.total, log.champion, log.session) })
 }
-
-
 
 async function create(database)
 {
     log.trace(`Establishing connection to database: Mercy`);
 
-    database.exec
-    (`
-        CREATE TABLE IF NOT EXISTS member
+    database.exec(`
+        CREATE TABLE IF NOT EXISTS member 
         (
-            id          TEXT        PRIMARY KEY,
-            member      TEXT        NOT NULL,
-            accounts    TEXT        DEFAULT '["Main"]',
-            data        TEXT        DEFAULT '{}',
-            settings    TEXT        DEFAULT '{}',
-            lastActive  TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
-            registered  TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now'))
+            member_id       TEXT PRIMARY KEY,
+            username        TEXT NOT NULL,
+            accounts        TEXT DEFAULT '["Main"]',
+            data            TEXT DEFAULT '{}',
+            settings        TEXT DEFAULT '{}',
+            lastActive      TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            registered      TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now'))
         )
-    `)
+    `);
 
-    database.exec
-    (`
-        CREATE TABLE IF NOT EXISTS account
+    database.exec(`
+        CREATE TABLE IF NOT EXISTS account 
         (
-            id          TEXT        NOT NULL,
-            member      TEXT        NOT NULL,
-            account     TEXT        NOT NULL,
-            main        INTEGER     DEFAULT 0,
-            data        TEXT        DEFAULT '{}',
-            settings    TEXT        DEFAULT '{}',
-            lastActive  TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
-            registered  TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
-            PRIMARY KEY (id, account),
-            FOREIGN KEY (id) REFERENCES member(id) ON DELETE CASCADE
+            member_id       TEXT NOT NULL,
+            account_id      TEXT NOT NULL,
+            name            TEXT NOT NULL,
+            main            INTEGER DEFAULT 0,
+            data            TEXT DEFAULT '{}',
+            settings        TEXT DEFAULT '{}',
+            lastActive      TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            registered      TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            PRIMARY KEY (member_id, account_id),
+            FOREIGN KEY (member_id) REFERENCES member(member_id) ON DELETE CASCADE
         )
-    `)
+    `);
 
-    database.exec
-    (`
-        CREATE TABLE IF NOT EXISTS mercy
+    database.exec(`
+        CREATE TABLE IF NOT EXISTS mercy 
         (
-            id          TEXT        NOT NULL,
-            member      TEXT        NOT NULL,
-            account     TEXT        NOT NULL,            
-            shard       TEXT        NOT NULL,
-            rarity      TEXT        NOT NULL,
-            total       INTEGER     DEFAULT 0,
-            session     TEXT        DEFAULT NULL,
-            lifetime    INTEGER     DEFAULT 0,
-            lastAdded   INTEGER     DEFAULT 0,
-            lastReset   TEXT        DEFAULT NULL,
-            lastChampion TEXT       DEFAULT NULL,
-            FOREIGN KEY (id, account) REFERENCES account(id, account) ON DELETE CASCADE
-        )    
-    `)
-
-    database.exec
-    (`
-        CREATE TABLE IF NOT EXISTS session
-        (
-            id          TEXT        NOT NULL,
-            member      TEXT        NOT NULL,
-            account     TEXT        NOT NULL,
-            pull        INTEGER     DEFAULT 0,
-            reset       INTEGER     DEFAULT 0,
-            champion    INTEGER     DEFAULT 0,
-            session     TEXT        NOT NULL,
-            timestamp   TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
-            PRIMARY KEY (id, account, session),
-            FOREIGN KEY (id, account) REFERENCES account(id, account) ON DELETE CASCADE
+            member_id       TEXT NOT NULL,
+            account_id      TEXT NOT NULL,            
+            source          TEXT NOT NULL,
+            rarity          TEXT NOT NULL,
+            total           INTEGER DEFAULT 0,
+            session         TEXT DEFAULT NULL,
+            lifetime        INTEGER DEFAULT 0,
+            lastAdded       INTEGER DEFAULT 0,
+            lastReset       TEXT DEFAULT NULL,
+            lastChampion    TEXT DEFAULT NULL,
+            FOREIGN KEY (member_id, account_id) REFERENCES account(member_id, account_id) ON DELETE CASCADE ON UPDATE CASCADE
         )
-    `)
+    `);
 
-    database.exec
-    (`
-        CREATE TABLE IF NOT EXISTS pull
+    database.exec(`
+        CREATE TABLE IF NOT EXISTS session 
         (
-            id          TEXT        NOT NULL,
-            member      TEXT        NOT NULL,
-            account     TEXT        NOT NULL,            
-            shard       TEXT        NOT NULL,
-            count       INTEGER     NOT NULL,
-            session     TEXT        NOT NULL,
-            timestamp   TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
-            FOREIGN KEY (id, account) REFERENCES account(id, account) ON DELETE CASCADE,
-            FOREIGN KEY (id, account, session) REFERENCES session(id, account, session) ON DELETE CASCADE
-        )    
-    `)
+            member_id       TEXT NOT NULL,
+            account_id      TEXT NOT NULL,
+            pull            INTEGER DEFAULT 0,
+            reset           INTEGER DEFAULT 0,
+            champion        INTEGER DEFAULT 0,
+            session         TEXT NOT NULL,
+            timestamp       TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            PRIMARY KEY (member_id, account_id, session),
+            FOREIGN KEY (member_id, account_id) REFERENCES account(member_id, account_id) ON DELETE CASCADE ON UPDATE CASCADE
+        )
+    `);
 
-    database.exec
-    (`
-        CREATE TABLE IF NOT EXISTS reset
+    database.exec(`
+        CREATE TABLE IF NOT EXISTS pull 
         (
-            id          TEXT        NOT NULL,
-            member      TEXT        NOT NULL,
-            account     TEXT        NOT NULL,            
-            shard       TEXT        NOT NULL,
-            rarity      TEXT        NOT NULL,            
-            total       INTEGER     NOT NULL,
-            session     TEXT        NOT NULL,
-            timestamp   TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
-            FOREIGN KEY (id, account) REFERENCES account(id, account) ON DELETE CASCADE,
-            FOREIGN KEY (id, account, session) REFERENCES session(id, account, session) ON DELETE CASCADE
-        )    
-    `)
+            member_id       TEXT NOT NULL,
+            account_id      TEXT NOT NULL,            
+            source          TEXT NOT NULL,
+            count           INTEGER NOT NULL,
+            session         TEXT NOT NULL,
+            timestamp       TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            FOREIGN KEY (member_id, account_id) REFERENCES account(member_id, account_id) ON DELETE CASCADE ON UPDATE CASCADE,
+            FOREIGN KEY (member_id, account_id, session) REFERENCES session(member_id, account_id, session) ON DELETE CASCADE
+        )
+    `);
 
-    database.exec
-    (`
-        CREATE TABLE IF NOT EXISTS champion
+    database.exec(`
+        CREATE TABLE IF NOT EXISTS reset 
         (
-            id          TEXT        NOT NULL,
-            member      TEXT        NOT NULL,
-            account     TEXT        NOT NULL,
-            source      TEXT,                    
-            shard       TEXT,        
-            rarity      TEXT,        
-            total       INTEGER     default 0,
-            champion    TEXT        NOT NULL,
-            session     TEXT        NOT NULL,
-            timestamp   TEXT        DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
-            FOREIGN KEY (id, account) REFERENCES account(id, account) ON DELETE CASCADE,
-            FOREIGN KEY (id, account, session) REFERENCES session(id, account, session) ON DELETE CASCADE
-        )    
-    `)
+            member_id       TEXT NOT NULL,
+            account_id      TEXT NOT NULL,            
+            source          TEXT NOT NULL,
+            rarity          TEXT NOT NULL,            
+            total           INTEGER NOT NULL,
+            session         TEXT NOT NULL,
+            timestamp       TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            FOREIGN KEY (member_id, account_id) REFERENCES account(member_id, account_id) ON DELETE CASCADE ON UPDATE CASCADE,
+            FOREIGN KEY (member_id, account_id, session) REFERENCES session(member_id, account_id, session) ON DELETE CASCADE
+        )
+    `);
+
+    database.exec(`
+        CREATE TABLE IF NOT EXISTS champion 
+        (
+            member_id       TEXT NOT NULL,
+            account_id      TEXT NOT NULL,
+            source          TEXT,
+            rarity          TEXT,        
+            total           INTEGER DEFAULT 0,
+            champion        TEXT NOT NULL,
+            session         TEXT NOT NULL,
+            timestamp       TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            FOREIGN KEY (member_id, account_id) REFERENCES account(member_id, account_id) ON DELETE CASCADE ON UPDATE CASCADE,
+            FOREIGN KEY (member_id, account_id, session) REFERENCES session(member_id, account_id, session) ON DELETE CASCADE
+        )
+    `);
 }
+
+export { create as Mercy };
+
 
 
 export { Mercy }

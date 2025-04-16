@@ -4,8 +4,8 @@ import { EmbedManager, Schema }                             from '../../../utili
 async function accountLanding(interaction = new CommandInteraction())
 { 
 
-    interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-home').create());
-    interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-home').create());
+    interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-account-landing').create());
+    interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-account-landing').create());
 
 
 }

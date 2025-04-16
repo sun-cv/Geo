@@ -4,8 +4,8 @@
         {
             "legendary": 
             {
-                "start": 200,
-                "base": 0.5,
+                "start":    200,
+                "base":     0.5,
                 "increase": 5
             }
         },
@@ -13,21 +13,21 @@
         {
             "legendary": 
             {
-                "start": 200,
-                "base": 0.5,
+                "start":    200,
+                "base":     0.5,
                 "increase": 5
             }
         },
         "primal": 
         {
             "legendary": {
-                "start": 75,
-                "base": 1,
+                "start":    75,
+                "base":     1,
                 "increase": 1
             },
             "mythical": {
-                "start": 200,
-                "base": 0.5,
+                "start":    200,
+                "base":     0.5,
                 "increase": 10
             }
         },
@@ -35,15 +35,22 @@
         {
             "legendary": 
             {
-                "start": 12,
-                "base": 6,
+                "start":    12,
+                "base":     6,
                 "increase": 2
             }
         },
         "prism": 
         {
+            "legendary": 
+            {
+                "start":    0,
+                "base":     6,
+                "increase": 0
+            }
         }
     },
+    
     "emoji":
     {
         "ancient":  "<:Ancient:1202496071104733225>",

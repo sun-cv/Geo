@@ -2,14 +2,23 @@
 
 class Flag 
 {
-    constructor(initialValue = false) 
+    constructor(initialValue = false, key = null, parent = null) 
     {
         this.value = initialValue;
+        this.key = key;
+        this.parent = parent;
     }
 
     set(value = true) 
     {
-        this.value = value;
+        if (this.parent?._exclusive && value) 
+        {
+            this.parent._setOnly(this.key);
+        } 
+        else 
+        {
+            this.value = value;
+        }
     }
 
     get() 
@@ -42,54 +51,98 @@ class Flag
 
 class Flags 
 {
-    constructor(flags = {}) 
+    constructor(flags = {}, exclusive = false) 
     {
+        this._exclusive = exclusive;
+
         if (Array.isArray(flags)) 
         {
             for (const key of flags) 
             {
-                this[key] = new Flag(false);
+                this[key] = new Flag(false, key, this);
             }
         } 
         else 
         {
             for (const [key, value] of Object.entries(flags)) 
             {
-                this[key] = new Flag(value);
+                this[key] = new Flag(value, key, this);
             }
+
+            if (exclusive) this._enforceExclusivity();
         }
     }
 
     all() 
     {
-        return Object.fromEntries
-        (
-            Object.entries(this).map(([key, flag]) => [key, flag.get()])
-        );
+        return Object.fromEntries(Object.entries(this).filter(([_, flag]) => flag instanceof Flag).map(([key, flag]) => [key, flag.get()]));
     }
 
     load(data) 
     {
         for (const [key, value] of Object.entries(data)) 
         {
-            if (this[key]) 
+
+            if (this[key] instanceof Flag) 
             {
                 this[key].set(value);
+            }
+            
+        }
+
+        if (this._exclusive) this._enforceExclusivity();
+    }
+
+    getActive() 
+    {
+        for (const [key, flag] of Object.entries(this)) 
+        {
+            if (flag instanceof Flag && flag.get()) return key;
+        }
+        return null;
+    }
+
+    _setOnly(activeKey) 
+    {
+        for (const [key, flag] of Object.entries(this)) 
+        {
+            if (flag instanceof Flag) 
+            {
+                flag.value = (key === activeKey);
             }
         }
     }
 
-    static from(input, defaults) 
+    _enforceExclusivity() 
     {
-        const flags = new Flags(defaults);
+        let found = false;
 
-        if (input) 
+        for (const [key, flag] of Object.entries(this)) 
         {
-            flags.load(input);
+            if (!(flag instanceof Flag)) continue;
+
+            if (flag.get()) 
+            {
+                if (found) flag.clear();
+                else       found = true;
+            }
         }
+
+        if (!found) 
+        {
+            const firstKey = Object.keys(this).find(k => this[k] instanceof Flag);
+            if (firstKey) this[firstKey].set(true);
+        }
+    }
+
+    static from(input, defaults, { exclusive = false } = {}) 
+    {
+        const flags = new Flags(defaults, exclusive);
+        if (input) flags.load(input);
         return flags;
     }
 }
+
 
 
 

@@ -25,7 +25,11 @@ class Input
 
     static menu(interaction)
     {
-        return interaction.values
+        if (interaction.values)
+        {
+            return interaction.values
+        }
+        return [false];
     }
 }
 

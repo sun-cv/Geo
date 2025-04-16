@@ -42,7 +42,6 @@ class AccountCache extends Collection
     {
         super();
 
-
         if (!registry.account.has(member.id)) 
         {
             registry.account.set(member.id, this);
@@ -60,7 +59,7 @@ class AccountCache extends Collection
         log.trace(`Retrieving cache for account '${accountName}'`);
         return super.get(accountName);
     }
-    
+   
     has(accountName)
     {
         const exists = super.has(accountName);

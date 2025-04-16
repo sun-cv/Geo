@@ -16,12 +16,12 @@ class Parser
     {     
         const buffer   = {};
 
-        for (const { shard, rarity, total, lifetime, lastAdded, lastReset, lastChampion } of data) 
+        for (const { source, rarity, total, lifetime, session, lastAdded, lastReset, lastChampion } of data) 
         {
-            buffer[shard] ??= {};
-            buffer[shard][rarity] ??= {};
+            buffer[source] ??= {};
+            buffer[source][rarity] ??= {};
             
-            Object.assign(buffer[shard][rarity], { total, lifetime, lastAdded, lastReset, lastChampion });
+            Object.assign(buffer[source][rarity], { total, lifetime, session, lastAdded, lastReset, lastChampion });
         }
         return buffer;
     }

@@ -1,8 +1,7 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder }    from "discord.js";
 import { Input, Schema }                                            from '../../../utility/index.js'
-import { template }                                                 from "../../data/template/mercy.js";
-import { getMercyChance }                                           from "./system/calculate.js";
-import { error }                                                    from "../../data/template/generic.js";
+import { template }                                                 from "../../data/template/templateMercy.js";
+import { error }                                                    from "../../data/template/templateGeneric.js";
 
 async function log(interaction = new CommandInteraction())
 {

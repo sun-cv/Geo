@@ -28,12 +28,16 @@ const data =
             const { account_name }              = Input.modal(interaction);
 
             const member                        = mercy.initialize(interaction);
+
             if (member.account.cache.has(account_name))
             {
                 return interaction.editReply({ content: `${account_name} already exists`, flags: MessageFlags.Ephemeral });
             }
+
             member.account.create(account_name);
+            member.account.updateAccounts();
             member.update();
+            
             navigate.member(member).return(interaction);
         }
     }),
@@ -52,7 +56,7 @@ const data =
             return Component
                 .modal  (this.meta.id)
                 .title  ('Delete account')
-                .addTextInput('account_name', 'Confirm deletion by entering account name:', TextInputStyle.Short, true)
+                .addTextInput('account_name', 'Confirm deletion by entering account name:', TextInputStyle.Short, true, "WARNING - this cannot be undone")
                 .build();
         },
 
@@ -75,7 +79,51 @@ const data =
            
             navigate.member(member).return(interaction);
         }
-    })
+    }),
+
+        'account-name': Schema.modal
+    ({
+        meta: { id: `modal-mercy-account-name` },
+
+        flag:
+        {
+            update:             true,
+        },
+
+        load: function(interaction)
+        {
+            return Component
+                .modal  (this.meta.id)
+                .title  ('Change name')
+                .addTextInput('account_name', 'Enter your new account name:', TextInputStyle.Short, true)
+                .build();
+        },
+
+        execute: function(interaction) 
+        {
+            const { mercy }                     = interaction.client
+            const { account_name }              = Input.modal(interaction);
+
+            const member                        = mercy.initialize(interaction);
+            const account                       = member.account.getActive()
+
+            if (member.account.cache.has(account_name))
+            {
+                return interaction.editReply({ content: `${account_name} already exists`, flags: MessageFlags.Ephemeral });
+            }
+
+            account.accountChange   = account.account;
+            account.account         = account_name;
+
+            console.log(member)
+
+            member.updateAccountRecord(account.accountChange, account.account)
+
+            account.update();
+
+            navigate.member(member).return(interaction);
+        }
+    }),
 }
 
 

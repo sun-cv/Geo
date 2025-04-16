@@ -119,7 +119,7 @@ class ComponentManager
             try 
             {
                 const data = this.registry.button.get(buttonID);
-               
+              
                 this.button.addComponents(data.load(this.interaction));
                 log.trace(`${Text.set(buttonID).constrain(20)} button load executed`)
 

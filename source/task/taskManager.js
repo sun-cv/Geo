@@ -45,7 +45,7 @@ class TaskManager
     {
         if (!task || !task.data || !task.data.schedule) 
         {
-            log.error(`Invalid task provided: ${task?.meta?.id || "Unknown"}`);
+            log.error(`Invalid task provided: ${task?.meta?.id || 'Unknown'}`);
             return;
         }
 
@@ -53,7 +53,7 @@ class TaskManager
 
         this.queue.push({task, argument, attempt: task.data.attempt});
 
-        log.trace(`Pushed task "${task.meta.id}" into task queue. Place in queue: ${this.queue.length }`);
+        log.trace(`Pushed task '${task.meta.id}' into task queue. Place in queue: ${this.queue.length }`);
     }
 
     async scheduleTask(task)
@@ -83,20 +83,20 @@ class TaskManager
         try 
         {
             await task.execute(...argument);
-            log.admin(`Task "${task.meta.id}" executed. Next run at: ${getNextExecutionTime(task.data.schedule)}`);
+            log.admin(`Task '${task.meta.id}' executed. Next run at: ${getNextExecutionTime(task.data.schedule)}`);
         } 
         catch (error)
         {
-            log.error(`Task "${task.meta.id}" failed: ${error.message}`);
+            log.error(`Task '${task.meta.id}' failed: ${error.message}`);
 
             if (task.flag.reattempt && attempt > 0) 
             {
-                log.debug(`Requeueing task "${task.meta.id}" (${attempt} attempts left).`);
+                log.debug(`Requeueing task '${task.meta.id}' (${attempt} attempts left).`);
                 this.queue.push({ task, argument, attempt: attempt - 1 });
             } 
             else 
             {
-                log.error(`Unable to queue task "${task.meta.id}" pushing to failed queue. ${task.flag.reattempt ? "No attempts left." : "Reattempts disabled."} Position in queue: ${this.failed.length}`);
+                log.error(`Unable to queue task '${task.meta.id}' pushing to failed queue. ${task.flag.reattempt ? "No attempts left." : "Reattempts disabled."} Position in queue: ${this.failed.length}`);
                 this.failed.push({ task, argument, attempt})
             }
         }
@@ -121,13 +121,16 @@ class TaskManager
 export { TaskManager }
 
 
-function formatAMPM(date) {
-    return date.toLocaleString('en-US', {
+function formatAMPM(date) 
+{
+    return date.toLocaleString('en-US', 
+    {
         hour12: true,
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-    }) + ' ' + date.toLocaleDateString('en-US', {
+    }) + ' ' + date.toLocaleDateString('en-US', 
+    {
         month: '2-digit',
         day: '2-digit',
         year: 'numeric',

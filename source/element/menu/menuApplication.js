@@ -1,7 +1,7 @@
 import { Component, EmbedManager, Schema }  from "../../../utility/index.js";
 import { Input }                            from "../../../utility/index.js";
 import { applicationConfig }                from "../../data/config/application.js";
-import { template }                         from "../../data/template/application.js";
+import { template }                         from "../../data/template/templateApplication.js";
 
 const data = 
 {

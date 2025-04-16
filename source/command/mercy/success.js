@@ -1,7 +1,7 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder }    from "discord.js";
 import { Input, Schema }                                            from '../../../utility/index.js'
-import { template }                                                 from "../../data/template/mercy.js";
-import { error }                                                    from "../../data/template/generic.js";
+import { template }                                                 from "../../data/template/templateMercy.js";
+import { error }                                                    from "../../data/template/templateGeneric.js";
 import Shards                                                       from '../../data/mercy/shards.json' with { type: 'json' }
 async function success(interaction = new CommandInteraction())
 {
@@ -89,6 +89,7 @@ const command = Schema.command
                     { name: 'void',     value: 'void'   },
                     { name: 'primal',   value: 'primal' },
                     { name: 'sacred',   value: 'sacred' },
+                    { name: 'prism',    value: 'prism'  },
                 ))
         .addIntegerOption(option =>
             option.setName('count')

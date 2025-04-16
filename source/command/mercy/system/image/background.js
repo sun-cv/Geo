@@ -1,14 +1,15 @@
 
-import { createCanvas, loadImage } from '@napi-rs/canvas'
-import source from '../../../../data/mercy/template.json' with { type: 'json' };
-import { log } from '../../../../../utility/index.js';
-import path from 'path';
+import { loadImage }    from '@napi-rs/canvas'
+import source           from '../../../../data/mercy/template.json' with { type: 'json' };
+import { log }          from '../../../../../utility/index.js';
 
 class Background
 {
-    constructor(canvas, account)
+    constructor(session, account)
     {
-        this.canvas     = canvas
+        this.session    = session
+        this.canvas     = session.canvas
+        this.context    = session.context
 
         this.account    = account;
         this.selection  = account.data.template.selection;
@@ -96,9 +97,10 @@ class Background
         this.height = this.image.height;
     }
 
-    async draw(context)
+    async draw()
     {
-        await context.drawImage(this.image, 0, 0, this.width, this.height)
+        await this.context.drawImage(this.image, 0, 0, this.width, this.height)
+        
     }
 }
 

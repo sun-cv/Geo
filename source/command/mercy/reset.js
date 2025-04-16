@@ -1,8 +1,7 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder }    from "discord.js";
 import { Input, Schema }                                            from '../../../utility/index.js'
-import { template }                                                 from "../../data/template/mercy.js";
-import { getMercyChance }                                           from "./system/calculate.js";
-import { error }                                                    from "../../data/template/generic.js";
+import { error }                                                    from "../../data/template/templateGeneric.js";
+import { template }                                                 from "../../data/template/templateMercy.js";
 
 async function reset(interaction = new CommandInteraction())
 {
@@ -25,12 +24,10 @@ async function reset(interaction = new CommandInteraction())
         account.pull(shard, count); // Optionally updates pull count for accurate record keeping before reset.
     }
 
-    console.log(account.mercy.ancient)
-
     account.reset(shard, rarity, champion);
     account.update();    
     
-    interaction.followUp({ content: template.reset(member, account.session.lastChampion(), getMercyChance(shard, rarity, account.session.lastReset().total))})
+    interaction.followUp({ content: `${template.command.reset.pull(interaction)}${template.command.reset.chance(interaction)}`})
 }
 
 

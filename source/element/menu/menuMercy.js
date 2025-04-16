@@ -1,4 +1,4 @@
-import { Component, EmbedManager, Schema }  from "../../../utility/index.js";
+import { Component, EmbedManager, navigate, Schema }  from "../../../utility/index.js";
 import { Text, Input }                      from "../../../utility/index.js";
 
 const data = 
@@ -6,12 +6,12 @@ const data =
     'select-account': Schema.menu
     ({
         meta: { id: 'menu-mercy-select-account' },
-
+    
         flag:
         {
             navigation: true,
         },
-    
+        
         load: function(interaction)
         {
             const { mercy } = interaction.client  
@@ -29,13 +29,15 @@ const data =
         execute: function(interaction) 
         {
             const { mercy }         = interaction.client;
-            const [account_name]    = Input.menu(interaction);
-        
+            const [ account_name ]  = Input.menu(interaction);
             const member            = mercy.initialize(interaction);
-            const account           = member.account.get(account_name);
-            account.setActive();
         
-            interaction.editReply(EmbedManager.set(interaction).load('mercy-account-settings').create())
+            if (account_name)
+            {
+                const account       = member.account.get(account_name);
+            }
+
+            interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-account-home').create())
         }
     })
 }

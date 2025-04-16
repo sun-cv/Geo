@@ -19,7 +19,7 @@ const data = Schema.task
 
     data:
     {
-        schedule:       ` 0 30 * * * *`,
+        schedule:       ` 10 * * * * *`,
         argument:       ['client'],
         attempt:        3
     },

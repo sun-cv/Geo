@@ -1,6 +1,6 @@
 import { EmbedBuilder }         from '@discordjs/builders';
 import { Embed, Schema, Text }  from '../../../utility/index.js';
-import { template }             from '../../data/template/clan.js';
+import { template }             from '../../data/template/templateClan.js';
 
 const data = 
 {

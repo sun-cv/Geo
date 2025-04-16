@@ -91,7 +91,7 @@ class Member
         this.manager    = manager
 
         this.id         = profile.id;
-        this.member     = profile.member;
+        this.username   = profile.username;
         this.accounts   = JSON.parse(profile.accounts)   || [];
         this.data       = JSON.parse(profile.data)       || {};
         this.settings   = JSON.parse(profile.settings)   || new MemberSettings();
@@ -101,7 +101,7 @@ class Member
         this.lastActive = Timestamp.iso();
         this.registered = profile.registered;
 
-        log.debug(`Instantiated ${this.member}'s member profile`);
+        log.debug(`Instantiated ${this.username}'s member profile`);
     }
 
     update()
@@ -112,6 +112,13 @@ class Member
     updateAccounts()
     {
         this.manager.updateAccounts(this);
+    }
+
+    updateAccountRecord(oldAccount, newAccount)
+    {
+        this.accounts = this.accounts.filter((account) => account != oldAccount);
+        this.accounts.push(newAccount)
+        this.update();    
     }
 
 }
