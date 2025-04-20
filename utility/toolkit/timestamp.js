@@ -1,3 +1,6 @@
+import parser                                   from 'cron-parser';
+
+
 class Timestamp {
     static options = { timeZone: 'America/New_York' }; // Default timezone
 
@@ -90,12 +93,36 @@ class Timestamp {
     {
         return (pastStamp) => 
         {
-            const { month, day} = this.formatDate(pastStamp);
-            return `${month}/${day}`;
+            const { month, day, year} = this.formatDate(pastStamp);
+            return `${month}/${day}/${year}`;
         }
+    }
+    static shortSession(session)
+    {
+        if (!session) return ' '
+        return session.split('/').slice(0, 2).join('/');
     }
 
 
+    static executionTime(schedule, timezone = 'America/New_York') 
+    {
+        const interval  = parser.parseExpression(schedule, { currentDate: new Date(), tz: timezone });
+        const date      = interval.next().toDate();
+    
+        return date.toLocaleString('en-US', 
+        {
+            hour12: true,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        }) + ' ' + date.toLocaleDateString('en-US', 
+        {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+        });
+    }
+    
 }
 
 export { Timestamp };

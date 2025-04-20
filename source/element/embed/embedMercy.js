@@ -1,7 +1,11 @@
+import fs                       from 'fs';
+import path                     from 'path';
+
 import { EmbedBuilder }         from '@discordjs/builders';
-import { Embed, Schema, Text }   from '../../../utility/index.js';
+import { Embed, Schema, Text }  from '../../../utility/index.js';
 import { template }             from '../../data/template/templateMercy.js';
 
+import templates                from '../../data/mercy/template.json' with { type: 'json'}
 
 
 const data = 
@@ -70,7 +74,7 @@ const data =
 
             const embed     = new EmbedBuilder().setColor(0xED8223).addFields
             (
-                { name: ' ', value: `${Text.set(`${member.member}'s Accounts`).constrain(58, { align: 'center', style: ['block_code']})}`, inline: false }
+                { name: ' ', value: `${Text.set(`${member.username}'s Accounts`).constrain(58, { align: 'center', style: ['block_code']})}`, inline: false }
             )
         
             sorted.forEach((account) =>
@@ -144,7 +148,88 @@ const data =
             return embed;
         },
         execute: () => {}
-    })
+    }),
+
+
+
+    'mercy-account-template-home': Schema.embed
+    ({
+        meta: 
+        {
+            id: "embed-account-template-home"
+        },
+
+        row:
+        [
+            { menu: ['menu-account-select-template-static'] },
+            { menu: ['menu-account-select-template-rotate'] },    
+            { menu: ['menu-account-select-template-custom'] },
+            { button: ['button-back-small'] },
+        ],
+
+        load: function(interaction)
+        {        
+            const files         = fs.readdirSync(templates.directory)
+                                    .filter(file => file.endsWith('.png'))
+                                    .map(file => path.parse(file).name)
+                                    .sort((a, b) => a.localeCompare(b));
+        
+            const embed         = new EmbedBuilder().setColor(0xED8223);
+            const grouped       = {};
+        
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').filter(letter => letter !== 'Z');
+            
+            alphabet.forEach(letter => grouped[letter] = []);
+        
+            files.forEach(name => 
+            {
+                const first = name[0].toUpperCase();
+                if (grouped[first]) grouped[first].push(name);
+            });
+        
+            alphabet.forEach(letter => 
+            {
+                const names = grouped[letter];
+                embed.addFields({
+                    name: ` `, 
+                    value: `${Text.set(`${letter}`).constrain(17, { style: ['block_code']})}${names.length ? names.join('\n') : '_none_'}`,
+                    inline: true
+                });
+            });
+        
+            return embed;
+        }
+    }),
+
+    'mercy-account-mercy-display': Schema.embed
+    ({
+        meta: 
+        {
+            id: "embed-mercy-account-mercy-display"
+        },
+
+        load: function(interaction)
+        {
+            const { mercy } = interaction.client
+
+            const member    = mercy.initialize(interaction);
+            const sorted    = [...member.account.cache.values()].sort((a,b) => b.main - a.main);
+
+            const embed     = new EmbedBuilder().setColor(0xED8223)
+        
+            sorted.forEach((account) =>
+            {
+                embed.addFields({ name: ' ', value: template.command.mercy(account), inline: true });
+            })
+                 
+            Embed.set(embed).buffer(((3 - (sorted.length % 3)) % 3), 17, true);
+
+            return embed;
+        },
+
+        execute: function() {}
+    }),
+
 }
 
 

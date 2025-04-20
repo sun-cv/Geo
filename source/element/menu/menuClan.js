@@ -128,26 +128,35 @@ const data =
             return menu;
         },
 
-        execute: function(interaction) 
+        execute: async function(interaction) 
         {
             const { member, client: { guilds, clanManagement: { cache: { active, selection, clones }}}} = interaction;
-            const [value]   = Input.menu(interaction)
+            const value     = Input.menu(interaction)
             
             const guild     = guilds.cache.get(config.guildID);
-            const roles     = ['Officer']
+            await guild.members.fetch();
             
-            roles.push(active.get(interaction.member.id))
-            guild.members.fetch();
+            const officerRole   = 'Officer';
+            const clanRole      = active.get(member.id).role;
 
-            const members   = guild.members.cache.filter((member) => { roles.every((role) => { member.roles.cache.has(role)}) })
-            const ids       = members.map((member) => { member.id });
+            const roles         = [officerRole, clanRole];
 
-            clones.get(member.id).leadership.leader = ids
+            const clanOfficers  = guild.members.cache.filter(member =>
+                roles.every(role => member.roles.cache.has(role))
+            );
 
-            for (const user of value)
+            const officerIds    = clanOfficers.map(m => m.id);
+
+            clones.get(member.id).leadership.deputies = value;
+
+
+            for (const userId of value) 
             {
-                RoleAssignment.set(interaction).removeRole('Officer').addRole('Deputy')
-            }
+                if (officerIds.includes(userId)) 
+                {
+                    RoleAssignment.set(interaction).target(userId).removeRole('Officer').addRole('Deputy');
+                }
+            } 
 
             interaction.editReply(EmbedManager.set(interaction).load('embed-clan-management-home').modify(clanConfig.getModifier(selection.get(member.id))).create());
         }

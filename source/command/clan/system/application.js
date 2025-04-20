@@ -9,7 +9,7 @@ class ApplicationSystem
         this.registry       = system.registry;
         this.database       = system.database;
 
-        this.channel        = '1348387136155422751' 
+        this.channel        = '1142552905682010192' 
 
         this.cache          = 
         {
@@ -64,13 +64,18 @@ class ApplicationSystem
         return this.cache.application.get(member.id)
     }
 
+    hasApplicationRecord(member)
+    {
+        return this.database.hasApplicationRecord(member);
+    }
+
 
     createTransfer(member)
     {
         if (!this.cache.application.has(member.id))
         {
             log.trace(`Created ${member.user.username}'s account transfer`)
-            const [data]        = this.database.getApplicationRecord(member)
+            const data          = this.database.getApplicationRecord(member)
             const application   = new Application(this, data );
             application.request = 'transfer';
             application.status  = 'pending';
@@ -79,6 +84,15 @@ class ApplicationSystem
         log.trace(`Loaded ${member.user.username}'s account transfer`)
 
         return this.cache.application.get(member.id)
+    }
+
+    createTransferNoRecord(member, accountName)
+    {
+        log.trace(`Creating ${member.user.username}'s account transfer (no record)`)
+
+        this.cache.transfer.set(member.id, new Application(this, {id: member.id, member: member.user.username, account: accountName, request: 'transfer'}));
+
+        return this.cache.transfer.get(member.id)
     }
 
     getApplicationsByClan(clanName) 

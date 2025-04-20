@@ -49,7 +49,7 @@ class Image
         await this.background.draw();
         await this.overlay   .draw();
 
-        log.event(`Successfully generated Mercy image for ${this.account.member}`)
+        log.debug(`Successfully generated Mercy image for ${this.account.member.username}`)
     }
 
 

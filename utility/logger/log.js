@@ -14,7 +14,7 @@ class Log
         Log.instance    = this;
 
         this.logs       = new Collection();
-        this.logLevel   = "Trace";
+        this.logLevel   = "trace";
     }
 
     setLevel(level) 
@@ -31,12 +31,12 @@ class Log
         console.log(logString[level], `${Timestamp.hour()} :`, ...messages);
     }
 
-    trace(...args) { this.log("Trace", ...args); };
-    debug(...args) { this.log("Debug", ...args); };
-    event(...args) { this.log("Event", ...args); };
-    admin(...args) { this.log("Admin", ...args); };
-    error(...args) { this.log("Error", ...args); };
-    fatal(...args) { this.log("Fatal", ...args); };
+    trace(...args) { this.log("trace", ...args); };
+    debug(...args) { this.log("debug", ...args); };
+    event(...args) { this.log("event", ...args); };
+    admin(...args) { this.log("admin", ...args); };
+    error(...args) { this.log("error", ...args); };
+    fatal(...args) { this.log("fatal", ...args); };
 
     initiate(interaction)
     {
@@ -58,15 +58,15 @@ class Log
         const { member, tracer, values, data: { meta } } = interaction;
 
         const timestamp     = Timestamp.hour();
-        const logPrefix     = `[Event] ${timestamp} - ${Text.set(tracer.responseTime).constrain(5)} : ${member.user.username}`;
-        const adminPrefix   = `[Admin] ${timestamp} :`;
+        const logPrefix     = `[event] ${timestamp} - ${Text.set(tracer.responseTime).constrain(5)} : ${member.user.username}`;
+        const adminPrefix   = `[admin] ${timestamp} :`;
 
         const logMessages   = 
         {
             command:        `${logPrefix} used ${await this.constructCommand(interaction)}`,
             button:         `${logPrefix} is navigating ${meta.id}`,
             menu:           `${logPrefix} selected ${values}`,
-            modal: `${logPrefix} submitted modal ${meta.id}: ${interaction.isModalSubmit() ? JSON.stringify(Input.modal(interaction)) : ''}`,
+            modal:          `${logPrefix} submitted modal ${meta.id}: ${interaction.isModalSubmit() ? JSON.stringify(Input.modal(interaction)) : ''}`,
             message:        `${tracer.endTime}: ${member.user.username} {} > {}`,
         };
 

@@ -88,7 +88,7 @@ class Registry
         }  
         this.autocomplete.set(autocomplete.meta.id, autocomplete);
 
-        log.debug(`Registered autocomplete: ${autocomplete.meta.id}`)   
+        log.trace(`Registered autocomplete: ${autocomplete.meta.id}`)   
     }
 
     
@@ -102,7 +102,7 @@ class Registry
         }  
         this.command.set(command.meta.id, command);
 
-        log.debug(`Registered command: ${command.meta.id}`);
+        log.trace(`Registered command: ${command.meta.id}`);
     }
     
 
@@ -116,7 +116,7 @@ class Registry
             }
             this.embed.set(embed.meta.id, embed);
 
-            log.debug(`Registered embed: ${embed.meta.id}`);
+            log.trace(`Registered embed: ${embed.meta.id}`);
         }
     }
 
@@ -132,7 +132,7 @@ class Registry
             }
             this.button.set(button.meta.id, button);
 
-            log.debug(`Registered button: ${button.meta.id}`);
+            log.trace(`Registered button: ${button.meta.id}`);
         }
     }
 
@@ -148,7 +148,7 @@ class Registry
                 }
                 this.menu.set(menu.meta.id, menu);
     
-                log.debug(`Registered menu: ${menu.meta.id}`);
+                log.trace(`Registered menu: ${menu.meta.id}`);
             }
     }
 
@@ -164,7 +164,7 @@ class Registry
             }
             this.modal.set(modal.meta.id, modal);
 
-            log.debug(`Registered modal: ${modal.meta.id}`);
+            log.trace(`Registered modal: ${modal.meta.id}`);
         }
     }
 
@@ -184,7 +184,7 @@ class Registry
         }
         this.task.set(task.meta.id, task);
 
-        log.debug(`Registered ${task.meta.category} task: ${task.meta.id}`);
+        log.trace(`Registered ${task.meta.category} task: ${task.meta.id}`);
     }
 
 

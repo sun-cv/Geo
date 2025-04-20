@@ -51,7 +51,7 @@ class MercyUtil
     
         const formatted = percent < 1 ? `.${percent.toFixed(1).split('.')[1]}` : percent.toFixed(1);
     
-        return `${formatted} %`;
+        return `${formatted}%`;
     }
     
 

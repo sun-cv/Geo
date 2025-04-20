@@ -84,6 +84,12 @@ const data =
     ({
         meta: { id: 'button-application-transfer' },
 
+        flag: 
+        {
+            defer: false,
+        },
+
+
         permission:
         {
             require:
@@ -104,7 +110,7 @@ const data =
 
         execute: async (interaction) => 
         {
-            const { member, client: { clanManagement: { applications }} } = interaction;
+            const { member, client: { registry, clanManagement: { applications }} } = interaction;
 
             if (applications.cache.transfer.has(member.id))
             {
@@ -116,9 +122,19 @@ const data =
                 }
             }
 
-            applications.createTransfer(member);
-
-            return interaction.editReply(EmbedManager.set(interaction).load('embed-application-apply-home').create());
+            if (!applications.hasApplicationRecord(member))
+            {
+                const modal = registry.modal.get('modal-application-transfer-name');
+                registry.modal.cache.set(member.id, interaction.customId);
+        
+                await interaction.showModal(modal.load());
+            }
+            else
+            {
+                applications.createTransfer(member);
+                return interaction.reply(EmbedManager.set(interaction).load('embed-application-apply-home').create());
+            }
+            
         }
     }),
 
@@ -142,13 +158,13 @@ const data =
     
         execute: async function (interaction) 
         {
-            const { member, client: { clanManagement, clanManagement: { officersLounge, clan, clans, applications, applications: { cache } }}} = interaction;
+            const { member, client: { clanManagement, clanManagement: { officersTable, clan, clans, applications, applications: { cache } }}} = interaction;
 
             const application = applications.getApplication({id: cache.active.get(member.id)})
 
             if (application.status == 'declined')
             {
-                interaction.client.channels.cache.get(officersLounge).send(EmbedManager.set(interaction).load('embed-application-officer-notification-declined').create());
+                interaction.client.channels.cache.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-declined').create());
             }
                 
             if (application.status == 'accepted')
@@ -159,14 +175,14 @@ const data =
 
                 RoleAssignment.set(interaction).removeRole(...clans).addRole(application.clan)
 
-                interaction.client.channels.cache.get(officersLounge).send(EmbedManager.set(interaction).load('embed-application-officer-notification-accepted').create());
+                interaction.client.channels.cache.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-accepted').create());
                 interaction.client.channels.cache.get(clan[application.clan].channel.home).send(template.accepted(interaction, application));
             }
                     
             applications.updateApplication(application);
             applications.resetCache();
 
-            interaction.editReply(EmbedManager.set(interaction).load('embed-clan-management-home').create());
+            interaction.editReply(EmbedManager.set(interaction).load('embed-clan-management-home').modify(clanConfig.landing()).create());
         }
     }),
 
@@ -376,7 +392,7 @@ const data =
     
         execute: (interaction) => 
         {
-            const { member, client: {clanManagement: { officersLounge, applications }} } = interaction;
+            const { member, client: {clanManagement: { officersTable, applications }} } = interaction;
             
             const application = applications.getApplication(member);
             
@@ -389,8 +405,8 @@ const data =
                 
             interaction.editReply(EmbedManager.set(interaction).load('embed-application-apply-submit').create());
 
-            interaction.client.channels.cache.get(officersLounge).send(`📢 Attention @here!`);
-            interaction.client.channels.cache.get(officersLounge).send(EmbedManager.set(interaction).load('embed-application-officer-notification').create());
+            interaction.client.channels.cache.get(officersTable).send(`📢 Attention @here!`);
+            interaction.client.channels.cache.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification').create());
 
         }
     }),

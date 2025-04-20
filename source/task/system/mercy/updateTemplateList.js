@@ -27,7 +27,8 @@ function updateTemplateList()
         };
     }
 
-    const finalData = { template };
+    const directory = 'C:/coding/project/Geo/assets/template/mercy'
+    const finalData = { template, directory };
 
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, JSON.stringify(finalData, null, 4));

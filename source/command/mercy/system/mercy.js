@@ -25,9 +25,11 @@ class MercyTracker
     initialize(interaction)
     {
         const member = this.memberManager.get(interaction.member);
-        
+       
         if (member.new)
         {
+            log.event(`Greeting new Mercy member ${member.username}`)
+
             delete member.new;
             setTimeout(() =>{ this.greetMember(interaction, member)}, 2000)
         }

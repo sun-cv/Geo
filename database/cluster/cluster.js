@@ -2,16 +2,18 @@ import directory            from '../../configuration/environment/directory.json
 import { log, Text }        from '../../utility/index.js';
 import { Mercy }            from '../configuration/mercy.js';
 import { Clan }             from '../configuration/clan.js';
+import { System }           from '../configuration/system.js';
 
 
 class Cluster 
 {
     constructor() 
     {
-        this.databases   =
+        this.databases  =
         {
-            mercy: Mercy,
-            clan: Clan,
+            mercy:  Mercy,
+            clan:   Clan,
+            system: System
         }
 
         this.system;

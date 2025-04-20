@@ -1,6 +1,6 @@
 import fs               from 'fs/promises';
 import path             from 'path'
-import envDirectory     from '../../../../../configuration/environment/directory.json' with { type: "json" }
+import directory        from '../../../../../configuration/environment/directory.json' with { type: "json" }
 import { log, Schema }  from '../../../../../utility/index.js';
 
 
@@ -11,21 +11,24 @@ async function deleteMonth()
 {
     const now = Date.now();
     
-    for (const database of Object.values(envDirectory.cluster)) 
+    for (const database of Object.values(directory.cluster)) 
     {
-        for (const directory of Object.values(database.backup))
-            {
-            const files = await fs.readdir(directory);
+        for (const backupPath of Object.values(database.backup))
+        {
+            const folder = path.join(backupPath, 'month');
+            const files = await fs.readdir(folder);
         
             for (const file of files) 
             {
                 const dateMatch = file.match(/\d{4}-\d{2}-\d{2}/);
-                if (!dateMatch) continue;
+
+                if (!dateMatch) continue
+
                 const backupDate = new Date(dateMatch[0]).getTime();
                 const fileAgeDays = (now - backupDate) / DAY;
             
                 if (fileAgeDays < RETENTION) continue;
-                const filePath = path.join(directory, file);
+                const filePath = path.join(folder, file);
                 await fs.unlink(filePath);
             
                 log.admin(`Deleted backup: ${filePath}`);

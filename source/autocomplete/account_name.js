@@ -4,10 +4,11 @@ function account_name(interaction)
 {
     const { mercy } = interaction.client
     const member    = mercy.initialize(interaction);
+    const accounts  = member.accounts.map((account) => account.name);
 
-    log.trace(`Returning ${member.member}'s autocomplete account values: ${member.accounts}`)
+    log.trace(`Returning ${member.username}'s autocomplete account values: ${accounts}`)
 
-    return member.accounts;
+    return accounts;
 }
 
 const data = Schema.autocomplete

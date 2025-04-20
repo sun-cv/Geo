@@ -152,7 +152,7 @@ const data =
 
         load(interaction) 
         {
-            const templates = ['static', 'rotate', 'random', 'custom', 'text'];
+            const templates = ['static', 'rotate', 'random', 'custom', 'text⠀'];
 
             const { mercy }       = interaction.client;
             const member          = mercy.initialize(interaction);
@@ -226,7 +226,7 @@ const data =
         {
             return Component
                 .button (this.meta.id)
-                .label  (`${Text.set('mercy').constrain(19, {align: 'center', paddingChar: '⠀'})}`)
+                .label  (`${Text.set('⠀⠀ mercy⠀⠀⠀').constrain(17, {align: 'center', paddingChar: '⠀'})}`)
                 .style  ('Secondary')
         },
 
@@ -257,7 +257,7 @@ const data =
         {
             return Component
                 .button (this.meta.id)
-                .label  (`${Text.set('lifetime').constrain(19, {align: 'center', paddingChar: '⠀'})}`)
+                .label  (`${Text.set('lifetime').constrain(17, {align: 'center', paddingChar: '⠀'})}`)
                 .style  ('Secondary')
         },
 
@@ -288,7 +288,7 @@ const data =
         {
             return Component
                 .button (this.meta.id)
-                .label  (`${Text.set('session').constrain(19, {align: 'center', paddingChar: '⠀'})}`)
+                .label  (`${Text.set('session').constrain(17, {align: 'center', paddingChar: '⠀'})}`)
                 .style  ('Secondary')
         },
 
@@ -319,7 +319,7 @@ const data =
         {
             return Component
                 .button (this.meta.id)
-                .label  (`${Text.set('last added').constrain(19, {align: 'center', paddingChar: '⠀'})}`)
+                .label  (`${Text.set(' last added ').constrain(20, {align: 'center', paddingChar: '⠀'})}`)
                 .style  ('Secondary')
         },
 
@@ -350,7 +350,7 @@ const data =
         {
             return Component
                 .button (this.meta.id)
-                .label  (`${Text.set('last reset').constrain(19, {align: 'center', paddingChar: '⠀'})}`)
+                .label  (`${Text.set(' last reset ').constrain(19, {align: 'center', paddingChar: '⠀'})}`)
                 .style  ('Secondary')
         },
 
@@ -381,7 +381,7 @@ const data =
         {
             return Component
                 .button (this.meta.id)
-                .label  (`${Text.set('last champion').constrain(19, {align: 'center', paddingChar: '⠀'})}`)
+                .label  (`${Text.set(' last champion').constrain(19, {align: 'center', paddingChar: '⠀'})}`)
                 .style  ('Secondary')
         },
 
@@ -422,7 +422,7 @@ const data =
 
         execute: async function (interaction) 
         {
-            interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-account-home').modify(modifier.template).create());
+            interaction.editReply(EmbedManager.set(interaction).load('embed-account-template-home').create());
         }
     }),
 
@@ -459,7 +459,7 @@ const data =
             account.main = true
             account.update()
 
-            interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-account-home').modify(modifier.template).create());
+            interaction.editReply(EmbedManager.set(interaction).load('embed-mercy-account-home').create());
         },
     }),
 
@@ -505,8 +505,8 @@ const modifier =
             data.row = [];
             data.row.push
             (
-                { button:['button-account-settings-mercy', 'button-account-settings-lifetime', 'button-account-settings-session'] },
-                { button:['button-account-settings-lastAdded', 'button-account-settings-lastReset', 'button-account-settings-lastChampion'] },
+                { button:['button-account-tracking-mercy', 'button-account-tracking-lifetime', 'button-account-tracking-session'] },
+                { button:['button-account-tracking-lastAdded', 'button-account-tracking-lastReset', 'button-account-tracking-lastChampion'] },
                 { button:['button-back-small']}
             );
         },

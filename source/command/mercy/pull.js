@@ -19,7 +19,7 @@ async function pull(interaction = new CommandInteraction())
    
     account.pull(shard, count);
     account.update();
-   
+ 
     interaction.followUp({ content: template.command.pull(interaction)});
 }
 
@@ -66,6 +66,12 @@ const command = Schema.command
     data: new SlashCommandBuilder()
     	.setName('pull')
     	.setDescription('Track and log shard pulls')
+        .addIntegerOption(option =>
+            option.setName('count')
+                .setDescription('Number of shards to pull')
+                .setRequired(true)
+                .setMinValue(-999)
+                .setMaxValue(999))
         .addStringOption(option =>
             option.setName('shard')
                 .setDescription('Shard type to pull')
@@ -77,12 +83,6 @@ const command = Schema.command
                     { name: 'sacred',   value: 'sacred' },
                     { name: 'prism',    value: 'prism'  },
                 ))
-    	.addIntegerOption(option =>
-    		option.setName('count')
-    			.setDescription('Number of shards to pull')
-    			.setRequired(true)
-    			.setMinValue(-999)
-    			.setMaxValue(999))
     	.addStringOption(option =>
     		option.setName('account_name')
     			.setDescription('Specify alternate account (if not \'main\')')

@@ -1,15 +1,17 @@
-import { Timestamp } from "../../../../utility/index.js";
+import { Flag, Timestamp, log } from "../../../../utility/index.js";
 
 
 class Session
 {
-    constructor(account, existing)
+    constructor(account, session)
     {
-        this.pull       = existing?.pull         || false;
-        this.reset      = existing?.reset        || false;
-        this.champion   = existing?.champion     || false;
-        this.session    = existing?.session      || Timestamp.session();
-        this.timestamp  = existing?.timestamp    || Timestamp.iso();
+
+        this.pull       = new Flag(session?.pull)
+        this.reset      = new Flag(session?.reset)
+        this.champion   = new Flag(session?.champion)
+        
+        this.session    = session?.session      || Timestamp.session();
+        this.timestamp  = session?.timestamp    || Timestamp.iso();
 
         this.log        = new Logs();
     }
@@ -28,27 +30,27 @@ class Session
 
     logPull(shard, count)
     {
-        this.pull       = true;
+        this.pull.set()
         this.log.addPull({source: shard, count});
     }
 
     logReset(shard, rarity, champion, total)
     {
-        this.reset      = true;
+        this.reset.set()
         this.log.addReset({source: shard, rarity, total});
     };
 
     logChampion(shard, rarity, champion, total)
     {
-        this.champion   = true;
+        this.champion.set()
         this.log.addChampion({source: shard, rarity, champion, total});
     };
 
     refresh()
     {
-        this.pull       = false;
-        this.reset      = false;
-        this.champion   = false;
+        this.pull       .clear()
+        this.reset      .clear()
+        this.champion   .clear()
         this.session    = Timestamp.session();
         this.timestamp  = Timestamp.iso()
     }

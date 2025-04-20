@@ -13,7 +13,7 @@ class ClanManagement
 
         this.clan           = {};
         this.clans          = [];
-        this.officersLounge = '1253926801600811069'
+        this.officersTable  = '1194171099160784896'
        
         this.applications   = new ApplicationSystem(this);
 
@@ -84,91 +84,66 @@ class ClanManagement
 
 
 
-
 class Clan 
 {
-    constructor(data, applications) 
+    constructor(data = {}, applications = []) 
     {
-        this.clan               = data.clan
-        this.tier               = data.tier
-        this.tag                = data.tag
-        this.level              = data.level
-        this.role               = data.role
+        this.clan       = data.clan                         ?? 0;
+        this.tier       = data.tier                         ?? 0;
+        this.tag        = data.tag                          ?? null;
+        this.level      = data.level                        ?? 0;
+        this.role       = data.role                         ?? null;
 
-        this.channel            = data.channel
-        this.leadership         = data.leadership
-        this.member             = data.member
-        this.settings           = data.settings
-        this.statistics         = data.statistics
-        this.recruitment        = data.recruitment
+        this.channel    = 
+        {
+            home:           data.channel?.home              ?? '',
+            announcements:  data.channel?.announcements     ?? '',
+        };
 
-        this.applications       = applications;
+        this.leadership = 
+        {
+            leader:         data.leadership?.leader         ?? '',
+            deputies:       data.leadership?.deputies       ?? [],
+            lieutenants:    data.leadership?.lieutenants    ?? [],
+        };
+
+        this.member     = 
+        {
+            count:          data.member?.count              ?? 0,
+            list:           data.member?.list               ?? [],
+            active:         data.member?.active             ?? [],
+        };
+
+        this.settings   = 
+        {
+            autoAccept:     data.settings?.autoAccept       ?? false,
+            autoClear:      data.settings?.autoClear        ?? false,
+            transfers:      data.settings?.transfers        ?? false,
+            alts:           data.settings?.alts             ?? false,
+        };      
+
+        this.statistics = 
+        {     
+            clanboss:       data.statistics?.clanboss       ?? { clearing: [] },
+            hydra:          data.statistics?.hydra          ?? { clearing: [] },
+            chimera:        data.statistics?.chimera        ?? { clearing: [] },
+            cvc:            data.statistics?.cvc            ?? { tier: 0, points: 0, average: 0 },
+            siege:          data.statistics?.siege          ?? { tier: 0 },
+        };
+
+        this.recruitment = 
+        {
+            clanTag:        data.recruitment?.clanTag       ?? false,
+            message:        data.recruitment?.message       ?? '',
+            clanboss:       data.recruitment?.clanboss      ?? { custom: '', difficulty: null, keys: 0 },
+            hydra:          data.recruitment?.hydra         ?? { custom: '', difficulty: null, keys: 0 },
+            chimera:        data.recruitment?.chimera       ?? { custom: '', difficulty: null, keys: 0 },
+            cvc:            data.recruitment?.cvc           ?? { custom: '', required: false, tier: 0, points: 0, average: 0 },
+            siege:          data.recruitment?.siege         ?? { custom: '', required: false },
+        };
+
+        this.applications = applications;
     }
-};
+}
 
-
-export { ClanManagement }
-
-
-
-
-// class Clan 
-// {
-//     constructor() 
-//     {
-//         this.clan               = 0
-//         this.tier               = 0;
-//         this.tag                = null;
-//         this.level              = 0;
-//         this.role               = null;
-
-//         this.channel            =
-//         {
-//             home:               '',
-//             announcements:      '',
-//         }
-
-//         this.leadership         =
-//         {
-//             leader:             '',
-//             deputies:           [],
-//             lieutenants:        [],
-//         }
-
-//         this.member             = 
-//         {
-//             count:              0,
-//             list:               [],
-//             active:             [],
-//         };
-        
-//         this.settings           =
-//         {
-//             autoAccept:         false,
-//             autoClear:          false,
-//             transfers:          false,
-//             alts:               false,
-             
-//         }
-
-//         this.statistics         = 
-//         {
-//             clanboss:           { clearing: [] },
-//             hydra:              { clearing: [] },
-//             chimera:            { clearing: [] },
-//             cvc:                { tier: 0, points: 0, average: 0 },
-//             siege:              { tier: 0  }
-//         };
-
-//         this.recruitment        = 
-//         {
-//             clanTag:            false,
-//             message:            '',
-//             clanboss:           { custom: '', difficulty: null, keys: 0  },
-//             hydra:              { custom: '', difficulty: null, keys: 0  },
-//             chimera:            { custom: '', difficulty: null, keys: 0  },
-//             cvc:                { custom: '', required: false, tier: 0, points: 0, average: 0 },
-//             siege:              { custom: '', required: false }
-//         };
-//     }
-// };
+export { ClanManagement } 

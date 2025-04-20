@@ -34,6 +34,38 @@ const data =
         }
     }),
    
+
+    'application-transfer-name': Schema.modal
+    ({
+        meta: { id: `modal-application-transfer-name` },
+
+        flag:
+        {
+            update:             true,
+        },
+
+        load: function(interaction)
+        {
+            return Component
+                .modal  (this.meta.id)
+                .title  ('Transfer')
+                .addTextInput('account_name', 'Enter your account name:', TextInputStyle.Short, true)
+                .build();
+        },
+
+        execute: function(interaction) 
+        {
+            const { member, client: { clanManagement: { applications }} } = interaction;
+    
+            const { account_name }  = Input.modal(interaction);
+            applications.createTransferNoRecord(member, account_name);
+
+            interaction.followUp(EmbedManager.set(interaction).load('embed-application-apply-home').create());
+        }
+    }),
+
+
+    
     'application-apply-message': Schema.modal
     ({
         meta: { id: `modal-application-apply-message` },

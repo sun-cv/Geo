@@ -3,16 +3,18 @@ import { Input, Schema }                                            from '../../
 import { template }                                                 from "../../data/template/templateMercy.js";
 import { error }                                                    from "../../data/template/templateGeneric.js";
 import Shards                                                       from '../../data/mercy/shards.json' with { type: 'json' }
+
+
 async function success(interaction = new CommandInteraction())
 {
     const { mercy }                                     = interaction.client
-    const input                                         = Input.initialize(interaction);
+    const input                                         = Input.command(interaction);
     const { count, start, event, account_name, share }  = input;
     
     const [shard, rarity = 'legendary']                 = input.shard.split('.');
 
     const member                                        = mercy.initialize(interaction);
-    const account                                       = member.getAccount(account_name);
+    const account                                       = member.account.get(account_name);
 
     if  (!account) 
     {
@@ -29,11 +31,11 @@ async function success(interaction = new CommandInteraction())
         const current = initial + i;
         return 1 - (adjustedBaseChance + Math.max(0, current - mercyStart + 1) * increase) / 100;
 
-    }).reduce((acc, failChance) => acc * Math.max(failChance, 0.01), 1);
+    }).reduce((accumulator, failChance) => accumulator * Math.max(failChance, 0.01), 1);
 
     const successChance = Math.min(100, (1 - totalFailChance) * 100);
 
-    return interaction.followUp({ content: template.success(member, initial, shard, rarity, count, successChance) });
+    return interaction.followUp({ content: template.command.success(member, initial, shard, rarity, count, successChance) });
 }
 
 
@@ -87,7 +89,8 @@ const command = Schema.command
                 .addChoices(
                     { name: 'ancient',  value: 'ancient'},
                     { name: 'void',     value: 'void'   },
-                    { name: 'primal',   value: 'primal' },
+                    { name: 'primal legendary',   value: 'primal.legendary' },
+                    { name: 'primal mythical',   value: 'primal.mythical' },
                     { name: 'sacred',   value: 'sacred' },
                     { name: 'prism',    value: 'prism'  },
                 ))
@@ -114,13 +117,13 @@ const command = Schema.command
         .addStringOption(option =>
             option.setName('account_name')
                 .setDescription('Specify alternate account (if not \'main\')')
-                .setAutocomplete(true))
-    	.addStringOption(option =>
-    		option.setName('share')
-    			.setDescription('Share your calculation')
-    			.addChoices(
-    				{ name: 'true',     value: 'true'   }
-                )),
+                .setAutocomplete(true)),
+    	// .addStringOption(option =>
+    	// 	option.setName('share')
+    	// 		.setDescription('Share your calculation')
+    	// 		.addChoices(
+    	// 			{ name: 'true',     value: 'true'   }
+        //         )),
 
     execute: success
 });

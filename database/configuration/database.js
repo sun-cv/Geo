@@ -37,8 +37,10 @@ class Database
 
     has(table, column, value)
     {
-        const exists = !!this.database.prepare(`SELECT 1 FROM ${table} WHERE ${column} = ?`).get(value)
-        log.trace(`data  ${exists ? 'found' : 'not found'} for ${value}`);
+        const exists = !!this.database.prepare(`SELECT 1 FROM ${table} WHERE ${column} = ?`).get(value);
+
+        log.trace(`data ${exists ? 'found' : 'not found'} for ${value}`);
+        
         return exists;
     }
 

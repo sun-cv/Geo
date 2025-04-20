@@ -1,15 +1,15 @@
-import { FileManager } from '../../utility/index.js';
-import cron from 'node-cron'; 
-import parser from 'cron-parser';
+import cron                                     from 'node-cron'; 
+import parser                                   from 'cron-parser';
 
-import { log, Text } from '../../utility/index.js'
+import { log, Text, FileManager, PathAccess, Timestamp }   from '../../utility/index.js'
 
 
 class TaskManager
 {
-    constructor(client, registry)
+    constructor(client, cluster, registry)
     {
         this.client     = client;
+        this.cluster    = cluster;
         this.registry   = registry;
 
         this.queue      = []
@@ -20,6 +20,13 @@ class TaskManager
         this.argument =
         {
             client: this.client,
+
+            database:
+            {
+                system: this.cluster.system,
+                mercy:  this.cluster.mercy,
+                clan:   this.cluster.clan
+            }
         }
     }
 
@@ -49,8 +56,8 @@ class TaskManager
             return;
         }
 
-        const argument = task.data.argument.map(arg => this.argument[arg]);
-
+        const argument = PathAccess.getAll(this.argument, task.data.argument)
+        
         this.queue.push({task, argument, attempt: task.data.attempt});
 
         log.trace(`Pushed task '${task.meta.id}' into task queue. Place in queue: ${this.queue.length }`);
@@ -65,7 +72,7 @@ class TaskManager
             this.runTask();
         })
         
-        log.debug(`task ${Text.set(`${task.meta.id}`).constrain(25)} scheduled. Next execution at: ${getNextExecutionTime(task.data.schedule)}`);
+        log.debug(`task ${Text.set(`${task.meta.id}`).constrain(25)} scheduled. Next execution at: ${Timestamp.executionTime(task.data.schedule)}`);
      }
 
 
@@ -83,11 +90,11 @@ class TaskManager
         try 
         {
             await task.execute(...argument);
-            log.admin(`Task '${task.meta.id}' executed. Next run at: ${getNextExecutionTime(task.data.schedule)}`);
+            log.admin(`Task '${task.meta.id}' executed. Next run at: ${Timestamp.executionTime(task.data.schedule)}`);
         } 
         catch (error)
         {
-            log.error(`Task '${task.meta.id}' failed: ${error.message}`);
+            log.error(`Task '${task.meta.id}' failed: ${error}`);
 
             if (task.flag.reattempt && attempt > 0) 
             {
@@ -119,28 +126,3 @@ class TaskManager
 }
 
 export { TaskManager }
-
-
-function formatAMPM(date) 
-{
-    return date.toLocaleString('en-US', 
-    {
-        hour12: true,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-    }) + ' ' + date.toLocaleDateString('en-US', 
-    {
-        month: '2-digit',
-        day: '2-digit',
-        year: 'numeric',
-    });
-}
-
-
-function getNextExecutionTime(schedule, timezone = 'America/New_York') 
-{
-        const interval = parser.parseExpression(schedule, { currentDate: new Date(), tz: timezone });
-        return formatAMPM(interval.next().toDate());
-}
-

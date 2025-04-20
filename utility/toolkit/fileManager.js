@@ -123,7 +123,7 @@ class FileManager
     {
         if (!fs.existsSync(directory))
         {
-            log.debug(`Creating directry: ${directory}`);
+            log.debug(`Creating directory: ${directory}`);
             fs.mkdirSync(directory, { recursive: true})
         }
     }

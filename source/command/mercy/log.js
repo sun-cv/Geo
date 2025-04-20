@@ -22,7 +22,7 @@ async function log(interaction = new CommandInteraction())
     account.log(source, rarity, champion, count);
     account.update();    
     
-    // interaction.followUp({ content: template.reset(member, account.session.lastChampion(), getMercyChance(shard, rarity, account.session.lastReset().total))})
+    return interaction.followUp({ content: template.command.log({source, rarity, champion, count}), flags: MessageFlags.Ephemeral})
 }
 
 
@@ -89,6 +89,8 @@ const command = Schema.command
                 { name: 'remnant',      value: 'remnant'    },
                 { name: 'doomtower',    value: 'doomtower'  },
                 { name: 'reward',       value: 'reward'     },
+                { name: 'event',        value: 'event'      },
+                { name: 'siege',        value: 'siege'      },
                 { name: 'other',        value: 'other'      }
             ))
     .addStringOption(option =>
