@@ -14,6 +14,8 @@ import { Flag }         from './toolkit/flag.js'
 import { Flags }        from './toolkit/flag.js'
 import { Schema }       from './toolkit/schema.js'
 import { MercyUtil }    from './toolkit/mercy.js'
+import { Snowflake }    from './toolkit/snowflake.js'
+import { PathAccess } from './toolkit/pathAccess.js'
 
 export
 {
@@ -33,4 +35,6 @@ export
     Flags,
     Schema,
     MercyUtil,
+    Snowflake,
+    PathAccess,
 }

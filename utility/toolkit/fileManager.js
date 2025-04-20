@@ -30,7 +30,6 @@ class FileManager
     
     static async loadDirectory(folderPath, callbackFunction, ...args)
     {
-        
         const directory = fs.readdirSync(folderPath);
 
         for (const file of directory)
@@ -123,7 +122,7 @@ class FileManager
     {
         if (!fs.existsSync(directory))
         {
-            log.debug(`Creating directry: ${directory}`);
+            log.debug(`Creating directory: ${directory}`);
             fs.mkdirSync(directory, { recursive: true})
         }
     }

@@ -1,4 +1,4 @@
-import { MercyUtil, Text }      from "../../../../../utility/index.js";
+import { MercyUtil, Text, Timestamp }      from "../../../../../utility/index.js";
 import { Style }                from "./style.js";
 
 
@@ -66,9 +66,9 @@ class Column
     
             const rowTextX = x + this.width - this.row.paddingRight;
             const rowTextY = currentY + this.row.height / 2;
-    
-            const value = this.account.mercy[shard]?.[rarity]?.[this.header.title] ?? ' ';
-    
+   
+            const value = (this.header.title != 'session') ? this.account.mercy[shard]?.[rarity]?.[this.header.title] ?? ' ' : Timestamp.shortSession(this.account.mercy[shard]?.[rarity]?.[this.header.title])
+
             this.style.set("row.text");
             this.context.fillText(`${Text.set(`${value}`).constrain(17, { align: 'right' })}`, rowTextX, rowTextY);
     

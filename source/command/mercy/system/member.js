@@ -6,11 +6,15 @@ class MemberManager
 {
     constructor(tracker)
     {
-        this.tracker    = tracker;
-        this.database   = tracker.database;
+        this.registry   = 
+        {
+            member:     tracker.registry.member,
+            account:    tracker.registry.account,
+        }
 
-        this.cache      = new MemberCache(tracker);
+        this.database   = tracker.database;
         
+        this.cache      = new MemberCache(this.registry.member);
     }
 
     findMember(iMember)
@@ -19,7 +23,7 @@ class MemberManager
     
         if (!exists.cache)
         {
-            exists.database = this.database.has('member', 'id', iMember.id);
+            exists.database = this.database.has('member', 'member_id', iMember.id);
         }
     
         return exists;
@@ -63,23 +67,19 @@ class MemberManager
         this.database.createMember(iMember);
 
         const member = this.loadMember(iMember);
-              member.account.create('Main', true)
+              member.account.create('main', true)
+
+        member.update();
 
         return Object.assign(member, { new: true });
     }
 
     update(member)
     {
-        log.trace(`Updating member ${member.member}`);
+        log.debug(`Updating member ${member.username}`);
         this.database.updateMember(member);
     }
-    
-    updateAccounts(member)
-    {
-        log.trace(`Updating member ${member.member}'s accounts`);
-        member.account.updateAccounts();
-    }
-    
+        
 }
 
 
@@ -88,20 +88,22 @@ class Member
 {
     constructor(manager, profile)
     {
-        this.manager    = manager
-
-        this.id         = profile.id;
-        this.username   = profile.username;
-        this.accounts   = JSON.parse(profile.accounts)   || [];
-        this.data       = JSON.parse(profile.data)       || {};
-        this.settings   = JSON.parse(profile.settings)   || new MemberSettings();
         
-        this.account    = new AccountManager(this);
+        this.manager    = manager
+        
+        this.id         = profile.member_id;
+        this.username   = profile.username;
+        this.accounts   = [];
+        this.data       = new MemberData    (profile.data);
+        this.settings   = new MemberSettings(profile.settings);
+        this.records    = new MemberRecords (profile.records);
 
         this.lastActive = Timestamp.iso();
         this.registered = profile.registered;
-
+        
         log.debug(`Instantiated ${this.username}'s member profile`);
+
+        this.account    = new AccountManager(this);
     }
 
     update()
@@ -111,18 +113,28 @@ class Member
 
     updateAccounts()
     {
-        this.manager.updateAccounts(this);
+        log.trace(`Updating ${this.username}'s accounts`);
+        this.account.updateAccounts()
     }
 
-    updateAccountRecord(oldAccount, newAccount)
+    updateAccountsCache(account)
     {
-        this.accounts = this.accounts.filter((account) => account != oldAccount);
-        this.accounts.push(newAccount)
-        this.update();    
+        log.trace(`Updating ${this.username}'s accounts cache`);
+        this.accounts = this.accounts.filter((accounts) => accounts.id != account.id);
+        this.accounts.push({ id: account.id, name: account.name });
+        this.manager.update(this);
     }
 
 }
 
+
+class MemberData
+{
+    constructor()
+    {
+
+    }
+}
 
 class MemberSettings
 {
@@ -132,5 +144,12 @@ class MemberSettings
     }
 }
 
+class MemberRecords
+{
+    constructor(data)
+    {
+
+    }
+}
 
 export { MemberManager, Member, MemberSettings };

@@ -4,19 +4,19 @@ import { log } from '../../../../utility/index.js'
 
 class MemberCache extends Collection
 {
-    constructor(tracker)
+    constructor(registry)
     {
         super();
         
-        if (!tracker.registry.member) 
+        if (!registry) 
         {
-            tracker.registry.member = this;
+            registry = this;
         }
     }
 
     set(member)
     {
-        log.trace(`Caching ${member.member}'s member profile`);
+        log.trace(`Caching ${member.username}'s member profile`);
         super.set(member.id, member);
     }
     
@@ -42,21 +42,22 @@ class AccountCache extends Collection
     {
         super();
 
-        if (!registry.account.has(member.id)) 
+        if (!registry.has(member.id)) 
         {
-            registry.account.set(member.id, this);
+            registry.set(member.id, this);
         }
     }
 
     set(account)
     {
-        log.trace(`Caching account profile '${account.account}'`);
-        super.set(account.account, account);
+        log.trace(`Caching account profile '${account.name}'`);
+        super.set(account.name, account);
     }
     
     get(accountName)
     {
         log.trace(`Retrieving cache for account '${accountName}'`);
+
         return super.get(accountName);
     }
    
@@ -69,7 +70,7 @@ class AccountCache extends Collection
 
     delete(accountName)
     {
-        log.trace(`Deleting account profile '${accountName}'`);
+        log.trace(`Deleting account cache '${accountName}'`);
         super.delete(accountName);
     }
 }

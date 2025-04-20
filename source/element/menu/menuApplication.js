@@ -97,7 +97,7 @@ const data =
     
         execute: function(interaction) 
         {
-            const { member, client: { clanManagement: { officersLounge, applications, applications: {cache: { active}} }} } = interaction;
+            const { member, client: { clanManagement: { officersTable, applications, applications: {cache: { active}} }} } = interaction;
 
             const [value] = Input.menu(interaction)
             const application = applications.getApplication({id: active.get(member.id)})
@@ -110,7 +110,7 @@ const data =
             applications.updateApplication(application);
             applications.cacheApplications();
 
-            interaction.client.channels.cache.get(officersLounge).send(EmbedManager.set(interaction).load('embed-application-officer-notification-transfer').create());
+            interaction.client.channels.cache.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-transfer').create());
 
             interaction.editReply(EmbedManager.set(interaction).load('embed-application-management-home').create());
         }
@@ -177,8 +177,8 @@ const data =
             const [value]           = Input.menu(interaction)
             
             const booleanMap        = { "true": true, "false": false, "null": null };
-            application.siege.active = booleanMap[value]
-        
+
+            application.siege.active    = booleanMap[value]
             application.meta.location   = (application.meta.location + 1) % applicationConfig.selection.count;
 
             interaction.editReply(EmbedManager.set(interaction).load('embed-application-apply-home').modify(applicationConfig.getModifier(application)).create());

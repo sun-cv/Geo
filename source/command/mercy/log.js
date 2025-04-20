@@ -22,7 +22,7 @@ async function log(interaction = new CommandInteraction())
     account.log(source, rarity, champion, count);
     account.update();    
     
-    // interaction.followUp({ content: template.reset(member, account.session.lastChampion(), getMercyChance(shard, rarity, account.session.lastReset().total))})
+    return interaction.followUp({ content: template.command.log({source, rarity, champion, count}), flags: MessageFlags.Ephemeral})
 }
 
 

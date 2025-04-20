@@ -38,8 +38,7 @@ class DeferHandler
 
     check(interaction)
     {
-        this.ephemeral = (interaction.data.flag.ephemeral || (interaction.options?.getString('share') === 'true')) ? 
-        this.flag : 0;
+        this.ephemeral = (interaction.data.flag.ephemeral && (interaction.options?.getString('share') !== 'true')) ? this.flag : 0;
     }
 
 }

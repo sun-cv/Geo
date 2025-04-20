@@ -112,14 +112,9 @@ const data =
                 return interaction.editReply({ content: `${account_name} already exists`, flags: MessageFlags.Ephemeral });
             }
 
-            account.accountChange   = account.account;
-            account.account         = account_name;
-
-            console.log(member)
-
-            member.updateAccountRecord(account.accountChange, account.account)
-
-            account.update();
+            account.alias(account_name);
+            
+            member.updateAccountsCache(account)
 
             navigate.member(member).return(interaction);
         }

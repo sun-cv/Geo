@@ -4,8 +4,8 @@ class Flag
 {
     constructor(initialValue = false, key = null, parent = null) 
     {
-        this.value = initialValue;
-        this.key = key;
+        this.value  = initialValue;
+        this.key    = key;
         this.parent = parent;
     }
 
@@ -53,7 +53,7 @@ class Flags
 {
     constructor(flags = {}, exclusive = false) 
     {
-        this._exclusive = exclusive;
+        this._exclusive   = exclusive;
 
         if (Array.isArray(flags)) 
         {
@@ -87,7 +87,6 @@ class Flags
             {
                 this[key].set(value);
             }
-            
         }
 
         if (this._exclusive) this._enforceExclusivity();
@@ -140,6 +139,15 @@ class Flags
         const flags = new Flags(defaults, exclusive);
         if (input) flags.load(input);
         return flags;
+    }
+
+    toJSON() 
+    {
+        const data = Object.fromEntries
+        (
+            Object.entries(this).filter(([_, value]) => value instanceof Flag)
+        );
+        return data;
     }
 }
 

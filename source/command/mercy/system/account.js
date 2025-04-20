@@ -1,20 +1,21 @@
-import { log, Timestamp, Flags, MercyUtil } from '../../../../utility/index.js'
-import { Session }                          from './session.js';
-import { AccountCache }                     from './cache.js';
+import { log, Timestamp, Flags, MercyUtil, Snowflake}  from '../../../../utility/index.js'
+import { Session }                                      from './session.js';
+import { AccountCache }                                 from './cache.js';
 
 
 class AccountManager
 {
     constructor(member)
     {
-        this.tracker    = member.manager.tracker
-        this.registry   = member.manager.tracker.registry;
-        this.database   = member.manager.tracker.database;
+        this.registry   = 
+        {
+            account:      member.manager.registry.account,
+        }        
+        this.database   = member.manager.database;
 
-        this.cache      = new AccountCache(this.registry, member);
+        this.cache      = new AccountCache(this.registry.account, member);
 
         this.member     = member;
-        this.active     = null;
 
         this.loadAccounts();
     }
@@ -25,18 +26,22 @@ class AccountManager
     {
         log.debug(`Creating new account '${accountName}'`);
 
-        this.database.createAccount(this.member, accountName, main);
-        this.loadAccount(accountName);
-        this.member.accounts.push(accountName)
+        const account_id = this.database.createAccount(this.member, accountName, main)
+
+        this.loadAccount(account_id);
+
+        this.member.updateAccountsCache({ id: account_id, name: accountName});
     }
 
     delete(accountName)
     {
         log.debug(`Deleting account '${accountName}'`);
 
-        this.database.deleteAccount(this.member, accountName);
+        const account = this.cache.get(accountName)
+
+        this.database.deleteAccount(this.member, account.id);
         this.cache.delete(accountName);
-        this.member.accounts = this.member.accounts.filter((account) => account != accountName);
+        this.member.accounts = this.member.accounts.filter((accounts) => accounts.id != account.id);
     }
 
     get(accountName)
@@ -47,7 +52,6 @@ class AccountManager
     
         for (const [name, cache] of this.cache)
         {
-
             if (cache !== account)
             {
                 cache.flag.account.active.clear();
@@ -71,59 +75,58 @@ class AccountManager
 
     loadAccounts()
     {
-        log.debug(`Loading ${this.member.member}'s accounts`)
+        log.debug(`Loading ${this.member.username}'s accounts`)
 
-        this.database.getAccounts(this.member).forEach((account) => 
+        this.database.getAccounts(this.member).forEach((data) => 
         {
-            this.loadAccount(account.account);
+            this.loadAccount(data.account_id);
         })
     }
 
-    loadAccount(accountName)
+    loadAccount(account_id)
     {
-        log.trace(`Loading account '${accountName}'`)
-
+       
         const account = new Account(
             this,
-            this.database.loadAccountProfile(this.member, accountName),
-            this.database.loadAccountData   (this.member, accountName),
-            this.database.loadAccountSession(this.member, accountName)
+            this.database.loadAccountProfile(this.member, account_id),
+            this.database.loadAccountData   (this.member, account_id),
+            this.database.loadAccountSession(this.member, account_id)
         );
-
-        if (!this.member.accounts.includes(accountName)) 
+        
+        if (!this.member.accounts.includes({ id: account.id, name: account.name })) 
         {
-            this.member.accounts.push(accountName);
+            this.member.accounts.push({ id: account.id, name: account.name });
         }        
-
+            
         this.cache.set(account);
+        log.trace(`Loaded account '${account.name}'`)
     }
 
     // Update Account
 
     async updateAccounts()
     {
-        log.debug(`Updating ${this.member.member}'s accounts`);
+        log.debug(`Updating ${this.member.username}'s accounts`);
 
         for (const account of this.cache.values()) 
         {
             await this.updateAccount(account);
         }
-
-        log.debug(`Successfully updated ${this.member.member}'s accounts`);
     }
 
     async updateAccount(account)
     {
-        log.trace(`Updating account '${account.account}'`);
+        log.trace(`Updating account '${account.name}'`);
 
         await this.database.updateAccount(account),
-
 
         await Promise.all([
             this.database.updateAccountMercy(account),
             this.database.updateAccountSession(account),
             this.database.updateAccountLogs(account)
         ]);
+
+        log.debug(`Successfully updated ${account.name}`);
 
         account.flag.account.dirty.clear()
     }
@@ -133,6 +136,8 @@ class AccountManager
     allAccountsFeed()
     {
         const feed = []
+
+        log.debug(`Generating all account feeds`)
 
         for (const [key, account] of this.cache)
         {
@@ -145,16 +150,18 @@ class AccountManager
 
     accountFeed(account)
     {
+        log.trace(`Generating account feed for ${account.name}`)
+
         const data = this.database.getAccountLogs(account);
         const feed = []
 
-        feed.push({log: `${Timestamp.session(account.registered)}: ${account.member} created account ${account.account}`, timestamp: account.registered})
+        feed.push({log: `${Timestamp.session(account.registered)}: ${account.member.username} created account ${account.name}`, timestamp: account.registered})
 
         for (const [type, array] of Object.entries(data))
         {
             for (const entry of array)
             {
-                feed.push(format[type](entry))
+                feed.push(format[type](entry, account));
             }
         }
         feed.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -166,9 +173,9 @@ class AccountManager
 
 const format =
 {
-    pull:       (entry) => { return {log: `${entry.session}: ${entry.account} pulled ${entry.count} ${entry.source} ${entry.count == 1 ? 'shard' : 'shards'}`,  timestamp: entry.timestamp }},
-    reset:      (entry) => { return {log: `${entry.session}: ${entry.account} reset ${entry.source} shards on shard ${entry.total}`,                            timestamp: entry.timestamp }},
-    champion:   (entry) => { return {log: `${entry.session}: ${entry.account} pulled ${entry.rarity} champion ${entry.champion}`,                               timestamp: entry.timestamp }}
+    pull:       (entry, account) => { return {log: `${entry.session}: ${account.name} pulled ${entry.count} ${entry.source} ${entry.count == 1 ? 'shard' : 'shards'}`,  timestamp: entry.timestamp }},
+    reset:      (entry, account) => { return {log: `${entry.session}: ${account.name} reset ${entry.source} shards on shard ${entry.total}`,                            timestamp: entry.timestamp }},
+    champion:   (entry, account) => { return {log: `${entry.session}: ${account.name} pulled ${entry.rarity} champion ${entry.champion} from ${entry.source}`,                               timestamp: entry.timestamp }}
 }
 
 
@@ -181,20 +188,20 @@ class Account
 
         this.id         = profile.id;
         this.member     = profile.member; // username, id
-        this.account    = profile.account;
         this.name       = profile.name;
         this.main       = !!profile.main;
 
         this.data       = new AccountData       (profile.data);
         this.settings   = new AccountSettings   (profile.settings);
-        this.flag       = new AccountFlags      (profile.flags)
+        this.records    = new AccountRecords    (profile.records);
+        this.flag       = new AccountFlags      (profile.flags);
         this.mercy      = new AccountMercy      (this, mercy);
         this.session    = new Session           (this, session);
 
         this.lastActive = Timestamp.iso();
         this.registered = profile.registered;
 
-        log.debug(`Instantiated ${this.member}'s account '${this.account}'`);
+        log.debug(`Instantiated ${this.member.username}'s account '${this.name}'`);
     }
 
     pull(shard, count)
@@ -253,6 +260,16 @@ class Account
     {
         return this.manager.accountFeed(this);
     }
+
+    alias(accountName)
+    {
+        this.records.alias.push({name: this.name, timestamp: Timestamp.iso()})
+        this.manager.cache.delete(this.name);
+        this.name = accountName;
+        this.mercy.forceUpdate();
+        this.manager.cache.set(this);
+        this.update();
+    }
 }
 
 
@@ -264,9 +281,9 @@ class AccountData
         {   
             selection:
             {
-                static:         ['wukong'],
-                rotate:         [],
-                custom:         [],
+                static:         ['tatsu'],
+                rotate:         ['tatsu', 'zinogre', 'tuhanarak'],
+                custom:         ['tatsu', 'zinogre', 'tuhanarak', 'skytouched-shaman','conscript'],
             },
         }
         this.historical = data?.account ||
@@ -285,8 +302,8 @@ class AccountSettings
         {   
             options: Flags.from(data?.template?.options,
             {   
-                static:         true,
-                rotate:         false,
+                static:         false,
+                rotate:         true,
                 random:         false,
                 custom:         false,
                 text:           false,
@@ -302,14 +319,18 @@ class AccountSettings
                 lifetime:       true,
                 session:        true,
 
-                prism:          false, // TBD
+                prism:          true, // TBD
             }),
-        },
-
-        this.embed = 
-        {
-            color:              0xED8223,  
         }
+    }
+}
+
+class AccountRecords
+{
+    constructor(data)
+    {
+        this.alias  = data?.alias   || [];
+
     }
 }
 
@@ -371,6 +392,7 @@ class AccountMercy
         
             this[shard][rarity] = entry;
         }, { prism: true });
+
     }
 
     pull(shard, count)
@@ -380,21 +402,25 @@ class AccountMercy
             this[shard].mythical.total         += count;
             this[shard].mythical.lifetime      += count;
             this[shard].mythical.lastAdded     += count;
-        
+            this[shard].mythical.session        = Timestamp.session()
+            
             this.flag[shard].mythical.dirty.set();
         }  
         
         this[shard].legendary.total            += count;
         this[shard].legendary.lifetime         += count;
         this[shard].legendary.lastAdded        += count;
+        this[shard].legendary.session           = Timestamp.session()
 
         this.flag[shard].legendary.dirty.set();
+
     }
 
     reset(shard, rarity)
     {
         this[shard][rarity].total               = 0;
         this[shard][rarity].lastReset           = Timestamp.session();
+        this[shard][rarity].session             = Timestamp.session()
 
         this.flag[shard][rarity].dirty.set();
     }
@@ -416,6 +442,15 @@ class AccountMercy
         });
 
         log.trace('Refreshed mercy lastAdded session data');
+    }
+
+    forceUpdate()
+    {
+        MercyUtil.forEachShard((shard, rarity) => 
+            {                
+                this.flag[shard][rarity].dirty.set();
+            });
+        log.trace('Flagged mercy session data');
     }
 }
 

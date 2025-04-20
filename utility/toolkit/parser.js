@@ -3,10 +3,23 @@
 
 class Parser
 {
-    static accountData(data) 
+
+    static memberData(data)
     {
         return {
             ...data,
+            data:       JSON.parse(data.data),
+            settings:   JSON.parse(data.settings),
+            records:    JSON.parse(data.records)
+        }
+    }
+
+    static accountData(data, member) 
+    {
+        return {
+            ...data,
+            member:     { username: member.username, id: member.id },
+            id:         data.account_id,
             data:       JSON.parse(data.data),
             settings:   JSON.parse(data.settings)
         };
@@ -26,6 +39,34 @@ class Parser
         return buffer;
     }
 
+    static accountMercyTransfer(data)
+    {
+        const buffer = {};
+    
+        for (const { shard, count, totalCount, lastAdded, lastPulled, lastReset } of data)
+        {
+            const [source, rarityRaw] = shard.split(".");
+            const rarity = rarityRaw ?? "legendary";
+            const total = count;
+            const lifetime = totalCount;
+    
+            buffer[source] ??= {};
+            buffer[source][rarity] ??= {};
+    
+            Object.assign(buffer[source][rarity], {
+                total,
+                lifetime,
+                session: lastPulled || null,
+                lastAdded: lastAdded || null,
+                lastReset: lastReset || null,
+                lastChampion: null,
+            });
+        }
+    
+        return buffer;
+    }
+    
+
     static clanData(data)
     {
         const recruitment = JSON.parse(data.recruitment);
@@ -42,21 +83,20 @@ class Parser
         }        
     }
 
-    static applicationData(data) {
-        return data.map((application) => 
-        ({ 
-            ...application,
-            selection:  JSON.parse(application.selection),
-            clanboss:   JSON.parse(application.clanboss),
-            hydra:      JSON.parse(application.hydra),
-            chimera:    JSON.parse(application.chimera),
-            siege:      JSON.parse(application.siege),
-            cvc:        JSON.parse(application.cvc),
-            data:       JSON.parse(application.data),
-            setting:    JSON.parse(application.setting),
-            admin:      JSON.parse(application.admin),
-            meta:       JSON.parse(application.meta),
-        }));
+    static applicationData(data = {}) {
+        return { 
+            ...data,
+            selection:  JSON.parse(data.selection),
+            clanboss:   JSON.parse(data.clanboss),
+            hydra:      JSON.parse(data.hydra),
+            chimera:    JSON.parse(data.chimera),
+            siege:      JSON.parse(data.siege),
+            cvc:        JSON.parse(data.cvc),
+            data:       JSON.parse(data.data),
+            setting:    JSON.parse(data.setting),
+            admin:      JSON.parse(data.admin),
+            meta:       JSON.parse(data.meta),
+        };
     }
     
     

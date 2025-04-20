@@ -16,7 +16,7 @@ class Bot
 {
     constructor()
     {
-        log.setLevel('Trace')
+        log.setLevel('event')
 
         this.client     = new Client(
         {
@@ -34,7 +34,7 @@ class Bot
         this.registry       = new Registry(this.client);
         this.dispatcher     = new Dispatcher(this.client);
         this.interaction    = new Interaction(this.client, this.registry);
-        this.scheduler      = new TaskManager(this.client, this.registry);
+        this.scheduler      = new TaskManager(this.client, this.cluster, this.registry);
 
         this.mercyTracker   = new MercyTracker(this.client, this.cluster, this.registry);
         this.clanManagement = new ClanManagement(this.client, this.cluster, this.registry);

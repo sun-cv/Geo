@@ -33,17 +33,27 @@ class Clan extends Database
         log.trace(`Successfully updated database entry: clan (${data.clan})`)
     }
 
+    hasApplicationRecord(member) 
+    {
+        const data = this.database.prepare(`SELECT 1 FROM application WHERE status = ? AND id = ? LIMIT 1`).get('accepted', member.id);
+        return !!data;
+    }
+
     getApplications()
     {
         const data = this.database.prepare(`SELECT * FROM application WHERE status = ?`).all('pending')
-        return Parser.applicationData(data);
+        
+        return data.map((data) => Parser.applicationData(data));
     }
 
     getApplicationRecord(member)
     {
         const data = this.database.prepare(`SELECT * FROM application WHERE status = ? AND id = ? ORDER BY timestamp DESC LIMIT 1`).get('accepted', member.id)
-        return Parser.applicationData([data]);
+        
+        return Parser.applicationData(data);
     }
+
+
 
     submitApplication(application) {
         const { system, id, member, account, request, clan, status, timestamp, ...nestedObjects }   = application;

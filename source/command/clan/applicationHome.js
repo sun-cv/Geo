@@ -25,7 +25,7 @@ const command = Schema.command
         require:
         {
             active:     true,
-            channels:   ['test'],
+            channels:   ['clan-applications'],
             roles:      ['Moderator'],
         },
         exclude:

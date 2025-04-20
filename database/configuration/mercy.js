@@ -1,7 +1,7 @@
 import Database                         from './database.js';
 import Directory                        from '../../configuration/environment/directory.json'    with { type: 'json' };
 import Shards                           from '../../source/data/mercy/shards.json'               with { type: 'json' };
-import { log, Text, Parser, Timestamp, MercyUtil } from '../../utility/index.js';
+import { log, Text, Parser, Timestamp, MercyUtil, Snowflake, Serializer } from '../../utility/index.js';
 
 
 class Mercy extends Database
@@ -13,103 +13,162 @@ class Mercy extends Database
         create(this.database);
     }
 
+    // TRANSFER - DELETE
+    hasMember(iMember)
+    {
+        return this.database.prepare(`SELECT * FROM MEMBER WHERE member_id = ?`).get(iMember.id);
+    };
+
+    createMemberTransfer(iMember, registered)
+    {
+        this.database.prepare(`INSERT INTO member (member_id, username, registered) VALUES (?, ?, ?)`).run(iMember.id, iMember.user.username, registered);
+        log.trace(`Successfully created database profile entry`);
+    }
+
+    createAccountTransfer(member, accountName, main = 0, registered )
+    {
+        const account_id = Snowflake.generate();
+
+        this.database.prepare(`INSERT INTO account(member_id, account_id, username, name, main, registered) VALUES (?, ?, ?, ?, ?, ?)`).run(member.id, account_id, member.user.username, accountName, Number(main), registered)
+        log.trace(`Successfully generated database entry: account '${accountName}'`);
+
+        MercyUtil.forEachShard((shard, rarity) =>
+        {
+            this.database.prepare(`INSERT INTO mercy(member_id, account_id, username, name, source, rarity) VALUES (?, ?, ?, ?, ?, ?)`).run(member.id, account_id, member.user.username, accountName, shard, rarity);
+            log.trace(`Successfully generated database entry: ${Text.set(rarity).constrain(9)} ${Text.set(shard).constrain(7)} mercy for '${accountName}'`)
+        }, { prism: true})
+
+        // this.database.prepare(`INSERT INTO session (member_id, account_id, pull, reset, champion, session) VALUES (?, ?, ?, ?, ?, ?)`).run(member.id, account_id, 0, 0, 0, Timestamp.session());
+        // log.trace(`Successfully created database entry: session`)
+
+        return account_id;
+    }
+
+        loadAccountDataTransfer(member, account_id)
+    {
+        const data = this.database.prepare(`SELECT * FROM mercy WHERE member_id = ? AND account_id = ?`).all(member.id, account_id);
+
+        log.trace(`Found mercy data (${data.length} records)`);
+
+        return Parser.accountMercy(data);
+    }
+
+
+
+    updateAccountMercyTransfer(account)
+    {
+         const dirtyEntries = Object.entries(Shards.mercy).flatMap(([ shard, rarities ]) => Object.keys(rarities).map((rarity) => ({shard, rarity})));
+
+        for (const {shard, rarity} of dirtyEntries)
+        {
+            const mercy = account.mercy[shard][rarity];
+        
+            this.database.prepare(`UPDATE mercy SET username = ?, name = ?, total = ?, lifetime = ?, lastAdded = ?, lastReset = ?, lastChampion = ? WHERE member_id = ? AND account_id = ? AND source = ? AND rarity = ?`).run(account.member.username, account.name, mercy.total, mercy.lifetime, mercy.lastAdded, mercy.lastReset, mercy.lastChampion, account.member.id, account.id, shard, rarity);
+            
+            log.trace(`Successfully updated database entry: ${Text.set(rarity).constrain(9)} ${Text.set(shard).constrain(7)}`)
+            
+            account.flag.mercy[shard][rarity].dirty.clear();
+        }
+    }
+    
 
     // Member
+
     loadMember(iMember)
     {
-        return this.database.prepare(`SELECT * FROM MEMBER WHERE id = ?`).get(iMember.id);
+        const data = this.database.prepare(`SELECT * FROM MEMBER WHERE member_id = ?`).get(iMember.id);
+        return Parser.memberData(data);
     };
 
     createMember(iMember)
     {
-        this.database.prepare(`INSERT INTO member (id, member) VALUES (?, ?)`).run(iMember.id, iMember.user.username);
+        this.database.prepare(`INSERT INTO member (member_id, username) VALUES (?, ?)`).run(iMember.id, iMember.user.username);
         log.trace(`Successfully created database profile entry`);
     }
     
     updateMember(member)
     {
-        const accounts  = JSON.stringify(member.accounts);
-        const data      = JSON.stringify(member.data);
-        const settings  = JSON.stringify(member.settings);
+        const { data, settings, records } = Serializer.memberData(member);
 
-        this.database.prepare(`UPDATE member SET accounts = ?, data = ?, settings = ?, lastActive = ? WHERE  id = ?`).run(accounts, data, settings, Timestamp.iso(), member.id)
+        this.database.prepare(`UPDATE member SET data = ?, settings = ?, records = ?, lastActive = ? WHERE  member_id = ?`).run(data, settings, records, Timestamp.iso(), member.id)
     }
 
     // Account
     getAccounts(member)
     {
-        return this.database.prepare("SELECT account FROM account WHERE id = ?").all(member.id);
+        return this.database.prepare("SELECT account_id FROM account WHERE member_id = ?").all(member.id);
     }
 
-    loadAccountProfile(member, accountName)
+    loadAccountProfile(member, account_id)
     {
-        const data = this.database.prepare("SELECT * FROM account WHERE id = ? and account = ?").get(member.id, accountName);
+
+        const data  = this.database.prepare("SELECT * FROM account WHERE member_id = ? and account_id = ?").get(member.id, account_id);
     
-        return Parser.accountData(data)
+        log.trace(`Successfully found account data ${data.name}`)
+
+        return Parser.accountData(data, member)
     }
 
-    loadAccountData(member, accountName)
+    loadAccountData(member, account_id)
     {
-        const data = this.database.prepare(`SELECT * FROM mercy WHERE id = ? AND account = ?`).all(member.id, accountName);
+        const data = this.database.prepare(`SELECT * FROM mercy WHERE member_id = ? AND account_id = ?`).all(member.id, account_id);
 
-        log.trace(`Found mercy for '${accountName}' (${data.length} records)`);
+        log.trace(`Successfully found mercy data (${data.length} records)`);
 
         return Parser.accountMercy(data);
     }
     
-    loadAccountSession(member, accountName)
+    loadAccountSession(member, account_id)
     {
-        return this.database.prepare(`SELECT * FROM session WHERE id = ? AND account = ? AND session = ?`).get(member.id, accountName, Timestamp.session())
+        const data = this.database.prepare(`SELECT * FROM session WHERE member_id = ? AND account_id = ? ORDER BY timestamp DESC LIMIT 1`).get(member.id, account_id)
+        
+        if (data) log.trace(`Successfully found session data (${Object.keys(data).length} records)`);
+        
+        return data
     }
 
     createAccount(member, accountName, main = 0)
     {
-        this.database.prepare(`INSERT INTO account(id, member, account, main) VALUES (?, ?, ?, ?)`).run(member.id, member.member, accountName, Number(main))
+        const account_id = Snowflake.generate();
+
+        this.database.prepare(`INSERT INTO account(member_id, account_id, username, name, main) VALUES (?, ?, ?, ?, ?)`).run(member.id, account_id, member.username, accountName, Number(main))
         log.trace(`Successfully generated database entry: account '${accountName}'`);
 
         MercyUtil.forEachShard((shard, rarity) =>
         {
-            this.database.prepare(`INSERT INTO mercy (id, member, account, source, rarity) VALUES (?, ?, ?, ?, ?)`).run(member.id, member.member, accountName, shard, rarity);
+            this.database.prepare(`INSERT INTO mercy(member_id, account_id, username, name, source, rarity) VALUES (?, ?, ?, ?, ?, ?)`).run(member.id, account_id, member.username, accountName, shard, rarity);
             log.trace(`Successfully generated database entry: ${Text.set(rarity).constrain(9)} ${Text.set(shard).constrain(7)} mercy for '${accountName}'`)
-        })
+        }, { prism: true})
 
+        return account_id;
     }
 
-    deleteAccount(member, accountName)
+    deleteAccount(member, account_id)
     {
-        this.database.prepare(`DELETE FROM account WHERE id = ? AND account = ?`).run(member.id, accountName);
-        log.trace(`Successfully deleted database entry for: account '${accountName}'`)
+        this.database.prepare(`DELETE FROM account WHERE member_id = ? AND account_id = ?`).run(member.id, account_id);
+        log.trace(`Successfully deleted database account entry`)
     }
 
 
     // Update
     updateAccount(account)
     {
-        const data      = JSON.stringify(account.data);
-        const settings  = JSON.stringify(account.settings)
-        const original  = account.accountChange ?? account.account
+        const { data, settings, records } = Serializer.accountData(account);
         
-        this.database.prepare(`UPDATE account SET main = ?, data = ?, settings = ?, lastActive = ? WHERE id = ? AND account = ?`).run(Number(account.main), data, settings, Timestamp.iso(), account.id, original );
-        log.trace(`Successfully updated database entry: account`)
-
-        delete account.accountChange
+        this.database.prepare(`UPDATE account SET username = ?, name = ?, main = ?, data = ?, settings = ?, records = ?, lastActive = ? WHERE member_id = ? AND account_id = ?`).run(account.member.username, account.name, Number(account.main), data, settings, records, Timestamp.iso(), account.member.id, account.id );
+        log.trace(`Successfully updated database account entry`)
     }
 
-
-    updateAccountName(account)
-    {
-
-    }
 
     updateAccountMercy(account)
     {
-        const dirtyEntries = Object.entries(Shards.mercy).flatMap(([ shard, rarities ]) => Object.keys(rarities).filter((rarity) => account.flag.mercy[shard][rarity].dirty.get()).map((rarity) => ({shard, rarity})));
+         const dirtyEntries = Object.entries(Shards.mercy).flatMap(([ shard, rarities ]) => Object.keys(rarities).filter((rarity) => account.flag.mercy[shard][rarity].dirty.get()).map((rarity) => ({shard, rarity})));
 
         for (const {shard, rarity} of dirtyEntries)
         {
             const mercy = account.mercy[shard][rarity];
             
-            this.database.prepare(`UPDATE mercy SET total = ?, session = ?, lifetime = ?, lastAdded = ?, lastReset = ?, lastChampion = ? WHERE id = ? AND account = ? AND source = ? AND rarity = ?`).run(mercy.total, Timestamp.session(), mercy.lifetime, mercy.lastAdded, mercy.lastReset, mercy.lastChampion, account.id, account.account, shard, rarity);
+            this.database.prepare(`UPDATE mercy SET username = ?, name = ?, total = ?, session = ?, lifetime = ?, lastAdded = ?, lastReset = ?, lastChampion = ? WHERE member_id = ? AND account_id = ? AND source = ? AND rarity = ?`).run(account.member.username, account.name, mercy.total, Timestamp.session(), mercy.lifetime, mercy.lastAdded, mercy.lastReset, mercy.lastChampion, account.member.id, account.id, shard, rarity);
             log.trace(`Successfully updated database entry: ${Text.set(rarity).constrain(9)} ${Text.set(shard).constrain(7)}`)
             account.flag.mercy[shard][rarity].dirty.clear();
         }
@@ -118,15 +177,15 @@ class Mercy extends Database
 
     updateAccountSession(account)
     {
-        const exists = !!this.database.prepare(`SELECT session FROM session WHERE id = ? AND account = ? AND session = ?`).get(account.id, account.account, account.session.session);
+        const exists = !!this.database.prepare(`SELECT session FROM session WHERE member_id = ? AND account_id = ? AND session = ?`).get(account.member.id, account.id, account.session.session);
         
         if (exists)
         {
-            this.database.prepare(`UPDATE session SET pull = ?, reset = ?, champion = ?, timestamp = ? WHERE id = ? AND account = ? AND session = ?`).run(Number(account.session.pull), Number(account.session.reset), Number(account.session.champion), Timestamp.iso(), account.id, account.account, account.session.session);
+            this.database.prepare(`UPDATE session SET pull = ?, reset = ?, champion = ?, timestamp = ? WHERE member_id = ? AND account_id = ? AND session = ?`).run(Number(account.session.pull.get()), Number(account.session.reset.get()), Number(account.session.champion.get()), Timestamp.iso(), account.member.id, account.id, account.session.session);
             log.trace(`Successfully updated database entry: session`)
             return;
         }
-        this.database.prepare(`INSERT INTO session (id, member, account, pull, reset, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, Number(account.session.pull), Number(account.session.reset), Number(account.session.champion), account.session.session);
+        this.database.prepare(`INSERT INTO session (member_id, account_id, pull, reset, champion, session) VALUES (?, ?, ?, ?, ?, ?)`).run(account.member.id, account.id, Number(account.session.pull.get()), Number(account.session.reset.get()), Number(account.session.champion.get()), account.session.session);
         log.trace(`Successfully created database entry: session`)
 
     }
@@ -145,9 +204,9 @@ class Mercy extends Database
     {
         const logs      = {};
 
-        logs.pull       = this.database.prepare(`SELECT * FROM pull     WHERE id = ? AND account = ?`).all(account.id, account.account)
-        logs.reset      = this.database.prepare(`SELECT * FROM reset    WHERE id = ? AND account = ?`).all(account.id, account.account)
-        logs.champion   = this.database.prepare(`SELECT * FROM champion WHERE id = ? AND account = ?`).all(account.id, account.account)
+        logs.pull       = this.database.prepare(`SELECT * FROM pull     WHERE member_id = ? AND account_id = ?`).all(account.member.id, account.id)
+        logs.reset      = this.database.prepare(`SELECT * FROM reset    WHERE member_id = ? AND account_id = ?`).all(account.member.id, account.id)
+        logs.champion   = this.database.prepare(`SELECT * FROM champion WHERE member_id = ? AND account_id = ?`).all(account.member.id, account.id)
 
         return logs;
     }
@@ -157,9 +216,9 @@ class Mercy extends Database
 
 const logHandler = 
 {
-    pull:       ((database, account, log) => { database.prepare(`INSERT INTO pull       (id, member, account, source, count, session) VALUES (?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.source, log.count, log.session) }),
-    reset:      ((database, account, log) => { database.prepare(`INSERT INTO reset      (id, member, account, source, rarity, total, session) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.source, log.rarity, log.total, log.session) }),
-    champion:   ((database, account, log) => { database.prepare(`INSERT INTO champion   (id, member, account, source, rarity, total, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(account.id, account.member, account.account, log.source, log.rarity, log.total, log.champion, log.session) })
+    pull:       ((database, account, log) => { database.prepare(`INSERT INTO pull       (member_id, account_id, source, count, session) VALUES (?, ?, ?, ?, ?)`)                        .run(account.member.id, account.id, log.source, log.count, log.session) }),
+    reset:      ((database, account, log) => { database.prepare(`INSERT INTO reset      (member_id, account_id, source, rarity, total, session) VALUES (?, ?, ?, ?, ?, ?)`)             .run(account.member.id, account.id, log.source, log.rarity, log.total, log.session) }),
+    champion:   ((database, account, log) => { database.prepare(`INSERT INTO champion   (member_id, account_id, source, rarity, total, champion, session) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(account.member.id, account.id, log.source, log.rarity, log.total, log.champion, log.session) })
 }
 
 async function create(database)
@@ -171,9 +230,9 @@ async function create(database)
         (
             member_id       TEXT PRIMARY KEY,
             username        TEXT NOT NULL,
-            accounts        TEXT DEFAULT '["Main"]',
             data            TEXT DEFAULT '{}',
             settings        TEXT DEFAULT '{}',
+            records         TEXT DEFAULT '{}',
             lastActive      TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
             registered      TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now'))
         )
@@ -184,10 +243,12 @@ async function create(database)
         (
             member_id       TEXT NOT NULL,
             account_id      TEXT NOT NULL,
+            username        TEXT NOT NULL,
             name            TEXT NOT NULL,
             main            INTEGER DEFAULT 0,
             data            TEXT DEFAULT '{}',
             settings        TEXT DEFAULT '{}',
+            records         TEXT DEFAULT '{}',
             lastActive      TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
             registered      TEXT DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%SZ', 'now')),
             PRIMARY KEY (member_id, account_id),
@@ -199,7 +260,9 @@ async function create(database)
         CREATE TABLE IF NOT EXISTS mercy 
         (
             member_id       TEXT NOT NULL,
-            account_id      TEXT NOT NULL,            
+            account_id      TEXT NOT NULL,
+            username        TEXT NOT NULL,
+            name            TEXT NOT NULL,            
             source          TEXT NOT NULL,
             rarity          TEXT NOT NULL,
             total           INTEGER DEFAULT 0,
@@ -271,10 +334,46 @@ async function create(database)
             FOREIGN KEY (member_id, account_id, session) REFERENCES session(member_id, account_id, session) ON DELETE CASCADE
         )
     `);
+
+
+    database.exec(`
+        CREATE INDEX IF NOT EXISTS index_session_member_account_timestamp
+        ON session(member_id, account_id, timestamp DESC)
+    `);
+    
+    
+    database.exec(`
+        CREATE INDEX IF NOT EXISTS index_pull_member_account_timestamp
+        ON pull(member_id, account_id, timestamp DESC)
+    `);
+    
+    database.exec(`
+        CREATE INDEX IF NOT EXISTS index_pull_member_account_session
+        ON pull(member_id, account_id, session)
+    `);
+    
+    
+    database.exec(`
+        CREATE INDEX IF NOT EXISTS index_reset_member_account_timestamp
+        ON reset(member_id, account_id, timestamp DESC)
+    `);
+    
+    database.exec(`
+        CREATE INDEX IF NOT EXISTS index_reset_member_account_session
+        ON reset(member_id, account_id, session)
+    `);
+    
+    
+    database.exec(`
+        CREATE INDEX IF NOT EXISTS index_champion_member_account_timestamp
+        ON champion(member_id, account_id, timestamp DESC)
+    `);
+    
+    database.exec(`
+        CREATE INDEX IF NOT EXISTS index_champion_member_account_session
+        ON champion(member_id, account_id, session)
+    `);
+
 }
-
-export { create as Mercy };
-
-
 
 export { Mercy }
