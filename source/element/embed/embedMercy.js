@@ -5,8 +5,7 @@ import { EmbedBuilder }         from '@discordjs/builders';
 import { Embed, Schema, Text }  from '../../../utility/index.js';
 import { template }             from '../../data/template/templateMercy.js';
 
-import templates                from '../../data/mercy/template.json' with { type: 'json'}
-
+import templates                from '../../../source/data/mercy/template.json' with { type: 'json'}
 
 const data = 
 {

@@ -5,7 +5,8 @@ import { MessageFlags }                                 from "discord.js";
 import { Component, EmbedManager, navigate, Schema }    from "../../../utility/index.js";
 import { Text, Input }                                  from "../../../utility/index.js";
 
-import  templates                                       from '../../data/mercy/template.json' with { type: 'json'}
+import templates                from '../../../source/data/mercy/template.json' with { type: 'json'}
+
 
 
 

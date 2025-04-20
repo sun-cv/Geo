@@ -1,13 +1,14 @@
 import fs       from 'fs';
 import path     from 'path';
+import directory from '../../../../configuration/environment/directory.json' with { type: 'json' }
 import { log, Schema }  from '../../../../utility/index.js';
 
-const projectRoot = path.resolve('C:/coding/project/Geo');
+const root = path.resolve(directory.root);
 
 function updateTemplateList() 
 {
-    const templateDir   = path.join(projectRoot, 'assets', 'template', 'mercy');
-    const outputPath    = path.join(projectRoot, 'source', 'data', 'mercy', 'template.json');
+    const templateDir   = path.join(root, 'assets', 'template', 'mercy');
+    const outputPath    = path.join(root, 'source', 'data', 'mercy', 'template.json');
 
     const files = fs.readdirSync(templateDir).filter(file => /\.(png|jpg|jpeg)$/i.test(file));
 
@@ -27,8 +28,7 @@ function updateTemplateList()
         };
     }
 
-    const directory = 'C:/coding/project/Geo/assets/template/mercy'
-    const finalData = { template, directory };
+    const finalData = { template, templateDir };
 
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, JSON.stringify(finalData, null, 4));
@@ -54,6 +54,6 @@ const data = Schema.task
     execute: updateTemplateList,
 });
 
-
+updateTemplateList()
 
 export default data;
