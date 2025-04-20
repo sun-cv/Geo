@@ -40,7 +40,7 @@ const command = Schema.command
     {
         handled:        false,
         ignore:         false,
-        defer:          true,
+        defer:          false,
         ephemeral:      false,
         access:         false,
         maintenance:    false,

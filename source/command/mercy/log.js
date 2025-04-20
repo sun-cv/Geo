@@ -89,6 +89,8 @@ const command = Schema.command
                 { name: 'remnant',      value: 'remnant'    },
                 { name: 'doomtower',    value: 'doomtower'  },
                 { name: 'reward',       value: 'reward'     },
+                { name: 'event',        value: 'event'      },
+                { name: 'siege',        value: 'siege'      },
                 { name: 'other',        value: 'other'      }
             ))
     .addStringOption(option =>
