@@ -1,4 +1,4 @@
-import config from '../../../configuration/secret/credentials.json' with { type: 'json' }
+import config from '../../../env/secret/credentials.json' with { type: 'json' }
 import { Component, EmbedManager, Schema }  from "../../../utility/index.js";
 import { Input }                            from "../../../utility/index.js";
 import { clanConfig }                       from "../../data/config/clan.js";

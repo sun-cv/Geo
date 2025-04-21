@@ -1,4 +1,4 @@
-import directory            from '../../configuration/environment/directory.json' with { type: 'json' };
+import directory            from '../../env/directory/path.json'    with { type: 'json' };
 import { log, Text }        from '../../utility/index.js';
 import { Mercy }            from '../configuration/mercy.js';
 import { Clan }             from '../configuration/clan.js';
@@ -30,7 +30,7 @@ class Cluster
         {
             try 
             {
-                const dbPath = directory.cluster[database]?.path;
+                const dbPath = directory.database[database];
                 if (!dbPath) 
                 {
                     log.error(`Database path for ${Text.set(database).capitalize()} not found in configuration.`);

@@ -1,6 +1,6 @@
 import Database                         from './database.js';
-import Directory                        from '../../configuration/environment/directory.json'    with { type: 'json' };
-import Shards                           from '../../source/data/mercy/shards.json'               with { type: 'json' };
+import directory                        from '../../env/directory/path.json'    with { type: 'json' };
+import Shards                           from '../../source/data/mercy/shards.json'  with { type: 'json' };
 import { log, Text, Parser, Timestamp, MercyUtil, Snowflake, Serializer } from '../../utility/index.js';
 
 
@@ -8,7 +8,7 @@ class Mercy extends Database
 {
     constructor()
     {
-        super(Directory.cluster.mercy.path)
+        super(directory.database.mercy.path)
 
         create(this.database);
     }

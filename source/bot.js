@@ -1,4 +1,4 @@
-import config                       from '../configuration/secret/credentials.json' with { type: 'json' };
+import config                       from '../env/secret/credentials.json' with { type: 'json' };
 import { Client, GatewayIntentBits} from 'discord.js';
 import { log }                      from '../utility/index.js'
 import { Registry }                 from '../source/registry/registry.js'

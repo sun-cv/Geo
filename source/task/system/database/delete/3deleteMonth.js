@@ -1,6 +1,6 @@
 import fs               from 'fs/promises';
 import path             from 'path'
-import directory        from '../../../../../configuration/environment/directory.json' with { type: "json" }
+import directory        from '../../../../../env/directory/path.json' with { type: 'json' };
 import { log, Schema }  from '../../../../../utility/index.js';
 
 
@@ -11,7 +11,7 @@ async function deleteMonth()
 {
     const now = Date.now();
     
-    for (const database of Object.values(directory.cluster)) 
+    for (const database of Object.values(directory.database)) 
     {
         for (const backupPath of Object.values(database.backup))
         {

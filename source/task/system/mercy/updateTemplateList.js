@@ -1,6 +1,6 @@
 import fs       from 'fs';
 import path     from 'path';
-import directory from '../../../../configuration/environment/directory.json' with { type: 'json' }
+import directory from '../../../../env/directory/path.json' with { type: 'json' }
 import { log, Schema }  from '../../../../utility/index.js';
 
 const root = path.resolve(directory.root);

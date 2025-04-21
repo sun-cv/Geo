@@ -1,5 +1,5 @@
 import { Snowflake }    from '@sapphire/snowflake';
-import config           from '../../configuration/secret/credentials.json' with { type: 'json' };
+import config           from '../../env/secret/credentials.json' with { type: 'json' };
 
 
 const snowflake = new Snowflake(config.snowflake);

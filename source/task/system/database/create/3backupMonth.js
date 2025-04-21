@@ -1,10 +1,10 @@
 import path                                     from 'path'
-import envDirectory                             from '../../../../../configuration/environment/directory.json' with { type: "json" }
+import envDirectory                             from '../../../../../env/directory/path.json' with { type: 'json' };
 import { Timestamp, FileManager, log, Schema }  from '../../../../../utility/index.js';
 
 async function backupMonth() 
 {
-    for (const database of Object.values(envDirectory.cluster))
+    for (const database of Object.values(envDirectory.database))
     {
         for (const directory of Object.values(database.backup))
             {

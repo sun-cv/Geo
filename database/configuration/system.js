@@ -1,5 +1,5 @@
 import Database     from './database.js';
-import Directory    from '../../configuration/environment/directory.json'    with { type: 'json' };
+import directory    from '../../env/directory/path.json'    with { type: 'json' };
 import { log }      from "../../utility/index.js";
 
 
@@ -7,7 +7,7 @@ class System extends Database
 {
     constructor()
     {
-        super(Directory.cluster.system.path)
+        super(directory.database.system.path)
 
         create(this.database);
     }

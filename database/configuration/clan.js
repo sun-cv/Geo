@@ -1,5 +1,5 @@
 import Database                         from './database.js';
-import Directory                        from '../../configuration/environment/directory.json'    with { type: 'json' };
+import directory                        from '../../env/directory/path.json'    with { type: 'json' };
 import { log, Text, Parser, Timestamp, Serializer } from '../../utility/index.js';
 import { serialize } from 'v8';
 
@@ -9,7 +9,7 @@ class Clan extends Database
 {
     constructor()
     {
-        super(Directory.cluster.clan.path)
+        super(directory.database.clan.path)
 
         create(this.database);
     }

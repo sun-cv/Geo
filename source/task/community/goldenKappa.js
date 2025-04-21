@@ -1,5 +1,5 @@
 import { log, Schema } from '../../../utility/index.js'
-import config from '../../../configuration/secret/credentials.json' with { type: 'json' }
+import config from '../../../env/secret/credentials.json' with { type: 'json' }
 
 async function goldenKappa(client, db)
 {       
