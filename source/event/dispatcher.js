@@ -12,13 +12,14 @@ class Dispatcher
 
         this.directory  = 
         {
+            "client": path.join(process.cwd(), "source", "event", "client"),
             "system": path.join(process.cwd(), "source", "event", "system"),
-            "client": path.join(process.cwd(), "source", "event", "client")
         }
+
         this.listeners  = 
         {
-            "system": (event) => this.registerSystem(event),
             "client": (event) => this.registerClient(event),
+            "system": (event) => this.registerSystem(event),
         };
 
     }

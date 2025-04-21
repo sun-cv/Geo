@@ -1,6 +1,6 @@
 import { log }          from './logger/log.js'
 import { Tracer }       from './logger/tracer.js'
-import { navigate }     from '../source/interaction/handler/navigation.js'
+import { navigate }     from '../source/event/interaction/handler/navigation.js'
 import { FileManager }  from './toolkit/fileManager.js'
 import { Timestamp }    from './toolkit/timestamp.js'
 import { Text }         from './toolkit/text.js'

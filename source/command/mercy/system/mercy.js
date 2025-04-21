@@ -1,5 +1,5 @@
 import { EmbedManager, log }    from '../../../../utility/index.js'
-import { RoleAssignment }       from '../../../interaction/handler/role.js';
+import { RoleAssignment }       from '../../../event/interaction/handler/role.js';
 import { MemberManager }        from './member.js';
 import { MessageFlags }         from 'discord.js';
 

@@ -3,7 +3,8 @@ import { Client, GatewayIntentBits} from 'discord.js';
 import { log }                      from '../utility/index.js'
 import { Registry }                 from '../source/registry/registry.js'
 import { Dispatcher }               from '../source/event/dispatcher.js'
-import { Interaction }              from '../source/interaction/interaction.js'
+import { Interaction }              from '../source/event/interaction/interaction.js'
+import { Message }                  from '../source/event/message/message.js'
 import { TaskManager }              from '../source/task/taskManager.js'
 import { MercyTracker }             from '../source/command/mercy/system/mercy.js'
 import { Cluster }                  from '../database/cluster/cluster.js'
@@ -34,6 +35,7 @@ class Bot
         this.registry       = new Registry(this.client);
         this.dispatcher     = new Dispatcher(this.client);
         this.interaction    = new Interaction(this.client, this.registry);
+        this.Message        = new Message(this.client, this.registry)
         this.scheduler      = new TaskManager(this.client, this.cluster, this.registry);
 
         this.mercyTracker   = new MercyTracker(this.client, this.cluster, this.registry);

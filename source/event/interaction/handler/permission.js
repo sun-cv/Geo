@@ -1,4 +1,4 @@
-import { log } from "../../../utility/index.js"
+import { log } from "../../../../utility/index.js"
 import { MessageFlags } from "discord.js";
 
 class PermissionHandler

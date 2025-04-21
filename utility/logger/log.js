@@ -80,6 +80,13 @@ class Log
         interactionLogs.forEach(log => console.log(`${adminPrefix} ${log}`));
     }
 
+    async message(message)
+    {
+        const { member, content, channel, } = interaction;
+
+
+    }
+
     async constructCommand(interaction)
     {
         let fullCommand = `/${interaction.data.meta.id}`;

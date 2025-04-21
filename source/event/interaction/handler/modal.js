@@ -1,5 +1,5 @@
 import { Collection, MessageFlags } from "discord.js";
-import { log } from "../../../utility/index.js";
+import { log } from "../../../../utility/index.js";
 
 class ModalHandler
 {

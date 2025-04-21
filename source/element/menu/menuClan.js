@@ -3,7 +3,7 @@ import { Component, EmbedManager, Schema }  from "../../../utility/index.js";
 import { Input }                            from "../../../utility/index.js";
 import { clanConfig }                       from "../../data/config/clan.js";
 import { UserSelectMenuBuilder }            from "discord.js";
-import { RoleAssignment } from '../../interaction/handler/role.js';
+import { RoleAssignment } from '../../event/interaction/handler/role.js';
 
 
 const data = 

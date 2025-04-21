@@ -1,16 +1,16 @@
 import fs       from 'fs';
 import path     from 'path';
-import directory from '../../../../env/directory/path.json' with { type: 'json' }
+import envdirectory from '../../../../env/directory/path.json' with { type: 'json' }
 import { log, Schema }  from '../../../../utility/index.js';
 
-const root = path.resolve(directory.root);
+const root = path.resolve(envdirectory.root);
 
 function updateTemplateList() 
 {
-    const templateDir   = path.join(root, 'assets', 'template', 'mercy');
+    const directory     = path.join(root, 'assets', 'template', 'mercy');
     const outputPath    = path.join(root, 'source', 'data', 'mercy', 'template.json');
 
-    const files = fs.readdirSync(templateDir).filter(file => /\.(png|jpg|jpeg)$/i.test(file));
+    const files = fs.readdirSync(directory).filter(file => /\.(png|jpg|jpeg)$/i.test(file));
 
     const template = {};
 
@@ -23,12 +23,12 @@ function updateTemplateList()
 
         template[name]  = 
         {
-            path: path.join(templateDir, file).replace(/\\/g, '/'),
+            path: path.join(directory, file).replace(/\\/g, '/'),
             relative: `./assets/template/mercy/${file}`
         };
     }
 
-    const finalData = { template, templateDir };
+    const finalData = { template, directory };
 
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, JSON.stringify(finalData, null, 4));

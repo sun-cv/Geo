@@ -168,6 +168,7 @@ const data =
 
         load: function(interaction)
         {        
+
             const files         = fs.readdirSync(templates.directory)
                                     .filter(file => file.endsWith('.png'))
                                     .map(file => path.parse(file).name)

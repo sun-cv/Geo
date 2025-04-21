@@ -8,7 +8,7 @@ import { ButtonHandler }        from './handler/button.js';
 import { CommandHandler }       from './handler/command.js';
 import { DeferHandler }         from './handler/defer.js';
 import { RoleHandler }          from './handler/role.js';
-import { Tracer, log, navigate }from '../../utility/index.js'
+import { Tracer, log, navigate }from '../../../utility/index.js'
 
 
 class Interaction
@@ -54,7 +54,7 @@ class Interaction
 
     async controller(client, interaction)
     {
-        await this.registry     .handle(interaction);
+        await this.registry     .loadInteractionData(interaction);
 
         await this.defer        .handle(interaction);
         await this.navigation   .handle(interaction);

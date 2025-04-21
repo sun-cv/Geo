@@ -213,7 +213,7 @@ class Registry
     }
 
     
-    async handle(interaction) 
+    async loadInteractionData(interaction) 
     {
         if (interaction.isAutocomplete()) 
         {

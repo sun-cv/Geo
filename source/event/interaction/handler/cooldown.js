@@ -1,5 +1,5 @@
 import { Collection, MessageFlags } from 'discord.js';
-import { log, Text } from '../../../utility/index.js';
+import { log, Text } from '../../../../utility/index.js';
 
 class CooldownHandler 
 {

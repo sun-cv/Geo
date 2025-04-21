@@ -2,7 +2,7 @@ import { MessageFlags }                                         from "discord.js
 import { Component, Text, EmbedManager, Schema, Timestamp }     from "../../../utility/index.js";
 import { applicationConfig }                                    from "../../data/config/application.js";
 import { clanConfig }                                           from "../../data/config/clan.js";
-import { RoleAssignment }                                       from "../../interaction/handler/role.js";
+import { RoleAssignment }                                       from "../../event/interaction/handler/role.js";
 import { template }                                             from "../../data/template/templateApplication.js";
 
 const data = 

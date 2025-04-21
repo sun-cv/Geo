@@ -1,4 +1,4 @@
-import lodash                       from 'lodash';
+import lodash from 'lodash';
 
 
 class Schema
@@ -42,7 +42,7 @@ class Schema
                 ignore:         false,
             },
 
-            execute:            () => {}
+            execute:            function() {}
         };
     
         return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
@@ -98,7 +98,7 @@ class Schema
 
             data:               null,
 
-            execute:            () => {}
+            execute:            function() {}
         };
     
         return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
@@ -152,8 +152,8 @@ class Schema
 
             roleAssignment:     {},
 
-            load:               () => {},
-            execute:            () => {}
+            load:               function() {},
+            execute:            function() {}
         };
     
         return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
@@ -206,8 +206,8 @@ class Schema
 
             roleAssignment:     {},
 
-            load:               () => {},
-            execute:            () => {}
+            load:               function() {},
+            execute:            function() {}
         };
     
         return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
@@ -261,8 +261,8 @@ class Schema
 
             roleAssignment:     {},
 
-            load:               () => {},
-            execute:            () => {}
+            load:               function() {},
+            execute:            function() {}
         };
     
         return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
@@ -324,6 +324,33 @@ class Schema
         return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
     }
 
+    static filter(overrides)
+    {
+        const defaultSchema = 
+        {
+            meta: 
+            {
+                id:             '',
+                type:           'filter',
+                category:       'filter',
+                description:    'filter'
+            },
+
+            config:
+            {
+                scope:          [],
+                channel:        [],
+                member:         [],
+                word:           [],
+            },
+
+            check:              function() {},
+            execute:            function() {}
+        };
+    
+        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+    }
+
     static task(overrides)
     {
         const defaultSchema = 
@@ -348,7 +375,7 @@ class Schema
                 reattempt:      true
             },
 
-            execute:            () => {}
+            execute:            function() {}
         };
     
         return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
