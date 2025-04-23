@@ -11,66 +11,7 @@ class Mercy extends Database
         super(directory.database.mercy.path)
 
         create(this.database);
-    }
-
-    // TRANSFER - DELETE
-    hasMember(iMember)
-    {
-        return this.database.prepare(`SELECT * FROM MEMBER WHERE member_id = ?`).get(iMember.id);
-    };
-
-    createMemberTransfer(iMember, registered)
-    {
-        this.database.prepare(`INSERT INTO member (member_id, username, registered) VALUES (?, ?, ?)`).run(iMember.id, iMember.user.username, registered);
-        log.trace(`Successfully created database profile entry`);
-    }
-
-    createAccountTransfer(member, accountName, main = 0, registered )
-    {
-        const account_id = Snowflake.generate();
-
-        this.database.prepare(`INSERT INTO account(member_id, account_id, username, name, main, registered) VALUES (?, ?, ?, ?, ?, ?)`).run(member.id, account_id, member.user.username, accountName, Number(main), registered)
-        log.trace(`Successfully generated database entry: account '${accountName}'`);
-
-        MercyUtil.forEachShard((shard, rarity) =>
-        {
-            this.database.prepare(`INSERT INTO mercy(member_id, account_id, username, name, source, rarity) VALUES (?, ?, ?, ?, ?, ?)`).run(member.id, account_id, member.user.username, accountName, shard, rarity);
-            log.trace(`Successfully generated database entry: ${Text.set(rarity).constrain(9)} ${Text.set(shard).constrain(7)} mercy for '${accountName}'`)
-        }, { prism: true})
-
-        // this.database.prepare(`INSERT INTO session (member_id, account_id, pull, reset, champion, session) VALUES (?, ?, ?, ?, ?, ?)`).run(member.id, account_id, 0, 0, 0, Timestamp.session());
-        // log.trace(`Successfully created database entry: session`)
-
-        return account_id;
-    }
-
-        loadAccountDataTransfer(member, account_id)
-    {
-        const data = this.database.prepare(`SELECT * FROM mercy WHERE member_id = ? AND account_id = ?`).all(member.id, account_id);
-
-        log.trace(`Found mercy data (${data.length} records)`);
-
-        return Parser.accountMercy(data);
-    }
-
-
-
-    updateAccountMercyTransfer(account)
-    {
-         const dirtyEntries = Object.entries(Shards.mercy).flatMap(([ shard, rarities ]) => Object.keys(rarities).map((rarity) => ({shard, rarity})));
-
-        for (const {shard, rarity} of dirtyEntries)
-        {
-            const mercy = account.mercy[shard][rarity];
-        
-            this.database.prepare(`UPDATE mercy SET username = ?, name = ?, total = ?, lifetime = ?, lastAdded = ?, lastReset = ?, lastChampion = ? WHERE member_id = ? AND account_id = ? AND source = ? AND rarity = ?`).run(account.member.username, account.name, mercy.total, mercy.lifetime, mercy.lastAdded, mercy.lastReset, mercy.lastChampion, account.member.id, account.id, shard, rarity);
-            
-            log.trace(`Successfully updated database entry: ${Text.set(rarity).constrain(9)} ${Text.set(shard).constrain(7)}`)
-            
-            account.flag.mercy[shard][rarity].dirty.clear();
-        }
-    }
-    
+    }    
 
     // Member
 
