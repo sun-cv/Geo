@@ -3,7 +3,7 @@ import config from '../../env/secret/credentials.json' with { type: 'json' }
 import { REST, Routes, Collection } from 'discord.js';
 import path                         from 'node:path';
 import lodash                       from 'lodash';
-import { log, FileManager }         from '../../utility/index.js'
+import { log, FileManager, Schema }         from '../../utility/index.js'
 
 class Registry
 {
@@ -34,12 +34,19 @@ class Registry
         this.modal          = new Collection();
         this.embed          = new Collection();
         this.row            = new Collection();
-        this.filter         = new Collection();
         this.task           = new Collection();
+        
+        this.filter         = 
+        {
+            member:           new Collection(),
+            content:          new Collection(),
+            channel:          new Collection(),
+        }
 
         // Guild
         this.guild          = null;
         this.role           = new Collection();
+        this.channels       = new Collection();
 
         // Mercy Tracker
         this.member         = new Collection();
@@ -81,7 +88,7 @@ class Registry
 
     async registerAutocomplete(autocomplete)
     {
-        if (autocomplete.flag.ignore)
+        if (autocomplete.flag.ignore.get())
         {
             log.trace(`${command.meta.id} load flag set to ignore.`)
             return;
@@ -95,7 +102,7 @@ class Registry
     async registerCommand(command) 
     {
 
-        if (command?.flag?.ignore) 
+        if (command.flag.ignore.get()) 
         {
             log.trace(`${command.meta.id} load flag set to ignore.`)
             return;
@@ -106,11 +113,11 @@ class Registry
     }
     
 
-    registerEmbed(data)
+    async registerEmbed(data)
     {
         for (const embed of Object.values(data))
         {
-            if (embed.flag.ignore)
+            if (embed.flag.ignore.get())
             {
                 log.trace(`${embed.meta.id} load flag set to ignore`);
             }
@@ -125,7 +132,7 @@ class Registry
     {
         for (const button of Object.values(data))
         {            
-            if (button.flag.ignore)
+            if (button.flag.ignore.get())
             {
                 log.trace(`${id} load flag set to ignore.`);
                 continue;
@@ -141,7 +148,7 @@ class Registry
     {
         for (const menu of Object.values(data))
             {            
-                if (menu.flag.ignore)
+                if (menu.flag.ignore.get())
                 {
                     log.trace(`${id} load flag set to ignore.`);
                     continue;
@@ -157,7 +164,7 @@ class Registry
     {
         for (const modal of Object.values(data))
         {            
-            if (modal.flag.ignore)
+            if (modal.flag.ignore.get())
             {
                 log.trace(`${id} load flag set to ignore.`);
                 continue;
@@ -171,13 +178,32 @@ class Registry
 
     async registerFilter(filter)
     {
-        // TBD
+
+        const { condition, condition: { scopes } } = filter
+
+        for (const scope of scopes)
+        {
+            if (condition.include[scope].length)
+            {
+                for (const value of condition.include[scope])
+                {
+                    if (!this.filter[scope].has(value))
+                    {
+                        this.filter[scope].set(value, new Collection)
+                    }
+                    this.filter[scope].get(value).set(filter.meta.id, filter)
+                }
+            }        
+        }
+
+        log.trace(`Registered filter: ${filter.meta.id}`);
     }
 
 
     async registerTask(task)
     {
-        if (task.flag.ignore)
+
+        if (task.flag.ignore.get())
         {
             log.trace(`${task.meta.id} load flag set to ignore`);
             return;
@@ -236,6 +262,11 @@ class Registry
             interaction.data = lodash.cloneDeep(this.modal.get(interaction.customId));
         }
     }
+
+    async loadMessageData(message)
+    {
+        message.data = Schema.message({ meta: { id: message.id }});
+    }
     
     async registerGuild()
     {
@@ -244,7 +275,44 @@ class Registry
 
         this.guild = guild;
         roles.map((role) => this.role.set(role.name, role))
+        
+        this.mapChannels();
     }
+
+    async mapChannels()
+    {
+        if (!this.guild) 
+        {
+            log.error("Guild not set, cannot map channels");
+            return;
+        }
+      
+        for (const [key, filterCollection] of this.filter.channel.entries()) 
+        {
+            if (!/^\d{17,19}$/.test(key)) 
+            {
+                const channel = this.guild.channels.cache.find(channelEntry => channelEntry.name.toLowerCase() === key.toLowerCase());
+                if (channel) 
+                {
+                    this.channels.set(key, channel.id);
+                } 
+                else 
+                {
+                    log.error(`mapChannels: channel name "${key}" not found in guild.`);
+                    this.channels.set(key, null);
+              }
+            } 
+            else 
+            {
+                const channel = this.guild.channels.cache.get(key);
+                if (channel) 
+                {
+                    this.channels.set(channel.name, channel.id);
+                }
+            }
+        }     
+    }
+    
 
 }
 

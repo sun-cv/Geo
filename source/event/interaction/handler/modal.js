@@ -16,7 +16,7 @@ class ModalHandler
     {
         const { data: { flag } } = interaction;
 
-        if (flag.handled || !interaction.isModalSubmit() || this.existingModal(interaction))
+        if (flag.handled.get() || !interaction.isModalSubmit() || this.existingModal(interaction))
         {
             return;
         }
@@ -29,7 +29,7 @@ class ModalHandler
         {
             log.error(error);
         }
-        flag.handled = true;
+        flag.handled.set()
 
         this.clearCache(interaction);
     }
@@ -54,7 +54,7 @@ class ModalHandler
     async modalInteraction(interaction)
     {
         const modal = interaction.data
-        try 
+        try
         {
             modal.execute(interaction);
         } 
@@ -63,7 +63,7 @@ class ModalHandler
             log.error(error)
             await interaction.editReply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
         }
-
+        modal.flag.handled.set();
     }
 
 

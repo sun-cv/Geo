@@ -55,13 +55,14 @@ class Interaction
     async controller(client, interaction)
     {
         await this.registry     .loadInteractionData(interaction);
+        
+        await this.autofill     .handle(interaction);
 
         await this.defer        .handle(interaction);
         await this.navigation   .handle(interaction);
         await this.permission   .handle(interaction);
         await this.cooldown     .handle(interaction);
 
-        await this.autofill     .handle(interaction);
         await this.modal        .handle(interaction);
         await this.button       .handle(interaction);
         await this.menu         .handle(interaction);

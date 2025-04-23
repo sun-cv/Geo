@@ -2,6 +2,7 @@ import fs                   from 'node:fs';
 import path                 from 'node:path';
 import { pathToFileURL }    from 'node:url';
 import { log }              from "../logger/log.js"
+import { Flags } from './flag.js';
 
 
 class FileManager
@@ -36,7 +37,7 @@ class FileManager
         {
             const filePath = path.join(folderPath, file);
             const stats    = fs.statSync(filePath);
-
+            
             if (stats.isDirectory())
             {
                 await this.loadDirectory(filePath, callbackFunction, ...args);
@@ -58,23 +59,25 @@ class FileManager
 
         if (!object)
         {
+            log.error(`File.js load failed (object data not found: ${fileURL})`)
             return;
         }
 
-        if (object?.flag?.ignore)
+        if (object?.flag instanceof Flags) 
+        {
+            if (object.flag?.ignore?.get())
+            {
+                log.trace(`load flag set to ignore: ${fileURL}`)
+                return
+            } 
+        }
+        else if (object?.flag?.ignore)
         {
             log.trace(`load flag set to ignore: ${fileURL}`)
             return;
         }
 
-        log.trace(`Loading source: ${fileURL})`);
-            
-        if (!object)
-        {
-            log.error(`File.js load failed (object data not found: ${fileURL})`)
-            return;
-        }
-        
+        log.trace(`Loading source: ${fileURL})`);       
 
         await callbackFunction(object, ...args);
     }

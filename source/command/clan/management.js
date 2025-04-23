@@ -23,13 +23,11 @@ const command = Schema.command
         access:         [],
         require:
         {
-            active:     true,
             channels:   [],
             roles:      ['Officer', 'Deputy'],
         },
         exclude:
         {
-            active:     false,
             channels:   [],
             roles:      []
         }
@@ -40,13 +38,18 @@ const command = Schema.command
         defer:          true,
         update:         false,
         ephemeral:      true,
-        permission:     false,
+
+        permission:     true,
+        require:        true,
+        exclude:        false,
+
         maintenance:    false,
         autocomplete:   false,
         navigation:     true,
         
         handled:        false,
         ignore:         false,
+
     },
 
     roleAssignment:     {},

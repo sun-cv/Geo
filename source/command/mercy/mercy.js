@@ -17,12 +17,14 @@ async function mercy(interaction = new CommandInteraction())
 
     if  (!account) 
     {
-        return interaction.followUp({ content: error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
+        await interaction.followUp({ content: error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
+        return;
     }
   
     if (account.settings.template.options.text.get())
     {
-        return interaction.followUp(EmbedManager.set(interaction).load('embed-mercy-account-mercy-display').create())
+        await interaction.followUp(EmbedManager.set(interaction).load('embed-mercy-account-mercy-display').create())
+        return;
     }
     
     const image = new Image(account);
@@ -31,7 +33,7 @@ async function mercy(interaction = new CommandInteraction())
 
     const attachment = image.canvas.toBuffer('image/png');
 
-    interaction.followUp({ files: [{ attachment: attachment, name: 'mercy.png' }]});
+    await interaction.followUp({ files: [{ attachment: attachment, name: 'mercy.png' }]});
 }
 
 const command = Schema.command
@@ -49,13 +51,11 @@ const command = Schema.command
         access:         [],
         require:
         {
-            active:     false,
             channels:   [],
             roles:      [],
         },
         exclude:
         {
-            active:     false,
             channels:   [],
             roles:      []
         }
@@ -63,13 +63,21 @@ const command = Schema.command
 
     flag: 
     {
-        handled:        false,
-        ignore:         false,
         defer:          true,
+        update:         false,
         ephemeral:      true,
-        access:         false,
+
+        permission:     false,
+        require:        false,
+        exclude:        false,
+
         maintenance:    false,
         autocomplete:   true,
+        navigation:     false,
+        
+        handled:        false,
+        ignore:         false,
+
     },
 
     roleAssignment:     {},

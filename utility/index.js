@@ -17,6 +17,8 @@ import { MercyUtil }    from './toolkit/mercy.js'
 import { Snowflake }    from './toolkit/snowflake.js'
 import { PathAccess } from './toolkit/pathAccess.js'
 
+import { Toolkit } from './toolkit/toolkit.js'
+
 export
 {
     log,
@@ -37,4 +39,5 @@ export
     MercyUtil,
     Snowflake,
     PathAccess,
+    Toolkit,
 }

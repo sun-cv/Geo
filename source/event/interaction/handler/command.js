@@ -13,8 +13,7 @@ class CommandHandler
     {
         const { data: command, data: { flag } } = interaction;
 
-         
-        if (flag.handled || !interaction.isChatInputCommand())
+        if (flag.handled.get() || !interaction.isChatInputCommand())
         {
             return;
         }
@@ -28,7 +27,8 @@ class CommandHandler
             log.error(error);
             await interaction.editReply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
         }
-        flag.handled = true;
+        
+        flag.handled.set()
     }
 }
 

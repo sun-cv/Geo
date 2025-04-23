@@ -14,7 +14,7 @@ class ButtonHandler
     {
         const { data: button, data: { flag } } = interaction;
 
-        if (flag.handled || !interaction.isButton())
+        if (flag.handled.get() || !interaction.isButton())
         {
             return;
         }
@@ -28,12 +28,9 @@ class ButtonHandler
             log.error(error);
             await interaction.editReply({ content: 'There was an error while executing this button!', flags: MessageFlags.Ephemeral });
         }
-        flag.handled = true;
-   
+
+        flag.handled.set()
     }
-
-
-
 }
 
 

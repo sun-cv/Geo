@@ -54,6 +54,4 @@ const data = Schema.task
     execute: updateTemplateList,
 });
 
-updateTemplateList()
-
 export default data;

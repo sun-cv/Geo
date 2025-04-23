@@ -11,15 +11,19 @@ class DeferHandler
 
     async handle(interaction)
     {
-
         const { data: { flag } } = interaction;
 
-        if (flag.update)
+        if (flag.handled.get())
+        {
+            return;
+        }
+
+        if (flag.update.get())
         {
             return interaction.deferUpdate();
         }
 
-        if (!flag.defer || interaction.isAutocomplete())
+        if (!flag.defer.get())
         {
             return;
         }
@@ -38,7 +42,7 @@ class DeferHandler
 
     check(interaction)
     {
-        this.ephemeral = (interaction.data.flag.ephemeral && (interaction.options?.getString('share') !== 'true')) ? this.flag : 0;
+        this.ephemeral = (interaction.data.flag.ephemeral.get() && (interaction.options?.getString('share') !== 'true')) ? this.flag : 0;
     }
 
 }

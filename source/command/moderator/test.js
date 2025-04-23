@@ -3,14 +3,7 @@ import { Schema } from '../../../utility/index.js';
 
 async function testCommand(interaction = new CommandInteraction()) 
 {
-    const { mercy } = interaction.client;
 
-    const member    = mercy.initialize(interaction);
-    const account   = member.getAccount('main');
-
-    // interaction.data.roleAssignment[member.id] = new RoleAssignment();
-
-    // interaction.data.roleAssignment[member.id].remove.push('Moderator', 'Mercy')
 
 }
 
@@ -29,13 +22,11 @@ const command = Schema.command
         access:         [],
         require:
         {
-            active:     true,
             channels:   [],
-            roles:      ["moderator"],
+            roles:      ['moderator'],
         },
         exclude:
         {
-            active:     false,
             channels:   [],
             roles:      []
         }
@@ -43,13 +34,20 @@ const command = Schema.command
 
     flag: 
     {
-        handled:        false,
-        ignore:         false,
-        defer:          true,
+        defer:          false,
+        update:         false,
         ephemeral:      true,
-        access:         true,
+
+        permission:     true,
+        require:        true,
+        exclude:        false,
+
         maintenance:    false,
         autocomplete:   true,
+        navigation:     false,
+        
+        handled:        false,
+        ignore:         false,
     },
 
     roleAssignment:     {},

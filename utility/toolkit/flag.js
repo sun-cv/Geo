@@ -4,9 +4,11 @@ class Flag
 {
     constructor(initialValue = false, key = null, parent = null) 
     {
-        this.value  = initialValue;
-        this.key    = key;
-        this.parent = parent;
+        this.value                  = initialValue;
+        this.key                    = key;
+
+        if (parent) this.parent     = parent;
+
     }
 
     set(value = true) 
@@ -54,19 +56,20 @@ class Flags
     constructor(flags = {}, exclusive = false) 
     {
         this._exclusive   = exclusive;
+        this._parent      = this.exclusive ? this : null;
 
         if (Array.isArray(flags)) 
         {
             for (const key of flags) 
             {
-                this[key] = new Flag(false, key, this);
+                this[key] = new Flag(false, key, this._parent);
             }
         } 
         else 
         {
             for (const [key, value] of Object.entries(flags)) 
             {
-                this[key] = new Flag(value, key, this);
+                this[key] = new Flag(value, key, this._parent);
             }
 
             if (exclusive) this._enforceExclusivity();
@@ -82,7 +85,6 @@ class Flags
     {
         for (const [key, value] of Object.entries(data)) 
         {
-
             if (this[key] instanceof Flag) 
             {
                 this[key].set(value);

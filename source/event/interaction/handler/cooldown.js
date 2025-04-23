@@ -12,15 +12,15 @@ class CooldownHandler
     {
         const { member, data: { meta: { id }, flag = {} } } = interaction;
 
-        if (!flag.cooldown || flag.handled)
+        if (flag.handled.get() || !flag.cooldown.get())
         {
             return;
         }
 
         this.initializeUserCooldowns(interaction);
 
-        const messages = [];
-        const now = Date.now();
+        const messages  = [];
+        const now       = Date.now();
         const cooldowns = await this.getCooldowns(interaction);
 
         for (const { name, time: seconds } of cooldowns) 
@@ -35,7 +35,7 @@ class CooldownHandler
             {
                 messages.push(this.formatCooldownMessage(name, seconds, timeLeft));
                 this.logCooldown(interaction, name, timeLeft);
-                flag.handled = true;
+                flag.handled.set()
             } 
             else 
             {
@@ -44,7 +44,7 @@ class CooldownHandler
             }
         }
 
-        if (flag.handled) 
+        if (flag.handled.get()) 
         {
             await this.sendCooldownMessage(interaction, messages);
         }

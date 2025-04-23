@@ -13,7 +13,7 @@ class AutocompleteHandler
     {
         const { data: { flag }} = interaction;
         
-        if (flag.handled || !flag.autocomplete || !interaction.isAutocomplete()) 
+        if (flag.handled.get() || !flag.autocomplete.get() || !interaction.isAutocomplete()) 
         {
             return;
         }
@@ -26,13 +26,12 @@ class AutocompleteHandler
         {
             log.error(error);
         }
-        flag.handled = true;
+        flag.handled.set()
     }
     
 
     respond(interaction)
     {
-
         const autocomplete  = interaction.data
         const values        = autocomplete.execute(interaction)
         const focused       = interaction.options.getFocused().toLowerCase();
@@ -50,6 +49,7 @@ class AutocompleteHandler
                 filtered.push({ name: choice, value: choice });
             }
         }
+
         interaction.respond(filtered);
     }
 }

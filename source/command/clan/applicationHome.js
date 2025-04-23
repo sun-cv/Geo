@@ -24,13 +24,11 @@ const command = Schema.command
         access:         [],
         require:
         {
-            active:     true,
             channels:   ['clan-applications'],
             roles:      ['Moderator'],
         },
         exclude:
         {
-            active:     false,
             channels:   [],
             roles:      []
         }
@@ -38,13 +36,21 @@ const command = Schema.command
 
     flag: 
     {
-        handled:        false,
-        ignore:         false,
+
         defer:          false,
+        update:         false,
         ephemeral:      false,
-        access:         false,
+
+        permission:     true,
+        require:        true,
+        exclude:        false,
+
         maintenance:    false,
         autocomplete:   false,
+        navigation:     false,
+        
+        handled:        false,
+        ignore:         false,
     },
 
     roleAssignment:     {},

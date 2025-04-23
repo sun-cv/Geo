@@ -3,7 +3,7 @@ import { log } from '../../../../utility/index.js'
 
 class MenuHandler
 {
-        constructor(client, registry)
+    constructor(client, registry)
     {
         this.client   = client;
         this.registry = registry;
@@ -13,7 +13,7 @@ class MenuHandler
     {
         const { data: menu, data: { flag } } = interaction;
          
-        if (flag.handled || !interaction.isAnySelectMenu())
+        if (flag.handled.get() || !interaction.isAnySelectMenu())
         {
             return;
         }
@@ -27,8 +27,8 @@ class MenuHandler
             log.error(error);
             await interaction.editReply({ content: 'There was an error while loading this menu', flags: MessageFlags.Ephemeral });
         }
-        flag.handled = true;
-        
+
+        flag.handled.set()
     }
 }
 

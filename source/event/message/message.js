@@ -1,5 +1,6 @@
 import { Collection, Events } from "discord.js";
 import { log, Tracer } from "../../../utility/index.js";
+import { Filter } from "./handler/filter.js";
 
 class Message
 {
@@ -7,6 +8,8 @@ class Message
     {
         this.client     = client
         this.registry   = registry;
+
+        this.filter     = new Filter(this.registry) 
     }
 
     create =
@@ -30,8 +33,9 @@ class Message
 
     async controller(client, message)
     {
-        await this.registry     .handle(message);
+        await this.registry     .loadMessageData(message);
 
+        await this.filter       .handle(message);
 
         await this              .finalize(message)
     }
@@ -39,8 +43,6 @@ class Message
 
     async log(message)
     {
-        this.test.contains()
-        log.initiate(message);
         message.tracer = new Tracer()
     }
 

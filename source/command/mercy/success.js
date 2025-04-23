@@ -35,7 +35,7 @@ async function success(interaction = new CommandInteraction())
 
     const successChance = Math.min(100, (1 - totalFailChance) * 100);
 
-    return interaction.followUp({ content: template.command.success(member, initial, shard, rarity, count, successChance) });
+    await interaction.followUp({ content: template.command.success(member, initial, shard, rarity, count, successChance) });
 }
 
 
@@ -54,13 +54,11 @@ const command = Schema.command
         access:         [],
         require:
         {
-            active:     false,
             channels:   [],
             roles:      [],
         },
         exclude:
         {
-            active:     false,
             channels:   [],
             roles:      []
         }
@@ -68,13 +66,20 @@ const command = Schema.command
 
     flag: 
     {
-        handled:        false,
-        ignore:         false,
         defer:          true,
+        update:         false,
         ephemeral:      false,
-        access:         false,
+
+        permission:     false,
+        require:        false,
+        exclude:        false,
+
         maintenance:    false,
         autocomplete:   true,
+        navigation:     false,
+        
+        handled:        false,
+        ignore:         false,
     },
 
     roleAssignment:     {},
@@ -82,6 +87,12 @@ const command = Schema.command
     data: new SlashCommandBuilder()
     	.setName('success')
     	.setDescription('Calculate success chance of pulling a provided number of shards (and more!)')
+        .addIntegerOption(option =>
+            option.setName('count')
+                .setDescription('Number of shards to pull')
+                .setRequired(true)
+                .setMinValue(-999)
+                .setMaxValue(999))
         .addStringOption(option =>
             option.setName('shard')
                 .setDescription('Shard type to pull')
@@ -94,12 +105,6 @@ const command = Schema.command
                     { name: 'sacred',   value: 'sacred' },
                     { name: 'prism',    value: 'prism'  },
                 ))
-        .addIntegerOption(option =>
-            option.setName('count')
-                .setDescription('Number of shards to pull')
-                .setRequired(true)
-                .setMinValue(-999)
-                .setMaxValue(999))
         .addIntegerOption(option =>
     		option.setName('start')
     			.setDescription('Specify your own starting count.')

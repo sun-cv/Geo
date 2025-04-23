@@ -16,7 +16,8 @@ async function reset(interaction = new CommandInteraction())
 
     if  (!account) 
     {
-        return interaction.followUp({ content: error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
+        await interaction.followUp({ content: error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
+        return;
     }
     
     if (count)
@@ -27,7 +28,7 @@ async function reset(interaction = new CommandInteraction())
     account.reset(shard, rarity, champion);
     account.update();    
     
-    interaction.followUp({ content: `${template.command.reset.pull(interaction)}${template.command.reset.chance(interaction)}`})
+    await interaction.followUp({ content: `${template.command.reset.pull(interaction)}${template.command.reset.chance(interaction)}`})
 }
 
 
@@ -46,13 +47,11 @@ const command = Schema.command
         access:         [],
         require:
         {
-            active:     false,
             channels:   [],
             roles:      [],
         },
         exclude:
         {
-            active:     false,
             channels:   [],
             roles:      []
         }
@@ -60,13 +59,20 @@ const command = Schema.command
 
     flag: 
     {
-        handled:        false,
-        ignore:         false,
         defer:          true,
+        update:         false,
         ephemeral:      false,
-        access:         false,
+
+        permission:     false,
+        require:        false,
+        exclude:        false,
+
         maintenance:    false,
         autocomplete:   true,
+        navigation:     false,
+        
+        handled:        false,
+        ignore:         false,
     },
 
     roleAssignment:     {},

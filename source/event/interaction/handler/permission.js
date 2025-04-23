@@ -11,21 +11,25 @@ class PermissionHandler
 
     async handle(interaction)
     {
-        const {flag, permission: { require = {}, exclude = {} } = {}} = interaction.data;
+        const { flag } = interaction.data;
 
-        if (require.active)
+        if (flag.handled.get() || !flag.permission.get())
+        {
+            return;
+        }
+        if (flag?.require.get())
         {
             this.require(interaction);
         }
-        if (exclude.active)
+        if (flag?.exclude.get())
         {
             this.exclude(interaction);
         }
-        if (flag.maintenance)
+        if (flag?.maintenance.get())
         {
             this.maintenance(interaction);
         }
-        if (flag.handled)
+        if (flag?.handled.get())
         {
             this.log(interaction)
         }
@@ -33,16 +37,17 @@ class PermissionHandler
 
     async require(interaction)
     {
-        const { member, data: { meta, flag, permission: { require: { channels = {}, roles = {}, message}}}} = interaction
-
-        const content = message ? message: `You do not have permissions to use this ${meta.type} here.`
+        const { member, data: { meta, flag, permission: { require: { channels = [], roles = [], message}}}} = interaction
 
         if (channels.length)
         {
+            const content = message ? message : `You do not have permissions to use this ${meta.type} here`
+
             if (!channels.includes(interaction.channel.name))
             {
-                flag.handled = true;
-                if (!flag.defer)
+                flag.handled.set()
+                
+                if (!flag.defer.get())
                 {
                     return interaction.reply({content: content, flags: MessageFlags.Ephemeral}) 
                 }
@@ -52,13 +57,16 @@ class PermissionHandler
 
         if (roles.length)
         {
+            const content = message ? message : `You do not have permissions to use this ${meta.type}`
+
             const memberRoles   = member.roles.cache.map((role) => role.name);
             const permissions   = roles.some(requiredRole => memberRoles.includes(requiredRole))
 
             if (!permissions)
             {
-                flag.handled = true;
-                if (!flag.defer)
+                flag.handled.set()
+
+                if (!flag.defer.get())
                 {
                     return interaction.reply({content: content, flags: MessageFlags.Ephemeral}) 
                 }
@@ -71,14 +79,15 @@ class PermissionHandler
     {
         const { member, data: { meta, flag, permission: { exclude: { channels, roles, message}}}} = interaction
 
-        const content = message ? message: `You do not have permissions to use this ${meta.type} here.`
-
         if (channels.length)
         {
+            const content = message ? message: `You do not have permissions to use this ${meta.type} here`
+
             if (channels.includes(interaction.channel.name))
             {
-                flag.handled = true;
-                if (!flag.defer)
+                flag.handled.set()
+
+                if (!flag.defer.get())
                 {
                     return interaction.reply({content: content, flags: MessageFlags.Ephemeral}) 
                 }
@@ -88,13 +97,16 @@ class PermissionHandler
 
         if (roles.length)
         {
+            const content = message ? message: `You do not have permissions to use this ${meta.type}`
+
             const memberRoles   = member.roles.cache.map((role) => role.name);
             const restriction   = roles.some(requiredRole => memberRoles.includes(requiredRole))
 
             if (restriction)
             {
-                flag.handled = true;
-                if (!flag.defer)
+                flag.handled.set()
+
+                if (!flag.defer.get())
                 {
                     return interaction.reply({content: content, flags: MessageFlags.Ephemeral}) 
                 }
@@ -107,7 +119,8 @@ class PermissionHandler
     {
         const { data: { flag }} = interaction;
 
-        flag.handled = true;
+        flag.handled.set()
+
         await interaction.editReply({content: "This command is currently under maintenance. Please try again later", flags: MessageFlags.Ephemeral});
     }
 

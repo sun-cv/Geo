@@ -25,13 +25,11 @@ const command = Schema.command
         access:         [],
         require:
         {
-            active:     false,
             channels:   [],
             roles:      [],
         },
         exclude:
         {
-            active:     false,
             channels:   [],
             roles:      []
         }
@@ -39,14 +37,20 @@ const command = Schema.command
 
     flag: 
     {
-        handled:        false,
-        ignore:         false,
         defer:          true,
+        update:         false,
         ephemeral:      true,
-        access:         false,
+
+        permission:     false,
+        require:        false,
+        exclude:        false,
+
         maintenance:    false,
         autocomplete:   true,
         navigation:     true,
+        
+        handled:        false,
+        ignore:         false,
     },
 
     roleAssignment:     {},

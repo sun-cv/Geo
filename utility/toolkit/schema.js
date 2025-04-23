@@ -1,4 +1,6 @@
 import lodash from 'lodash';
+import { Flags } from './flag.js';
+import { Condition } from '../../source/event/message/handler/filter.js';
 
 
 class Schema
@@ -20,13 +22,11 @@ class Schema
                 access:         [],
                 require:
                 {
-                    active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
-                    active:     false,
                     channels:   [],
                     roles:      []
                 }
@@ -34,7 +34,6 @@ class Schema
 
             flag: 
             {
-
                 maintenance:    false,
                 autocomplete:   true,
 
@@ -45,7 +44,9 @@ class Schema
             execute:            function() {}
         };
     
-        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        const schema    = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        schema.flag     = Flags.from(schema.flag, defaultSchema.flag)
+        return schema;    
     }
 
 
@@ -67,14 +68,12 @@ class Schema
                 require:
                 {
                     message:    '',
-                    active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
                     message:    '',
-                    active:     false,
                     channels:   [],
                     roles:      []
                 }
@@ -85,7 +84,12 @@ class Schema
                 defer:          true,
                 update:         false,
                 ephemeral:      true,
+
                 permission:     false,
+                require:        false,
+                exclude:        false,
+                cooldown:       false,
+
                 maintenance:    false,
                 autocomplete:   false,
                 navigation:     false,
@@ -101,7 +105,10 @@ class Schema
             execute:            function() {}
         };
     
-        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        const schema    = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        schema.flag     = Flags.from(schema.flag, defaultSchema.flag)
+
+        return schema;    
     }
 
 
@@ -123,14 +130,12 @@ class Schema
                 require:
                 {
                     message:    '',
-                    active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
                     message:    '',
-                    active:     false,
                     channels:   [],
                     roles:      []
                 }
@@ -141,7 +146,12 @@ class Schema
                 defer:          true,
                 update:         false,
                 ephemeral:      true,
+
                 permission:     false,
+                require:        false,
+                exclude:        false,
+                cooldown:       false,
+
                 maintenance:    false,
                 autocomplete:   false,
                 navigation:     false,
@@ -156,7 +166,9 @@ class Schema
             execute:            function() {}
         };
     
-        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        const schema    = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        schema.flag     = Flags.from(schema.flag, defaultSchema.flag)
+        return schema;    
     }    
     
     static menu(overrides)
@@ -177,14 +189,12 @@ class Schema
                 require:
                 {
                     message:    '',
-                    active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
                     message:    '',
-                    active:     false,
                     channels:   [],
                     roles:      []
                 }
@@ -195,7 +205,12 @@ class Schema
                 defer:          false,
                 update:         true,
                 ephemeral:      true,
+
                 permission:     false,
+                require:        false,
+                exclude:        false,
+                cooldown:       false,
+
                 maintenance:    false,
                 autocomplete:   false,
                 navigation:     false,
@@ -210,7 +225,9 @@ class Schema
             execute:            function() {}
         };
     
-        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        const schema    = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        schema.flag     = Flags.from(schema.flag, defaultSchema.flag)
+        return schema;    
     }
 
 
@@ -232,14 +249,12 @@ class Schema
                 require:
                 {
                     message:    '',
-                    active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
                     message:    '',
-                    active:     false,
                     channels:   [],
                     roles:      []
                 }
@@ -250,7 +265,12 @@ class Schema
                 defer:          true,
                 update:         false,
                 ephemeral:      true,
+
                 permission:     false,
+                require:        false,
+                exclude:        false,
+                cooldown:       false,
+
                 maintenance:    false,
                 autocomplete:   false,
                 navigation:     false,
@@ -265,7 +285,9 @@ class Schema
             execute:            function() {}
         };
     
-        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        const schema    = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        schema.flag     = Flags.from(schema.flag, defaultSchema.flag)
+        return schema;    
     }
 
     static embed(overrides)
@@ -286,14 +308,12 @@ class Schema
                 require:
                 {
                     message:    '',
-                    active:     false,
                     channels:   [],
                     roles:      [],
                 },
                 exclude:
                 {
                     message:    '',
-                    active:     false,
                     channels:   [],
                     roles:      []
                 }
@@ -306,7 +326,11 @@ class Schema
                 defer:          true,
                 update:         false,
                 ephemeral:      true,
+                
                 permission:     false,
+                require:        false,
+                exclude:        false,
+
                 maintenance:    false,
                 autocomplete:   false,
                 navigation:     false,
@@ -321,8 +345,50 @@ class Schema
             execute:            () => {}
         };
     
-        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        const schema    = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        schema.flag     = Flags.from(schema.flag, defaultSchema.flag)
+        return schema;    
     }
+
+
+    static message(overrides)
+    {
+        const defaultSchema = 
+        {
+            meta: 
+            {
+                id:             '',
+                type:           'message',
+                category:       'message',
+                description:    'message'
+            },
+
+            condition:
+            {
+                scopes:         new Set(),
+                member:         new Set(),
+                content:        new Set(),
+                channel:        new Set(),
+
+                filters:        new Set(),
+                exclude:        new Set(),
+            },
+
+            flag:
+            {
+                match:          false,
+                filtered:       false,
+            },
+
+
+        };
+    
+        const schema    = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        schema.flag     = Flags.from(schema.flag, defaultSchema.flag)
+        return schema;
+    }
+
+
 
     static filter(overrides)
     {
@@ -336,19 +402,39 @@ class Schema
                 description:    'filter'
             },
 
-            config:
+            condition:
             {
-                scope:          [],
-                channel:        [],
-                member:         [],
-                word:           [],
+                scopes:         [],
+                include:
+                {
+                    member:     [],
+                    content:    [],
+                    channel:    [],
+                },
+                exclude:
+                {
+                    member:     [],
+                    content:    [],
+                    channel:    [],        
+                }
             },
 
-            check:              function() {},
+            flag:
+            {
+                bot:            false,
+
+                maintenance:    false,
+                ignore:         false,
+            },
+
+            evaluate:           function() {},
             execute:            function() {}
         };
     
-        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        const schema        = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        schema.flag         = Flags.from(schema.flag, defaultSchema.flag)
+        schema.condition    = new Condition(schema.condition, schema.flag)
+        return schema
     }
 
     static task(overrides)
@@ -372,14 +458,16 @@ class Schema
 
             flag: 
             {
-                reattempt:      true
+                ignore:         false,
+                reattempt:      true,
             },
 
             execute:            function() {}
         };
     
-        return lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
-    }
+        const schema    = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        schema.flag     = Flags.from(schema.flag, defaultSchema.flag)
+        return schema;    }
 }
 
 

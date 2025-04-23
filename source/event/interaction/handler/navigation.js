@@ -72,9 +72,9 @@ class Navigation
 
     async handle(interaction)
     {
-        const data = interaction.data;
+        const {data, data: { flag }} = interaction
 
-        if (data.flag.handled || !data.flag.navigation || (!data.flag.navigation && interaction.isChatInputCommand()))
+        if (flag.handled.get() || !flag.navigation.get() || (!flag.navigation.get() && interaction.isChatInputCommand()))
         {
             return;
         }

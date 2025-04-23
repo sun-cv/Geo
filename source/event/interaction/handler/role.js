@@ -63,6 +63,7 @@ class RoleHandler
             {
                 continue;
             }
+
             const member    = await this.registry.guild.members.fetch(memberID);
             
             log.debug(`RoleHandler is attempting to remove ${roles.length} ${roles.length > 1 ? 'roles' : "role"} from ${member.user.username}`)
@@ -92,6 +93,7 @@ class RoleHandler
             {
                 continue
             }
+            
             const member    = await this.registry.guild.members.fetch(memberID);
             
             log.debug(`RoleHandler is attempting to assign ${roles.length} ${roles.length > 1 ? 'roles' : "role"} to ${member.user.username}`)

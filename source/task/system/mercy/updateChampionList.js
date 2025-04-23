@@ -1,16 +1,14 @@
 import fs                               from 'node:fs';
 import path                             from 'node:path';
 import puppeteer                        from 'puppeteer';
-import { fileURLToPath }                from 'url';
 import { log, Schema }                  from '../../../../utility/index.js';
 import { updateChampionListTrieCache }  from '../../../data/autocomplete/championListTrie.js';
-
+import directory from '../../../../env/directory/path.json' with { type: 'json'}
 
 async function updateChampionList() 
 {
-    const __filename    = fileURLToPath(import.meta.url);
-    const __dirname     = path.dirname(__filename);
-    const filePath      = path.join(__dirname, '..', '..', '..', 'data', 'autocomplete', 'championList.json');
+
+    const filePath      = path.join(directory.root, 'source', 'data', 'autocomplete', 'championList.json');
     const championList  = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
     const browser       = await puppeteer.launch({ headless: 'shell' });
@@ -38,7 +36,7 @@ async function updateChampionList()
         await page.waitForSelector('.champion-name a');
 
         const names = await page.evaluate(() => 
-            Array.from(document.querySelectorAll('.champion-name a')).map(el => el.textContent.trim())
+            Array.from(document.querySelectorAll('.champion-name a')).map(element => element.textContent.trim())
         );
 
         log.trace(`Page search offset ${i}: Found ${names.length} names`);
@@ -84,7 +82,6 @@ async function updateChampionList()
 
     updateChampionListTrieCache();
 }
-
 
 
 const data = Schema.task

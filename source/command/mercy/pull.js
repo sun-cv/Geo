@@ -14,13 +14,14 @@ async function pull(interaction = new CommandInteraction())
 
     if  (!account) 
     {
-        return interaction.followUp({ content: error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
+        await interaction.followUp({ content: error.account.notFound(account_name), flags: MessageFlags.Ephemeral})
+        return;
     }
    
     account.pull(shard, count);
     account.update();
  
-    interaction.followUp({ content: template.command.pull(interaction)});
+    await interaction.followUp({ content: template.command.pull(interaction)});
 }
 
 const command = Schema.command
@@ -38,13 +39,11 @@ const command = Schema.command
         access:         [],
         require:
         {
-            active:     false,
             channels:   [],
             roles:      [],
         },
         exclude:
         {
-            active:     false,
             channels:   [],
             roles:      []
         }
@@ -52,13 +51,20 @@ const command = Schema.command
 
     flag: 
     {
-        handled:        false,
-        ignore:         false,
         defer:          true,
+        update:         false,
         ephemeral:      false,
-        access:         false,
+
+        permission:     false,
+        require:        false,
+        exclude:        false,
+
         maintenance:    false,
         autocomplete:   true,
+        navigation:     false,
+        
+        handled:        false,
+        ignore:         false,
     },
 
     roleAssignment:     {},

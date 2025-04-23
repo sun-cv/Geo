@@ -55,13 +55,11 @@ const command = Schema.command
         access:         [],
         require:
         {
-            active:     false,
             channels:   [],
             roles:      ["moderator"],
         },
         exclude:
         {
-            active:     false,
             channels:   [],
             roles:      []
         }
@@ -69,11 +67,20 @@ const command = Schema.command
 
     flag: 
     {
+        defer:          true,
+        update:         false,
+        ephemeral:      true,
+
+        permission:     true,
+        require:        true,
+        exclude:        false,
+
+        maintenance:    false,
+        autocomplete:   false,
+        navigation:     false,
+        
         handled:        false,
         ignore:         false,
-        defer:          true,
-        access:         true,
-        maintenance:    false
     },
 
     data: new SlashCommandBuilder()
