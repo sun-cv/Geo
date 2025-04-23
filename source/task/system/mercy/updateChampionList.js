@@ -65,11 +65,8 @@ async function updateChampionList()
     }
     else
     {
-        
         log.admin(`No new names found.`)
     }
-
-
 
     fs.writeFileSync(filePath, JSON.stringify({
         champions: updatedNames,

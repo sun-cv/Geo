@@ -82,22 +82,24 @@ class Log
 
     async message(message)
     {
-        const { member, content, channel, tracer, data: { meta, condition } } = message;
-
-        const timestamp     = Timestamp.hour();
-        const logPrefix     = `[event] ${timestamp} - ${Text.set(tracer.responseTime).constrain(5)} : ${member.user.username}`;
+        const { member, content, channel, tracer, data: { meta, condition }} = message;
 
         const filters = [...condition.filters].map((filter) => filter.meta.id)
-            // Log triggering filter and message content?? [filter]
 
-        const logMessages   = 
+        if (filters.length)
         {
-            message:        `${logPrefix} > ${filters.join(', ')} : ${content ? content : 'No message content found'}`,
-        };
+            const timestamp     = Timestamp.hour();
+            const logPrefix     = `[event] ${timestamp} - ${Text.set(tracer.responseTime).constrain(5)} : ${member?.user?.username}`;
 
-        if (logMessages[meta.type] && filters.length)
-        {
-            console.log(logMessages[meta.type]);
+            const logMessages   = 
+            {
+                message:        `${logPrefix} > ${filters.join(', ')} : ${content ? content : 'No message content found'}`,
+            };
+
+            if (logMessages[meta.type])
+            {
+                console.log(logMessages[meta.type]);
+            }
         }
     }
 

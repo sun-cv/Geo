@@ -114,7 +114,7 @@ class Filter
             try 
             {
                 filter.execute(message);
-                log.trace(`Executed filter: ${filter.meta.id}`)
+                log.trace(`Executed filter(${filter.condition.scopes.join(', ')}): ${filter.meta.id}`)
             } 
             catch (error) 
             {
