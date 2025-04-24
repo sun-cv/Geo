@@ -125,7 +125,7 @@ const data =
             embed.addFields
             (
                 { name: ' ', value:`${Text.set(`${Text.set(application.member).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
-                { name: ' ', value:`${Text.set(`${Text.set(`Re-assigned by ${interaction.member.user.username} from: ${application.admin.transfer.from}`).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
+                { name: ' ', value:`${Text.set(`${Text.set(`Reassigned by ${interaction.member.user.username} from: ${application.admin.transfer.from}`).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
                 { name: ' ', value: template.applicationCard1(application), inline: true },
                 { name: ' ', value: template.applicationCard2(application), inline: true },
             )

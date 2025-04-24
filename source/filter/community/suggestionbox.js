@@ -63,7 +63,7 @@ const filter = Schema.filter
             return;
         }
         
-        await message.react('<:keanu_thanks59:1185010015178870894>');
+        // await message.react('<:keanu_thanks59:1185010015178870894>');
 
         for (let i = 0; i < 3; i++) 
         {

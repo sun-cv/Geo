@@ -33,9 +33,12 @@ const data =
             const { client: { clanManagement: { applications: { cache: { selection, active }}} }, member } = interaction
             const [value] = Input.menu(interaction)
 
-            active.set(member.id, value)
+            if (value)
+            {
+                active.set(member.id, value)
 
-            interaction.editReply(EmbedManager.set(interaction).load('embed-application-management-home').create());
+                interaction.editReply(EmbedManager.set(interaction).load('embed-application-management-home').create());
+            }
         }
     }),
 
@@ -66,9 +69,12 @@ const data =
             const { client: { clanManagement: { applications: { cache: { active }}} }, member } = interaction
             const [value] = Input.menu(interaction)
 
-            active.set(member.id, value)
+            if (value)
+            {
+                active.set(member.id, value)
 
-            interaction.editReply(EmbedManager.set(interaction).load('embed-application-management-home').create());
+                interaction.editReply(EmbedManager.set(interaction).load('embed-application-management-home').create());
+            }
         }
     }),
 
@@ -90,14 +96,14 @@ const data =
 
             return Component
                 .menu(this.meta.id)
-                .placeholder(`Assign application to a different clan. `)
+                .placeholder(`Reassign | Care - submits instantly`)
                 .values(1, 1)
                 .arrayOptions(clans.map((clan) => {return clan.clan}))
         },
     
         execute: function(interaction) 
         {
-            const { member, client: { clanManagement: { officersTable, applications, applications: {cache: { active}} }} } = interaction;
+            const { member, client: { registry: { channels }, clanManagement: { officersTable, applications, applications: {cache: { active}} }} } = interaction;
 
             const [value] = Input.menu(interaction)
             const application = applications.getApplication({id: active.get(member.id)})
@@ -110,7 +116,8 @@ const data =
             applications.updateApplication(application);
             applications.cacheApplications();
 
-            interaction.client.channels.cache.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-transfer').create());
+            channels.get(officersTable).send(`📢 Attention @here!`);
+            channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-transfer').create());
 
             interaction.editReply(EmbedManager.set(interaction).load('embed-application-management-home').create());
         }

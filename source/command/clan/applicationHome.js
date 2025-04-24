@@ -5,8 +5,9 @@ import { EmbedManager, Schema }    from '../../../utility/index.js'
 
 async function applicationLanding(interaction = new CommandInteraction())
 {
-    const channel = await interaction.client.channels.fetch(interaction.client.clanManagement.applications.channel);
-    channel.send(EmbedManager.set(interaction).load('embed-clan-application-landing').create())
+    const { client: { channels, clanManagement: { applications: { channel }}}} = interaction;
+
+    channels.get(channel).send(EmbedManager.set(interaction).load('embed-clan-application-landing').create())
 }
 
 const command = Schema.command

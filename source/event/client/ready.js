@@ -20,13 +20,14 @@ export const event =
 
 	execute: async (client) =>
     {
-        log.admin("All systems online. Engage!")
-
 		client.guilds.cache.forEach(async (guild) => 
         {
 			await guild.members.fetch();
+
 			log.admin(`${guild.name} has ${guild.members.cache.size} members`);
 		});
+
+
 	},
 };
 

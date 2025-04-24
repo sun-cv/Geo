@@ -158,13 +158,13 @@ const data =
     
         execute: async function (interaction) 
         {
-            const { member, client: { clanManagement, clanManagement: { officersTable, clan, clans, applications, applications: { cache } }}} = interaction;
+            const { member, client: { registry: { channels }, clanManagement, clanManagement: { officersTable, clan, clans, applications, applications: { cache } }}} = interaction;
 
             const application = applications.getApplication({id: cache.active.get(member.id)})
 
             if (application.status == 'declined')
             {
-                interaction.client.channels.cache.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-declined').create());
+                channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-declined').create());
             }
                 
             if (application.status == 'accepted')
@@ -175,8 +175,8 @@ const data =
 
                 RoleAssignment.set(interaction).removeRole(...clans).addRole(application.clan)
 
-                interaction.client.channels.cache.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-accepted').create());
-                interaction.client.channels.cache.get(clan[application.clan].channel.home).send(template.accepted(interaction, application));
+                channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-accepted').create());
+                channels.get(clan[application.clan].channel.home).send(template.accepted(interaction, application));
             }
                     
             applications.updateApplication(application);
@@ -392,7 +392,7 @@ const data =
     
         execute: (interaction) => 
         {
-            const { member, client: {clanManagement: { officersTable, applications }} } = interaction;
+            const { member, client: { registry: { channels }, clanManagement: { officersTable, applications }} } = interaction;
             
             const application = applications.getApplication(member);
             
@@ -405,8 +405,8 @@ const data =
                 
             interaction.editReply(EmbedManager.set(interaction).load('embed-application-apply-submit').create());
 
-            interaction.client.channels.cache.get(officersTable).send(`📢 Attention @here!`);
-            interaction.client.channels.cache.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification').create());
+            channels.get(officersTable).send(`📢 Attention @here!`);
+            channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification').create());
 
         }
     }),

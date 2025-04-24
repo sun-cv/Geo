@@ -137,30 +137,24 @@ class Condition
 
     check(message) 
     {
-        if (!this.flag.bot.get() && message.author.bot) return false;
+        if (!this.flag.bot.get() && message.author.bot)                                                         return false;
     
-        const resolveChannels = (arr = []) => arr.map(channelEntry => 
-        {
-            if (!channelEntry) return null;
-            if (/^\d{17,19}$/.test(channelEntry)) return channelEntry;
+        const channelName = message.channel.name?.toLowerCase();
+    
+        const includeChannels = this.include.channel.map(channel => channel.toLowerCase());
+        const excludeChannels = this.exclude.channel.map(channel => channel.toLowerCase());
+    
+        if (excludeChannels.includes(channelName))                                                              return false;
+        if (this.exclude.member.includes(message.author.id))                                                    return false;
+        if (this.exclude.content.some(str => message.content.includes(str)))                                    return false;
 
-            const channel = message.guild.channels.cache.find(chan => chan.name.toLowerCase() === channelEntry.toLowerCase());
-            return channel ? channel.id : null;
-        }).filter(Boolean);
-    
-        const includeChannels = resolveChannels(this.include.channel);
-        const excludeChannels = resolveChannels(this.exclude.channel);
-    
-        if (excludeChannels.includes(message.channel.id))                       return false;
-        if (this.exclude.member.includes(message.author.id))                    return false;
-        if (this.exclude.content.some(str => message.content.includes(str)))    return false;
-    
-        if (includeChannels.length && !includeChannels.includes(message.channel.id))                            return false;
+        if (includeChannels.length && !includeChannels.includes(channelName))                                   return false;
         if (this.include.member.length && !this.include.member.includes(message.author.id))                     return false;
         if (this.include.content.length && !this.include.content.some(str => message.content.includes(str)))    return false;
     
         return true;
     }
+    
     
 }
 

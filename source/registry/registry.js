@@ -279,38 +279,26 @@ class Registry
         this.mapChannels();
     }
 
-    async mapChannels()
+    async mapChannels() 
     {
         if (!this.guild) 
         {
             log.error("Guild not set, cannot map channels");
             return;
         }
-      
-        for (const [key, filterCollection] of this.filter.channel.entries()) 
+    
+        this.channels = new Collection();
+    
+        this.guild.channels.cache.forEach(channel => 
         {
-            if (!/^\d{17,19}$/.test(key)) 
+            if (channel && channel.name && channel.id) 
             {
-                const channel = this.guild.channels.cache.find(channelEntry => channelEntry.name.toLowerCase() === key.toLowerCase());
-                if (channel) 
-                {
-                    this.channels.set(key, channel.id);
-                } 
-                else 
-                {
-                    log.error(`mapChannels: channel name "${key}" not found in guild.`);
-                    this.channels.set(key, null);
-              }
-            } 
-            else 
-            {
-                const channel = this.guild.channels.cache.get(key);
-                if (channel) 
-                {
-                    this.channels.set(channel.name, channel.id);
-                }
+                this.channels.set(channel.name.toLowerCase(), channel);
+                this.channels.set(channel.id, channel);
             }
-        }     
+        });
+    
+        log.trace(`Mapped ${this.channels.size} channels in registry.channels`);
     }
     
 

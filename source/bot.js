@@ -56,18 +56,21 @@ class Bot
 
         await this.scheduler.registerTasks();
 
-        this.engage();
+        this.login();
     }
 
-    async engage()
-    {
-        await this.login()
-    }
-
+    
     async login()
     {
         await this.client.login(config.token);
         await this.registry.registerGuild();
+        
+        this.engage()
+    }
+    
+    async engage()
+    {
+        log.admin("All systems online. Engage!")
     }
 
     shutdown()

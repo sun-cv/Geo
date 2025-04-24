@@ -13,7 +13,7 @@ class ClanManagement
 
         this.clan           = {};
         this.clans          = [];
-        this.officersTable  = '1194171099160784896'
+        this.officersTable  = "officers-table"
        
         this.applications   = new ApplicationSystem(this);
 

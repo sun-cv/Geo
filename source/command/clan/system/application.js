@@ -9,7 +9,7 @@ class ApplicationSystem
         this.registry       = system.registry;
         this.database       = system.database;
 
-        this.channel        = '1142552905682010192' 
+        this.channel        = 'clan-applications' 
 
         this.cache          = 
         {
@@ -53,6 +53,8 @@ class ApplicationSystem
         {
             return this.cache.transfer.get(member.id)
         }
+        
+        return new Application()
     }
 
     createApplication(member, accountName)
@@ -119,7 +121,7 @@ class ApplicationSystem
 
     async updateLanding(interaction)
     {
-        const channel   = await interaction.client.channels.fetch(this.channel);
+        const channel   = await this.registry.channels.get(this.channel)
         const messages  = await channel.messages.fetch()
         const message   = messages.first()
 
