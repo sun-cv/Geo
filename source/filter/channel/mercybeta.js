@@ -47,7 +47,7 @@ const filter = Schema.filter
     {
         if (message.author.bot)
         {
-            await Toolkit.delay((1 * 1000 ))
+            await Toolkit.delay((1 * 1000 * 60 * 15))
             message.delete()
         }
     }
