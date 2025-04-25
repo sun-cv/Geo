@@ -2,6 +2,7 @@ import { Component, EmbedManager, Schema }  from "../../../utility/index.js";
 import { Input }                            from "../../../utility/index.js";
 import { applicationConfig }                from "../../data/config/application.js";
 import { template }                         from "../../data/template/templateApplication.js";
+import { clanConfig }                       from "../../data/config/clan.js";
 
 const data = 
 {
@@ -108,18 +109,25 @@ const data =
             const [value] = Input.menu(interaction)
             const application = applications.getApplication({id: active.get(member.id)})
 
+            console.log(application)
+
             application.admin.admin         = member.id;
             application.admin.transfer.from = application.clan;
             application.admin.transfer.to   = value
+            application.selection.alternate = value
             application.clan                = value;
 
+            application.statu               = 'pending'
+
             applications.updateApplication(application);
-            applications.cacheApplications();
+            applications.resetCache();
+
+            console.log(application)
 
             channels.get(officersTable).send(`📢 Attention @here!`);
             channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-transfer').create());
 
-            interaction.editReply(EmbedManager.set(interaction).load('embed-application-management-home').create());
+            interaction.editReply(EmbedManager.set(interaction).load('embed-clan-home').create());
         }
     }),
 

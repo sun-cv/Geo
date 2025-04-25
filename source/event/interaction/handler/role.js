@@ -35,15 +35,28 @@ class RoleHandler
             roleAssignment[memberID].add = roleAssignment[memberID].add.filter(roleName => 
             {
                 const role      = this.registry.role.get(roleName);
+
+                if (!role)
+                {
+                    log.error(`Role assignment attempted to add role that does not exist: ${roleName}`)
+                    return false;
+                }
+
                 const hasRole   = member.roles.cache.has(role.id);
 
                 if (hasRole) log.trace(`${member.user.username} already has role ${roleName}, removing from add list`);
                 return !hasRole;
             });
-    
+   
             roleAssignment[memberID].remove = roleAssignment[memberID].remove.filter(roleName => 
             {
                 const role      = this.registry.role.get(roleName);
+
+                if (!role)
+                {
+                    log.error(`Role assignment attempted to remove role that does not exist: ${roleName}`)
+                    return false;
+                }
                 const hasRole   = member.roles.cache.has(role.id);
 
                 if (!hasRole) log.trace(`${member.user.username} does not have role ${roleName}, removing from remove list`);

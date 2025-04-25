@@ -112,6 +112,7 @@ class ApplicationSystem
     submitApplication(application)
     {
         this.database.submitApplication(application);
+        this.resetCache();
     }
 
     updateApplication(application)

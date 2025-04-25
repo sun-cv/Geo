@@ -21,7 +21,7 @@ const filter = Schema.filter
         {
             member:     [],
             content:    [],
-            channel:    ['general'],
+            channel:    ['suggestion-box'],
         },
         exclude:
         {

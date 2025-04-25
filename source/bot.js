@@ -40,7 +40,7 @@ class Bot
 
         this.mercyTracker   = new MercyTracker(this.client, this.cluster, this.registry);
         this.clanManagement = new ClanManagement(this.client, this.cluster, this.registry);
-        this.deploy         = true; // Deploy commands?
+        this.deploy         = false; // Deploy commands?
     }
     
 

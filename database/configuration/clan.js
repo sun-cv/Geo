@@ -70,8 +70,8 @@ class Clan extends Database
         const { system, id, member, account, request, clan, status, timestamp, ...nestedObjects } = application;
         const { selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta} = Object.fromEntries(Object.entries(nestedObjects).map(([key, value]) => [key, JSON.stringify(value)]));
     
-        this.database.prepare(`UPDATE application SET member = ?, account = ?, request = ?, clan = ?, status = ?, selection = ?, clanboss = ?, hydra = ?, chimera = ?, siege = ?, cvc = ?, data = ?, setting = ?, admin = ?, meta = ?, timestamp = ? WHERE id = ?`)
-            .run(member, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp, id);
+        this.database.prepare(`UPDATE application SET member = ?, account = ?, request = ?, clan = ?, status = ?, selection = ?, clanboss = ?, hydra = ?, chimera = ?, siege = ?, cvc = ?, data = ?, setting = ?, admin = ?, meta = ?, timestamp = ? WHERE application = ?`)
+            .run(member, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp, application.application);
 
         log.trace(`Successfully updated database entry: application '${account}'`);
     }
