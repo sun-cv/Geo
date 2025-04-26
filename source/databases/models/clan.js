@@ -34,7 +34,7 @@ class Clan extends Database
 
     hasApplicationRecord(member) 
     {
-        const data = this.database.prepare(`SELECT 1 FROM application WHERE status = ? AND id = ? LIMIT 1`).get('accepted', member.id);
+        const data = this.database.prepare(`SELECT 1 FROM application WHERE status = ? AND member_id = ? LIMIT 1`).get('accepted', member.id);
         return !!data;
     }
 
@@ -47,7 +47,7 @@ class Clan extends Database
 
     getApplicationRecord(member)
     {
-        const data = this.database.prepare(`SELECT * FROM application WHERE status = ? AND id = ? ORDER BY timestamp DESC LIMIT 1`).get('accepted', member.id)
+        const data = this.database.prepare(`SELECT * FROM application WHERE status = ? AND member_id = ? ORDER BY timestamp DESC LIMIT 1`).get('accepted', member.id)
         
         return Parser.applicationData(data);
     }
@@ -55,11 +55,11 @@ class Clan extends Database
 
 
     submitApplication(application) {
-        const { system, id, member, account, request, clan, status, timestamp, ...nestedObjects }   = application;
+        const { system, member, account, request, clan, status, timestamp, ...nestedObjects }   = application;
         const { selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta}        = Object.fromEntries(Object.entries(nestedObjects).map(([key, value]) => [key, JSON.stringify(value)]));
     
-        this.database.prepare(`INSERT INTO application(id, member, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-            .run(id, member, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp);
+        this.database.prepare(`INSERT INTO application(member, member_id, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+            .run(member.username, member.id, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp);
         
             log.trace(`Successfully submitted database entry: application '${account}'`);
     }
@@ -69,19 +69,37 @@ class Clan extends Database
         const { system, id, member, account, request, clan, status, timestamp, ...nestedObjects } = application;
         const { selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta} = Object.fromEntries(Object.entries(nestedObjects).map(([key, value]) => [key, JSON.stringify(value)]));
     
-        this.database.prepare(`UPDATE application SET member = ?, account = ?, request = ?, clan = ?, status = ?, selection = ?, clanboss = ?, hydra = ?, chimera = ?, siege = ?, cvc = ?, data = ?, setting = ?, admin = ?, meta = ?, timestamp = ? WHERE application = ?`)
-            .run(member, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp, application.application);
+        this.database.prepare(`UPDATE application SET member = ?, member_id = ?, account = ?, request = ?, clan = ?, status = ?, selection = ?, clanboss = ?, hydra = ?, chimera = ?, siege = ?, cvc = ?, data = ?, setting = ?, admin = ?, meta = ?, timestamp = ? WHERE id = ?`)
+            .run(member.username, member.id, account, request, clan, status, selection, clanboss, hydra, chimera, siege, cvc, data, setting, admin, meta, timestamp, application.id);
 
         log.trace(`Successfully updated database entry: application '${account}'`);
     }
     
+    hasMember(application)
+    {
+        const data = this.database.prepare(`SELECT 1 FROM member WHERE id = ? LIMIT 1`).get( application.member.id);
+        return !!data;
+    }
+
+
     addMember(application) {
         const { system, id, member, account, request, clan, status, timestamp, ...nestedObjects }   = application;
         const { clanboss, hydra, chimera, siege, cvc, data, setting, admin}        = Object.fromEntries(Object.entries(nestedObjects).map(([key, value]) => [key, JSON.stringify(value)]));
     
         this.database.prepare(`INSERT INTO member(id, member, account, clan, clanboss, hydra, chimera, siege, cvc, data, setting, admin, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-            .run(id, member, account, clan, clanboss, hydra, chimera, siege, cvc, data, setting, admin, timestamp);
+            .run(member.id, member.username, account, clan, clanboss, hydra, chimera, siege, cvc, data, setting, admin, timestamp);
         
+            log.trace(`Successfully submitted database entry: member '${account}'`);
+    }
+
+    updateMember(application)
+    {
+        const { system, id, member, account, request, clan, status, timestamp, ...nestedObjects }   = application;
+        const { clanboss, hydra, chimera, siege, cvc, data, setting, admin}        = Object.fromEntries(Object.entries(nestedObjects).map(([key, value]) => [key, JSON.stringify(value)]));
+    
+        this.database.prepare(`UPDATE member SET member = ?, account = ?, clan = ?, clanboss = ?, hydra = ?, chimera = ?, siege = ?, cvc = ?, data = ?, setting = ?, admin = ?, timestamp = ? WHERE id = ?`)
+            .run(member.username, account, clan, clanboss, hydra, chimera, siege, cvc, data, setting, admin, timestamp, member.id);
+    
             log.trace(`Successfully submitted database entry: member '${account}'`);
     }
 
@@ -134,9 +152,9 @@ async function create(database)
     (`
         CREATE TABLE IF NOT EXISTS application
         (
-            application INTEGER     PRIMARY KEY AUTOINCREMENT,
-            id          TEXT        NOT NULL,
+            id          INTEGER     PRIMARY KEY AUTOINCREMENT,
             member      TEXT        NOT NULL,
+            member_id   TEXT        NOT NULL,
             account     TEXT        NOT NULL,
             request     TEXT        NOT NULL,
             clan        TEXT        NOT NULL,

@@ -128,7 +128,7 @@ ${Text.set(`${chimera.complete ? indicator.color.green[true] : indicator.color.b
     {
         const message = 
 `
-${Timestamp.monthDay(application.timestamp)} | ${Text.set(application.member).constrain(15,{ paddingChar: '⠀' })}
+${Timestamp.monthDay(application.timestamp)} | ${Text.set(application.member.username).constrain(15,{ paddingChar: '⠀' })}
 `
         return message;
     },
@@ -259,7 +259,7 @@ ${Text.set(`${chimera.complete ? indicator.color.green[true] : indicator.color.b
     {
         const message = 
 `
-${Timestamp.monthDay(application.timestamp)} | ${Text.set(application.member).constrain(15,{ paddingChar: '⠀' })}
+${Timestamp.monthDay(application.timestamp)} | ${Text.set(application.member.username).constrain(15,{ paddingChar: '⠀' })}
 `
         return message;
     }, 

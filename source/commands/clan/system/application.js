@@ -28,7 +28,7 @@ class ApplicationSystem
         {
             for (const application of applications)
             {
-                this.cache[application.request].set(application.id, application)
+                this.cache[application.request].set(application.member.id, application)
             }
             log.trace(`Successfully cached ${applications.length ? applications.length : '0'} applications`)
         }
@@ -40,6 +40,7 @@ class ApplicationSystem
         this.cache.transfer     = new Collection();
 
         this.cacheApplications();
+        console.log(this.cache.application)
     }
     
     getApplication(member)
@@ -61,7 +62,7 @@ class ApplicationSystem
     {
         log.trace(`Creating ${member.user.username}'s account application`)
 
-        this.cache.application.set(member.id, new Application(this, {id: member.id, member: member.user.username, account: accountName, request: 'application'}));
+        this.cache.application.set(member.id, new Application(this, {id: null, member: { id: member.id, username: member.user.username }, account: accountName, request: 'application'}));
 
         return this.cache.application.get(member.id)
     }
@@ -78,7 +79,7 @@ class ApplicationSystem
         {
             log.trace(`Created ${member.user.username}'s account transfer`)
             const data          = this.database.getApplicationRecord(member)
-            const application   = new Application(this, data );
+            const application   = new Application(this, data);
             application.request = 'transfer';
             application.status  = 'pending';
             this.cache.application.set(member.id, application);
@@ -92,7 +93,7 @@ class ApplicationSystem
     {
         log.trace(`Creating ${member.user.username}'s account transfer (no record)`)
 
-        this.cache.transfer.set(member.id, new Application(this, {id: member.id, member: member.user.username, account: accountName, request: 'transfer'}));
+        this.cache.transfer.set(member.id, new Application(this,  {id: null, member: { id: member.id, username: member.user.username }, account: accountName, request: 'transfer'}));
 
         return this.cache.transfer.get(member.id)
     }
@@ -146,10 +147,13 @@ class Application
     constructor(system, data = {}) 
     {
         this.system     =   system;
-        this.application=   data.application            || '';
-
         this.id         =   data.id                     || '';
-        this.member     =   data.member                 || '';
+
+        this.member     =
+        {
+            id:             data.member.id              || '',
+            username:       data.member.username        || '',
+        }
         this.account    =   data.account                || '';
         this.request    =   data.request                || '';
         this.clan       =   data.clan                   || '';

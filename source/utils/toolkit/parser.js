@@ -85,6 +85,11 @@ class Parser
     static applicationData(data = {}) {
         return { 
             ...data,
+            member:     
+            {
+                id:                data.member_id, 
+                username:          data.member,
+            },
             selection:  JSON.parse(data.selection),
             clanboss:   JSON.parse(data.clanboss),
             hydra:      JSON.parse(data.hydra),

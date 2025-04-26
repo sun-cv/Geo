@@ -173,7 +173,7 @@ const data =
                 clanManagement.addMember(application);
                 clanManagement.applications.updateLanding(interaction)
 
-                RoleAssignment.set(interaction).removeRole(...clans).addRole(application.clan)
+                RoleAssignment.set(interaction, application.member.id).removeRole(...clans).addRole(application.clan)
 
                 channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-accepted').create());
                 channels.get(clan[application.clan].channel.home).send(template.accepted(interaction, application));
@@ -400,7 +400,9 @@ const data =
             {
                 return interaction.editReply(EmbedManager.set(interaction).load('embed-application-apply-home').modify(applicationConfig.getModifier(application)).create());
             }
-            
+           
+            console.log(application)
+
             application.submit();
                 
             interaction.editReply(EmbedManager.set(interaction).load('embed-application-apply-submit').create());

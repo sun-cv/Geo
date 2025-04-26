@@ -100,7 +100,7 @@ const data =
             const [value]   = Input.menu(interaction)
 
             clones.get(member.id).leadership.leader = value
-            RoleAssignment.set(interaction).removeRole('Deputy').addRole('Officer')
+            RoleAssignment.set(interaction, value).removeRole('Deputy').addRole('Officer')
 
             interaction.editReply(EmbedManager.set(interaction).load('embed-clan-management-home').modify(clanConfig.getModifier(selection.get(member.id))).create());
         }
@@ -148,12 +148,11 @@ const data =
 
             clones.get(member.id).leadership.deputies = value;
 
-
             for (const userId of value) 
             {
                 if (officerIds.includes(userId)) 
                 {
-                    RoleAssignment.set(interaction).target(userId).removeRole('Officer').addRole('Deputy');
+                    RoleAssignment.set(interaction, userId).removeRole('Officer').addRole('Deputy');
                 }
             } 
 

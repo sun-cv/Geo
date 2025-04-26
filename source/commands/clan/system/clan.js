@@ -75,9 +75,14 @@ class ClanManagement
     {
         log.debug(`Adding member ${application.account} to clan: ${application.clan}`)
         
-        this.clan[application.clan].member.count++;
-        this.updateClan(this.clan[application.clan]);
-        this.database.addMember(application)
+        if (!this.database.hasMember(application))
+        {
+            this.clan[application.clan].member.count++;
+            this.updateClan(this.clan[application.clan]);
+            this.database.addMember(application);
+            return;
+        }
+        this.database.updateMember(application)
     }
 
 }

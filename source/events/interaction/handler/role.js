@@ -129,25 +129,24 @@ class RoleHandler
 
 class RoleAssignment
 {
-    constructor(interaction)
+    constructor(interaction, targetId = interaction.member.id)
     {
         this.require        = [];
         this.remove         = [];
         this.add            = [];
 
-        this.initialize(interaction)
+        this.initialize(interaction, targetId);
     }
 
-    initialize(interaction)
+    initialize(interaction, targetId)
     {
-
         interaction.data.roleAssignment ??= {};
-        interaction.data.roleAssignment[interaction.member.id] = this;
+        interaction.data.roleAssignment[targetId] = this;
     }
 
-    static set(interaction)
+    static set(interaction, targetId)
     {
-        return new RoleAssignment(interaction);
+        return new RoleAssignment(interaction, targetId);
     }
 
     requireRole(...args)

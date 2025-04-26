@@ -83,7 +83,7 @@ const data =
         load: function(interaction)
         {
             const { member, client: { clanManagement: { applications }} } = interaction;
-            const application = applications.getApplication(member);
+            const application = applications.getApplication(member)
 
             const embed     = new EmbedBuilder().setColor(0xED8223).addFields
             (
@@ -93,7 +93,7 @@ const data =
 
             embed.addFields
             (
-                { name: ' ', value:` ${Text.set(`${Text.set(application.member).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
+                { name: ' ', value:` ${Text.set(`${Text.set(application.member.username).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
                 { name: ' ', value: template.applicationCard1(application), inline: true },
                 { name: ' ', value: template.applicationCard2(application), inline: true },
             )
@@ -113,8 +113,8 @@ const data =
 
         load: function(interaction)
         {
-            const { member, client: { clanManagement: { applications }} } = interaction;
-            const application = applications.getApplication(member);
+            const { member, client: { clanManagement: { applications, applications: {cache: { active }} }} } = interaction;
+            const application = applications.getApplication({id: active.get(member.id)})
 
             const embed     = new EmbedBuilder().setColor(0xED8223).addFields
             (
@@ -124,7 +124,7 @@ const data =
 
             embed.addFields
             (
-                { name: ' ', value:`${Text.set(`${Text.set(application.member).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
+                { name: ' ', value:`${Text.set(`${Text.set(application.member.username).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
                 { name: ' ', value:`${Text.set(`${Text.set(`Reassigned by ${interaction.member.user.username} from: ${application.admin.transfer.from}`).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
                 { name: ' ', value: template.applicationCard1(application), inline: true },
                 { name: ' ', value: template.applicationCard2(application), inline: true },
@@ -145,8 +145,9 @@ const data =
 
         load: function(interaction)
         {
-            const { member, client: { clanManagement: { applications }} } = interaction;
-            const application = applications.getApplication(member);
+            const { member, client: { clanManagement: { applications, applications: {cache: { active }} }} } = interaction;
+
+            const application = applications.getApplication({id: active.get(member.id)})
 
             const embed     = new EmbedBuilder().setColor(0xED8223).addFields
             (
@@ -156,7 +157,7 @@ const data =
 
             embed.addFields
             (
-                { name: ' ', value:`${Text.set(`${Text.set(application.member).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
+                { name: ' ', value:`${Text.set(`${Text.set(application.member.username).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
                 { name: ' ', value:`${Text.set(`${Text.set(`Successfully Accepted by ${interaction.member.user.username}`).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
             )
 
@@ -176,8 +177,9 @@ const data =
 
         load: function(interaction)
         {
-            const { member, client: { clanManagement: { applications }} } = interaction;
-            const application = applications.getApplication(member);
+            const { member, client: { clanManagement: { applications, applications: {cache: { active }} }} } = interaction;
+
+            const application = applications.getApplication({id: active.get(member.id)})
 
             const embed     = new EmbedBuilder().setColor(0xED8223).addFields
             (
@@ -187,7 +189,7 @@ const data =
 
             embed.addFields
             (
-                { name: ' ', value:` ${Text.set(`${Text.set(application.member).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
+                { name: ' ', value:` ${Text.set(`${Text.set(application.member.username).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
                 { name: ' ', value:`${Text.set(`${Text.set(`Successfully Declined by ${interaction.member.user.username}`).constrain(56, { align: 'center', style: ['block_code'] })}`)}`, inline: false},
 
             )

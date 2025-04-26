@@ -13,7 +13,7 @@ class PermissionHandler
     {
         const { flag } = interaction.data;
 
-        if (flag.handled.get() || !flag.permission.get())
+        if (flag.handled.get() || !flag.permission.get() && !flag.maintenance.get())
         {
             return;
         }
@@ -25,6 +25,7 @@ class PermissionHandler
         {
             this.exclude(interaction);
         }
+
         if (flag?.maintenance.get())
         {
             this.maintenance(interaction);
@@ -120,7 +121,10 @@ class PermissionHandler
         const { data: { flag }} = interaction;
 
         flag.handled.set()
-
+        if (!flag.defer.get())
+        {
+            await interaction.reply({content: "This command is currently under maintenance. Please try again later", flags: MessageFlags.Ephemeral});
+        }
         await interaction.editReply({content: "This command is currently under maintenance. Please try again later", flags: MessageFlags.Ephemeral});
     }
 
