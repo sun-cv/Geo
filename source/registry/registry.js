@@ -1,27 +1,28 @@
-import config from '../../env/secret/credentials.json' with { type: 'json' }
-
 import { REST, Routes, Collection } from 'discord.js';
 import path                         from 'node:path';
 import lodash                       from 'lodash';
-import { log, FileManager, Schema }         from '../../utility/index.js'
+import config                       from '#env/secret/credentials.json' with { type: 'json' };
+import directory                    from '#env/directory/path.json'     with { type: 'json' };
+import global                       from '#env/constant/global.json'    with { type: 'json' };
+import { log, FileManager, Schema } from '#utils';
 
 class Registry
 {
     constructor(client)
     {
-        this.root       = process.cwd()
+        this.root       =   directory.root
         this.directory  = 
         {
-            system:         path.join(this.root, "source", "system"             ),
-            event:          path.join(this.root, "source", "event"              ),
-            autocomplete:   path.join(this.root, "source", "autocomplete"       ),
-            command:        path.join(this.root, "source", "command"            ),
-            embed:          path.join(this.root, "source", "element"  , "embed" ),
-            button:         path.join(this.root, "source", "element"  , "button"),
-            menu:           path.join(this.root, "source", "element"  , "menu"  ),
-            modal:          path.join(this.root, "source", "element"  , "modal" ),
-            filter:         path.join(this.root, "source", "filter"             ),
-            task:           path.join(this.root, "source", "task"               )
+            system:         path.join(this.root, "source", "system"                 ),
+            event:          path.join(this.root, "source", "events"                 ),
+            autocomplete:   path.join(this.root, "source", "autocomplete"           ),
+            command:        path.join(this.root, "source", "commands"               ),
+            embed:          path.join(this.root, "source", "elements"  , "embeds"   ),
+            button:         path.join(this.root, "source", "elements"  , "buttons"  ),
+            menu:           path.join(this.root, "source", "elements"  , "menus"    ),
+            modal:          path.join(this.root, "source", "elements"  , "modals"   ),
+            filter:         path.join(this.root, "source", "filters"                ),
+            task:           path.join(this.root, "source", "tasks"                  )
         }
 
         this.client         = client;
@@ -214,9 +215,9 @@ class Registry
     }
 
 
-    async deployCommands(enabled)
+    async deployCommands()
     {
-        if (enabled)
+        if (global.commands)
         {
             const commandData = [];
 

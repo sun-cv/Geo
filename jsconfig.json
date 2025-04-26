@@ -2,8 +2,29 @@
     "compilerOptions": 
     {
         "target": "es6",
-        "module": "commonjs",
-        "checkJs": false
+        "module": "esnext",
+        "checkJs": false,
+        "resolveJsonModule": true,
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
+        "paths": {
+            "#env/*":["./env/*"],
+            "#bot": ["source/bot.js"],
+            "#commands/*": ["source/commands/*"],
+            "#databases/*": ["source/databases/*"],
+            "#buttons/*": ["source/elements/buttons/*"],
+            "#embeds/*": ["source/elements/embeds/*"],
+            "#menus/*": ["source/elements/menus/*"],
+            "#modals/*": ["source/elements/modals/*"],
+            "#events/*": ["source/events/*"],
+            "#filters/*": ["source/filters/*"],
+            "#registry/*": ["source/registry/*"],
+            "#resources/*": ["source/resources/*"],
+            "#tasks/*": ["source/tasks/*"],
+            "#utils/*": ["source/utils/*"],
+            "#utils": ["source/utils/index.js"],
+        }
     },
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules", "**/node_modules/*"]
 }

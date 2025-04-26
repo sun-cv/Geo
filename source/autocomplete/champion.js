@@ -1,6 +1,6 @@
-import { log, Schema }              from '../../utility/index.js';
-import { Trie }             from '../../utility/algorithm/structure/trie.js';
-import championList         from '../../source/data/autocomplete/championList.json' with { type: 'json' };
+import { log, Schema }      from '#utils';
+import { Trie }             from '#utils/algorithm/trie.js';
+import championList         from '#resources/data/championList.json' with  { type: 'json' }
 
 
 const trie = new Trie();

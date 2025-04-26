@@ -34,5 +34,22 @@
         "@eslint/js": "^9.19.0",
         "globals": "^15.14.0"
     },
-    "type": "module"
+    "type": "module",
+    "imports": {
+        "#env/*":"./env/*",
+        "#bot": "./source/bot.js",
+        "#commands/*": "./source/commands/*",
+        "#databases/*": "./source/databases/*",
+        "#buttons/*": "./source/elements/buttons/*",
+        "#embeds/*": "./source/elements/embeds/*",
+        "#menus/*": "./source/elements/menus/*",
+        "#modals/*": "./source/elements/modals/*",
+        "#events/*": "./source/events/*",
+        "#filters/*": "./source/filters/*",
+        "#registry/*": "./source/registry/*",
+        "#resources/*": "./source/resources/*",
+        "#tasks/*": "./source/tasks/*",
+        "#utils/*": "./source/utils/*",
+        "#utils": "./source/utils/index.js"
+    }
 }

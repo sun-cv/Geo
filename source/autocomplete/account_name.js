@@ -1,4 +1,4 @@
-import { log, Schema } from "../../utility/index.js";
+import { log, Schema } from '#utils';
 
 function account_name(interaction)
 {
