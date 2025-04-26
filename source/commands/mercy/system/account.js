@@ -249,6 +249,7 @@ class Account
             this.session.refresh();
             this.mercy  .refresh();
         }
+
     }
 
     update()

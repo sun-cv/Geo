@@ -108,20 +108,16 @@ const data =
             const [value] = Input.menu(interaction)
             const application = applications.getApplication({id: active.get(member.id)})
 
-            console.log(application)
-
             application.admin.admin         = member.id;
             application.admin.transfer.from = application.clan;
             application.admin.transfer.to   = value
             application.selection.alternate = value
             application.clan                = value;
 
-            application.statu               = 'pending'
+            application.status              = 'pending'
 
             applications.updateApplication(application);
             applications.resetCache();
-
-            console.log(application)
 
             channels.get(officersTable).send(`📢 Attention @here!`);
             channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-transfer').create());

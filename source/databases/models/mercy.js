@@ -109,7 +109,7 @@ class Mercy extends Database
         {
             const mercy = account.mercy[shard][rarity];
             
-            this.database.prepare(`UPDATE mercy SET username = ?, name = ?, total = ?, session = ?, lifetime = ?, lastAdded = ?, lastReset = ?, lastChampion = ? WHERE member_id = ? AND account_id = ? AND source = ? AND rarity = ?`).run(account.member.username, account.name, mercy.total, Timestamp.session(), mercy.lifetime, mercy.lastAdded, mercy.lastReset, mercy.lastChampion, account.member.id, account.id, shard, rarity);
+            this.database.prepare(`UPDATE mercy SET username = ?, name = ?, total = ?, session = ?, lifetime = ?, lastAdded = ?, lastReset = ?, lastChampion = ? WHERE member_id = ? AND account_id = ? AND source = ? AND rarity = ?`).run(account.member.username, account.name, mercy.total, mercy.session, mercy.lifetime, mercy.lastAdded, mercy.lastReset, mercy.lastChampion, account.member.id, account.id, shard, rarity);
             log.trace(`Successfully updated database entry: ${Text.set(rarity).constrain(9)} ${Text.set(shard).constrain(7)}`)
             account.flag.mercy[shard][rarity].dirty.clear();
         }
