@@ -40,7 +40,6 @@ class ApplicationSystem
         this.cache.transfer     = new Collection();
 
         this.cacheApplications();
-        console.log(this.cache.application)
     }
     
     getApplication(member)
