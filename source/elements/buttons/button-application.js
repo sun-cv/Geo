@@ -401,8 +401,6 @@ const data =
                 return interaction.editReply(EmbedManager.set(interaction).load('embed-application-apply-home').modify(applicationConfig.getModifier(application)).create());
             }
            
-            console.log(application)
-
             application.submit();
                 
             interaction.editReply(EmbedManager.set(interaction).load('embed-application-apply-submit').create());
