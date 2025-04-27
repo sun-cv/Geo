@@ -4,7 +4,7 @@ import { Timestamp, FileManager, log, Schema }  from '#utils';
 
 async function backupMonth() 
 {
-    for (const database of Object.values(envDirectory.database))
+    for (const database of Object.values(envDirectory.databases))
     {
         for (const directory of Object.values(database.backup))
             {

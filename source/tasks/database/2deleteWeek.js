@@ -10,7 +10,7 @@ async function deleteWeek()
 {
     const now = Date.now();
     
-    for (const database of Object.values(directory.database)) 
+    for (const database of Object.values(directory.databases)) 
     {
         for (const backupPath of Object.values(database.backup))
         {
