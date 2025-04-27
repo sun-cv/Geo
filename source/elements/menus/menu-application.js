@@ -21,8 +21,6 @@ const data =
             
             const applicationList = applications.getApplicationsByClan(active.get(member.id)).sort((a, b) => a.timestamp - b.timestamp).reduce((obj, application) => { obj[template.menu(application)] = application.member.id; return obj }, {})
             
-            console.log(applicationList)
-
             return Component
                 .menu(this.meta.id)
                 .placeholder('View application')

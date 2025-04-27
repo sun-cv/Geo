@@ -68,7 +68,7 @@ class Bot
     {
         log.admin("All systems online. Engage!")
     }
-
+    
     shutdown()
     {
         log.admin('Powering down..')
