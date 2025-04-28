@@ -185,7 +185,7 @@ ${Text.set(` ${indicator.color.green[clan.recruitment.siege.required]} Siege:`).
             const clan      = cache.clones.get(member.id)
             const message =
 `
-${Text.set(`Description:`).constrain(54, {style: ['block_code']})}${Text.set(`${clan.recruitment.message ? clan.recruitment.message : ' '}`).constrain(200, {style: ['block_code']})}
+${Text.set(`Description:`).constrain(54, {style: ['block_code']})}${Text.set(`${clan.recruitment.message ? clan.recruitment.message : ' '}`).constrain(900, {style: ['block_code']})}
 `
             return message
         }
@@ -354,8 +354,8 @@ ${Text.set(` CvC:`).constrain(18, {style: ['block_code']})}
             const message =
 `
 ${Text.set(` Siege:`).constrain(18, {style: ['block_code']})}
-> ${Text.set(`${selection == 17 ? '▶' : ' '}Req : ${Text.set(`${indicator.yesno[clan.recruitment.siege.required]} ` ).constrain(11, {align: 'right'})}`).constrain(18, {style: ['code']})}
-> ${Text.set(`${selection == 20 ? '▶' : ' '}Cust: ${Text.set(`${clan.recruitment.siege.custom} `                    ).constrain(11, {align: 'right'})}`).constrain(18, {style: ['code']})}
+> ${Text.set(`${selection == 16 ? '▶' : ' '}Req : ${Text.set(`${indicator.yesno[clan.recruitment.siege.required]} ` ).constrain(10, {align: 'right'})}`).constrain(18, {style: ['code']})}
+> ${Text.set(`${selection == 19 ? '▶' : ' '}Cust: ${Text.set(`${clan.recruitment.siege.custom} `                    ).constrain(10, {align: 'right'})}`).constrain(18, {style: ['code']})}
 `   
             return message;
         },

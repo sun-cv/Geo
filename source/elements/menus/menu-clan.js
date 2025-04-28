@@ -460,7 +460,8 @@ const data =
             const [ value ] = Input.menu(interaction);
             const clan      = clones.get(member.id)
 
-            clan.recruitment.cvc.required = value;
+            clan.recruitment.cvc.required   = value;
+            clan.statistics.cvc.average     = value;
 
             interaction.editReply(EmbedManager.set(interaction).load('embed-clan-management-home').modify(clanConfig.getModifier(selection.get(member.id))).create());
         }
