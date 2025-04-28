@@ -11,9 +11,9 @@ const template =
         const message = 
 `
 ${Text.set(`${indicator.color.green[clan.member.count < 30]} ${clan.member.count}/30  |  ${Text.set(clan.clan).constrain(36)} ${clan.recruitment.clanTag ? '[CPR]' : ''}`).constrain(58, { style: ['block_code'] })}
-> ${Text.set(`Demon  : ${clanboss.custom || `${clanboss.keys} key ${clanboss.difficulty}`}`).constrain(42, { style: ['code'] })} ⠀${Text.set(`Siege  : ${siege.custom || (siege.required ? 'required' : 'optional')}`)   .constrain(21, { style: ['code'] })}
-> ${Text.set(`Hydra  : ${hydra.custom || `${hydra.keys} key ${hydra.difficulty}`}`)         .constrain(42, { style: ['code'] })} ⠀${Text.set(`CVC    : ${cvc.custom  || `${cvc.points}k minimum`}`)                      .constrain(21, { style: ['code'] })}
-> ${Text.set(`Chimera: ${chimera.custom || `${chimera.keys} key ${chimera.difficulty}`}`)   .constrain(42, { style: ['code'] })}
+> ${Text.set(`Demon  : ${clanboss.custom || `${clanboss.keys} key ${clanboss.difficulty}`}`).constrain(41, { style: ['code'] })} ⠀${Text.set(`Siege  : ${siege.custom || (siege.required ? 'required' : 'optional')}`)   .constrain(20, { style: ['code'] })}
+> ${Text.set(`Hydra  : ${hydra.custom || `${hydra.keys} key ${hydra.difficulty}`}`)         .constrain(41, { style: ['code'] })} ⠀${Text.set(`CVC    : ${cvc.custom  || `${cvc.points}k minimum`}`)                      .constrain(20, { style: ['code'] })}
+> ${Text.set(`Chimera: ${chimera.custom || `${chimera.keys} key ${chimera.difficulty}`}`)   .constrain(41, { style: ['code'] })}
 
 > ${leadershipMap.length > 1 ? leadershipMap : 'TBD'}
 `;
