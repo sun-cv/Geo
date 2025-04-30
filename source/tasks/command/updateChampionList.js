@@ -8,7 +8,7 @@ import { updateChampionListTrieCache }  from '#utils/algorithm/championListTrie.
 async function updateChampionList() 
 {
 
-    const filePath      = path.join(directory.root, 'source', 'data', 'autocomplete', 'championList.json');
+    const filePath      = path.join(directory.root, 'source', 'resources', 'data', 'championList.json');
     const championList  = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
     const browser       = await puppeteer.launch({ headless: 'shell' });
