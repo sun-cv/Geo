@@ -11,13 +11,12 @@ class CommandHandler
 
     async handle(interaction)
     {
-        const { data: command, data: { flag } } = interaction;
+        const { data, data: command, data: { flag } } = interaction;
 
         if (flag.handled.get() || !interaction.isChatInputCommand())
         {
             return;
         }
-
         try
         {
             await command.execute(interaction);

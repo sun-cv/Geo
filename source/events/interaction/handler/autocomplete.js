@@ -11,7 +11,7 @@ class AutocompleteHandler
 
     async handle(interaction) 
     {
-        const { data: { flag }} = interaction;
+        const { data, data: { flag }} = interaction;
         
         if (flag.handled.get() || !flag.autocomplete.get() || !interaction.isAutocomplete()) 
         {
