@@ -36,6 +36,12 @@ class MercyTracker
         return member;
     }
 
+    autofill(interaction)
+    {
+        const member = this.memberManager.get(interaction.member);
+        return member;
+    }
+
     greetMember(interaction, member)
     {
         RoleAssignment.set(interaction).addRole('Mercy')

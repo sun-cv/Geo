@@ -3,7 +3,7 @@ import { log, Schema } from '#utils';
 function account_name(interaction)
 {
     const { mercy } = interaction.client
-    const member    = mercy.initialize(interaction);
+    const member    = mercy.autofill(interaction);
     const accounts  = member.accounts.map((account) => account.name);
 
     log.trace(`Returning ${member.username}'s autocomplete account values: ${accounts}`)

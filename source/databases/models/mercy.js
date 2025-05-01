@@ -103,7 +103,7 @@ class Mercy extends Database
 
     updateAccountMercy(account)
     {
-         const dirtyEntries = Object.entries(Shards.mercy).flatMap(([ shard, rarities ]) => Object.keys(rarities).filter((rarity) => account.flag.mercy[shard][rarity].dirty.get()).map((rarity) => ({shard, rarity})));
+        const dirtyEntries = Object.entries(Shards.mercy).flatMap(([ shard, rarities ]) => Object.keys(rarities).filter((rarity) => account.flag.mercy[shard][rarity].dirty.get()).map((rarity) => ({shard, rarity})));
 
         for (const {shard, rarity} of dirtyEntries)
         {
