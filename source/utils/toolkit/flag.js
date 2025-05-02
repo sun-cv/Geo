@@ -58,8 +58,6 @@ class Flags
         this._exclusive   = exclusive;
         this._parent      = this._exclusive ? this : null;
 
-        console.log(this._parent)
-
         if (Array.isArray(flags)) 
         {
             for (const key of flags) 
