@@ -47,6 +47,11 @@ class AccountManager
     get(accountName)
     {
         const account = accountName ? this.cache.get(accountName) : this.cache.find(account => account.main);
+       
+        if (!account)
+        {
+            return false;
+        }
         
         account.flag.account.active.set();
     
