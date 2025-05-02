@@ -158,7 +158,10 @@ const data =
             const member          = mercy.initialize(interaction);
             const account         = member.account.getActive();
             const current         = account.settings.template.options.getActive() || 'static';
-    
+   
+            console.log(account.settings.template.options)
+            console.log(current)
+
             const currentIndex    = templates.indexOf(current);
             const nextLabel       = templates[(currentIndex + 1) % templates.length];
     

@@ -56,7 +56,9 @@ class Flags
     constructor(flags = {}, exclusive = false) 
     {
         this._exclusive   = exclusive;
-        this._parent      = this.exclusive ? this : null;
+        this._parent      = this._exclusive ? this : null;
+
+        console.log(this._parent)
 
         if (Array.isArray(flags)) 
         {
