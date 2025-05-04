@@ -16,7 +16,7 @@ championList.data.champions.forEach(name => championList.trie.insert(name.toLowe
 function updateChampionListTrieCache()
 {
 
-    const filePath      = path.join(directory.root, 'source', 'data', 'autocomplete', 'championList.json');
+    const filePath      = path.join(directory.root, 'source', 'resources', 'data', 'championList.json');
     championList.data   = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
     championList.trie = new Trie();
