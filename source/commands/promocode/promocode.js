@@ -9,10 +9,23 @@ import { template }                                 from '#resources/templates/t
 async function promocode(interaction = new CommandInteraction())
 {
     const input                             = Input.command(interaction);
+    const channel                           = await interaction.client.registry.channels.get('promo-codes')
+    const messages                          = await channel.messages.fetch({ limit: 10 });
+    const messageArray                      = [...messages.values()].reverse();
+
+    const banner                            = messageArray[0];
+    const message                           = messageArray[1];
+
+    if (input.refresh)
+    {
+        await message.edit(EmbedManager.set(interaction).load('embed-promo-landing').create())
+        return interaction.editReply('Refreshed successfully')
+    }
 
     const filePath                          = path.join(directory.root, 'source', 'resources', 'data', 'promocodes.json');
     const codes                             = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     const code                              = input.code.toLowerCase()
+
 
     if (codes[code])
     {
@@ -26,19 +39,13 @@ async function promocode(interaction = new CommandInteraction())
         codes[code][key] = value;
     }
 
-    codes[code].code = input.code.toUpperCase();
-    codes[code].timestamp = Timestamp.iso();
+    codes[code].code        = input.code.toUpperCase();
+    codes[code].timestamp   = Timestamp.iso();
+    codes[code].reported    = false
 
     await fs.writeFileSync(filePath, JSON.stringify(
         codes
     , null, 4), 'utf8');
-
-    const channel                           = await interaction.client.registry.channels.get('promo-codes')
-    const messages                          = await channel.messages.fetch({ limit: 10 });
-    const messageArray                      = [...messages.values()].reverse();
-
-    const banner                            = messageArray[0];
-    const message                           = messageArray[1];
 
     if (!banner)
     {
@@ -110,11 +117,11 @@ const command = Schema.command
     .addStringOption(option =>
         option.setName('code')
             .setDescription('e.g: (promo code in caps): YEARLYGIFT')
-            .setRequired(true))
+            .setRequired(false))
     .addStringOption(option =>
         option.setName('type')
             .setDescription('e.g: (type of promo code): New Player, Time-Limited')
-            .setRequired(true)
+            .setRequired(false)
             .addChoices(
                 { name: 'New Player',  value: 'player'},
                 { name: 'Time-Limited', value: 'limited'},
@@ -188,7 +195,11 @@ const command = Schema.command
         option.setName('not_listed')
             .setDescription('e.g: (custom reward description): 25 Primal Fragments')
             .setRequired(false)
-            .setAutocomplete(true)),
+            .setAutocomplete(true))
+    .addBooleanOption(option =>
+        option.setName('refresh')
+        .setDescription('Refresh only')
+    ),
 
     execute: promocode
 });

@@ -5,8 +5,7 @@ import { Text, Timestamp }     from '#utils/index.js'
 import global       from '#env/constant/global.json' with { type: 'json'}
 
 
-const rewardOrder = [
-    'champion', 'silver', 'experience_brew', 'energy_refill', 'multi_battle',
+const rewardOrder = ['champion', 'silver', 'experience_brew', 'energy_refill', 'multi_battle',
     'experience_day', 'potion', 'chicken', 'book', 'shard', 'artifact',
     'energy_flat', 'refill_arena', 'not_listed'
 ];
@@ -62,7 +61,7 @@ To use a promo code:
 5. Rewards will be sent to your **mailbox**, where they must be claimed before they expire (usually within 7 days).
 
 Code e.g.
-> date added [reported] **CODE** - Rewards;
+> \`date added\` \`[reported]\` : **CODE** - Rewards;
 `
             return message;
         },
@@ -83,6 +82,7 @@ Code e.g.
             
                 const codeString = [];
             
+                
                 for (const key of rewardOrder)
                 {
                     if (codes[code][key] !== undefined)
@@ -91,7 +91,7 @@ Code e.g.
                     }
                 }
             
-                codeList += `> ${Timestamp.monthDay(codes[code].timestamp)} [ ]: ${stringGeneration.code(codes[code])}`;
+                codeList += `> ${stringGeneration.date(codes[code])}${stringGeneration.reported(codes[code])} : ${stringGeneration.code(codes[code])}`;
                 codeList += codeString.join(', ') + '\n';
             }
 
@@ -125,6 +125,7 @@ ${codeList}
             
                 const codeString = [];
             
+                
                 for (const key of rewardOrder)
                 {
                     if (codes[code][key] !== undefined)
@@ -133,7 +134,7 @@ ${codeList}
                     }
                 }
             
-                codeList += `> ${Timestamp.monthDay(codes[code].timestamp)} [ ]: ${stringGeneration.code(codes[code])}`;
+                codeList += `> ${stringGeneration.date(codes[code])}${stringGeneration.reported(codes[code])} : ${stringGeneration.code(codes[code])}`;
                 codeList += codeString.join(', ') + '\n';
             }
 
@@ -173,6 +174,17 @@ export { template }
 
 const stringGeneration = 
 {
+
+    date: (input) =>
+    {
+        return `${Text.set(`${Timestamp.monthDay(input.timestamp)}`).constrain(5, {style: ['code']})} `
+    },
+
+    reported: (input) =>
+    {
+        return `${Text.set(`[${input.reported == true ? 'x' : ' '}]`).constrain(3, {style: ['code']})} `
+    },
+
     code: (input) => 
     {
         return `${Text.set(`${input.code.toUpperCase()} -`).style(['bold'])} `;
