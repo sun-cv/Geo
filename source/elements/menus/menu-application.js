@@ -1,11 +1,12 @@
-import { Component, EmbedManager, Schema, Input }   from '#utils';
+import { Component, EmbedManager, Schema, Input, Flag, Flags }   from '#utils';
 import { clanConfig }                               from '#commands/clan/config/clan.js'
 import { applicationConfig }                        from '#commands/clan/config/application.js';
-import { template }                                 from '#resources/templates/application/template-application.js'
+import { template }                                 from '#resources/templates/template-application.js'
+
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
-
     'management-application': Schema.menu
     ({
         meta: { id: 'menu-application-management-application' },
@@ -398,5 +399,5 @@ const data =
     }),
 }
 
-
+export { flag }
 export default data

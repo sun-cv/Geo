@@ -11,7 +11,7 @@ export const event =
 
     flag: 
     {
-        ignore:         false,
+        load:           true,
         once:           true,
     },
 

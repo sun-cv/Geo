@@ -1,10 +1,12 @@
 import fs                       from 'fs';
 import path                     from 'path';
 import { EmbedBuilder }         from '@discordjs/builders';
-import { Embed, Schema, Text }  from '#utils';
-import { template }             from '#resources/templates/mercy/template-mercy.js';
+import { Embed, Flags, Schema, Text }  from '#utils';
+import { template }             from '#resources/templates/template-mercy.js';
 import templates                from '#resources/env/directory-template.json' with { type: 'json'}
 
+
+const flag = Flags.from({ autoload: true })
 const data = 
 {
 
@@ -231,7 +233,5 @@ const data =
 }
 
 
-
-
-
+export { flag }
 export default data

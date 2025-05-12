@@ -76,7 +76,7 @@ const command = Schema.command
         navigation:     false,
         
         handled:        false,
-        ignore:         false,
+        autoload:       true,
 
     },
 

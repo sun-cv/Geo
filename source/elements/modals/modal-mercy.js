@@ -1,5 +1,8 @@
 import { MessageFlags, TextInputStyle }         from 'discord.js'
-import { Component, Input, navigate, Schema }   from '#utils'
+import { Component, Flags, Input, navigate, Schema }   from '#utils'
+
+
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -121,5 +124,5 @@ const data =
     }),
 }
 
-
+export { flag }
 export default data

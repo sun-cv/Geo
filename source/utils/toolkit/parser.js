@@ -102,8 +102,7 @@ class Parser
             meta:       JSON.parse(data.meta),
         };
     }
-    
-    
+       
 }
 
 

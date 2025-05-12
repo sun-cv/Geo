@@ -54,62 +54,69 @@ class FileManager
     static async loadJS(filePath, callbackFunction, ...args)
     {        
         const fileURL   = pathToFileURL(filePath).href;
-        const data      = await import(fileURL);
-        const object    = data.default;
+        const module    = await import(fileURL);
+        const object    = module.default;
+        const flag      = module.flag;
 
-        if (!object)
+        if (!object) 
         {
-            log.error(`File.js load failed (object data not found: ${fileURL})`)
+            log.trace(module ? `Skipping module (No autoload flag): ${fileURL}` 
+                             : `File load failed (No object data found): ${fileURL}`);
             return;
         }
+
         
         if (object?.flag instanceof Flags) 
         {
-            if (object.flag?.ignore?.get())
+            if (!object.flag?.autoload?.get())
             {
-                log.trace(`load flag instance set to ignore: ${fileURL}`)
+                log.trace(`Skipping load (Autoload flag instance set to ignore): ${fileURL}`)
                 return
-            } 
+            }
+            
         }
-        else if (object?.flag?.ignore)
+        else if (!flag)
         {
-            log.trace(`load flag set to ignore: ${fileURL}`)
-            return;
+            log.trace(`Skipping load: ${fileURL}`)
+            return
         }
 
-        log.trace(`Loading source: ${fileURL})`);       
-
+        log.trace(`Loading JavaScript module: ${fileURL})`);
         await callbackFunction(object, ...args);
     }
 
 
-    static async loadJSON(filePath, callbackFunction, ...args)
+    static async loadJSON(filePath, callbackFunction, ...args) 
     {
-        const data = fs.readFileSync(filePath,'utf8');
-        if (!data)
+        const data = fs.readFileSync(filePath, 'utf8');
+
+        if (!data) 
         {
-            log.error(`File.JSON load failed (No data: ${filePath})`);
+            log.error(`File load failed (Empty or unreadable JSON): ${filePath}`);
             return;
         }
 
-        const json = JSON.parse(data);
-        
-        log.trace(`Loading .JSON (source: ${filePath})`);
+        let json;
 
-        if (!json)
+        try 
         {
-            log.error(`File.JSON load failed (could not parse json data: ${filePath})`);
+            json = JSON.parse(data);
+        } catch (error) 
+        {
+            log.error(`File load failed (Invalid JSON format): ${filePath}`);
             return;
         }
-        if (json?.flag?.ignore)
+
+        log.trace(`Loading JSON data: ${filePath}`);
+
+        if (!json?.flag?.autoload) 
         {
-            log.trace(`Load flag set to ignore.`);
+            log.trace(`Skipping load (Autoload flag instance set to ignore): ${fileURL}`)
             return;
         }
 
         await callbackFunction(json, ...args);
     }
-
 
     static get fileLoaders()
     {

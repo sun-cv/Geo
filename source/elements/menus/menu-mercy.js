@@ -1,11 +1,11 @@
-import fs                                                           from 'fs';
-import path                                                         from 'path';
-import { MessageFlags }                                             from 'discord.js';
-import { Component, EmbedManager, navigate, Schema, Text, Input }   from '#utils';
-import templates                                                    from '#resources/env/directory-template.json' with { type: 'json'}
+import fs                                                                   from 'fs';
+import path                                                                 from 'path';
+import { MessageFlags }                                                     from 'discord.js';
+import { Component, EmbedManager, navigate, Schema, Text, Input, Flags }    from '#utils';
+import templates                                                            from '#resources/env/directory-template.json' with { type: 'json'}
 
 
-
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -148,5 +148,5 @@ const data =
     })
 }
 
-
+export { flag }
 export default data;

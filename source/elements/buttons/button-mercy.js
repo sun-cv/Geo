@@ -1,5 +1,6 @@
-import { Component, Text, EmbedManager, Schema }    from '#utils';
+import { Component, Text, EmbedManager, Schema, Flags }    from '#utils';
 
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -491,7 +492,8 @@ const data =
     
 }
 
-export default data;
+export { flag }
+export default data
 
 const modifier =
 {

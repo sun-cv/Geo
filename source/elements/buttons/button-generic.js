@@ -1,6 +1,7 @@
-import { navigate, Component, Text, Schema } from '#utils'
+import { navigate, Component, Text, Schema, Flags } from '#utils'
 
 
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -30,4 +31,6 @@ const data =
 
 }
 
+
+export { flag }
 export default data

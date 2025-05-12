@@ -1,3 +1,5 @@
+import fs                   from 'fs';
+import path                 from 'path';
 import { ActionRowBuilder } from '@discordjs/builders';
 import { MessageFlags }     from 'discord.js';
 import lodash               from 'lodash';
@@ -19,6 +21,7 @@ class EmbedManager
         this.data           = null;
         this.embeds         = [];
         this.components     = [];
+        this.files          = [];
 
     }
 
@@ -43,8 +46,9 @@ class EmbedManager
     {
         this.loadEmbed(this.data);
         this.loadComponents(this.data);
-   
-        return { embeds: this.embeds , components: this.components, flags: this.data.flag.ephemeral ? MessageFlags.Ephemeral : 0 };
+        this.loadAttachments(this.data) 
+
+        return { embeds: this.embeds , components: this.components, files: this.files, flags: this.data.flag.ephemeral ? MessageFlags.Ephemeral : 0 };
     }
 
     loadEmbed(embed)
@@ -58,6 +62,27 @@ class EmbedManager
         this.components = this.component.load(embed);
         log.debug(`Successfully loaded embed ${embed.meta.id} components`)
     }
+
+
+    loadAttachments(embed) 
+    {
+        if (embed.attachment)
+        {
+            console.log('testomg', embed.attachment)
+            const attachmentPath = embed.attachment.path
+
+            if (!fs.existsSync(attachmentPath))
+            {
+                log.error(`Attachment file missing: ${attachmentPath}`);
+                return;
+            }
+
+            this.files.push({ attachment: attachmentPath, name: path.basename(attachmentPath) });
+        }
+        log.debug(`Successfully loaded embed ${embed.meta.id} attachments`)
+
+    }
+
 
     modifyComponents(modifier) 
     {

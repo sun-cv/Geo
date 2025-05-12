@@ -132,9 +132,8 @@ class ApplicationSystem
 }
 
 
-const flag = { ignore: true };
 
-export { ApplicationSystem, flag };
+export { ApplicationSystem };
 
 
 

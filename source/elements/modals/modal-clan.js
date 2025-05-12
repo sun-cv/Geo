@@ -1,8 +1,9 @@
 import { TextInputStyle }                           from 'discord.js';
-import { Component, EmbedManager, Input, Schema }   from '#utils';
+import { Component, EmbedManager, Flags, Input, Schema }   from '#utils';
 import { clanConfig }                               from '#commands/clan/config/clan.js';
 
 
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -293,4 +294,5 @@ function getModifier(selection)
     }
 }
 
+export { flag }
 export default data

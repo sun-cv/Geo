@@ -50,7 +50,7 @@ const command = Schema.command
         navigation:     true,
         
         handled:        false,
-        ignore:         false,
+        autoload:       true,
     },
 
     roleAssignment:     {},
