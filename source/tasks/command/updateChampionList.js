@@ -70,7 +70,8 @@ async function updateChampionList()
 
     fs.writeFileSync(filePath, JSON.stringify({
         champions: updatedNames,
-        flag: { ignore: true}
+        flag: { load:           false,
+}
     }, null, 4), 'utf8');
     
     log.admin(`Champion list updated at ${filePath}`);

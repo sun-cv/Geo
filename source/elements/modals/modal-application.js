@@ -1,6 +1,9 @@
 import { MessageFlags, TextInputStyle }                     from 'discord.js';
-import { Component, EmbedManager, Input, navigate, Schema } from '#utils';
+import { Component, EmbedManager, Flags, Input, navigate, Schema } from '#utils';
 import { applicationConfig }                                from '#commands/clan/config/application.js';
+
+
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -130,4 +133,5 @@ function getModifier(application)
 }
 
 
+export { flag }
 export default data

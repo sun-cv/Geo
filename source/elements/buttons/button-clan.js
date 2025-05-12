@@ -1,11 +1,11 @@
-import { Component, EmbedManager, Schema, Text }    from '#utils';
+import { Component, EmbedManager, Flags, Schema, Text }    from '#utils';
 import { clanConfig }                               from '#commands/clan/config/clan.js';
+
+
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
-
-
-    
     'update-edit': Schema.button
     ({
         meta: { id: 'button-clan-update-edit' },
@@ -368,4 +368,6 @@ const data =
     }),
 }
 
+
+export { flag }
 export default data

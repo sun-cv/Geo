@@ -38,7 +38,7 @@ class Schema
                 autocomplete:   true,
 
                 handled:        false,
-                ignore:         false,
+                autoload:       true,
             },
 
             execute:            function() {}
@@ -95,7 +95,7 @@ class Schema
                 navigation:     false,
                 
                 handled:        false,
-                ignore:         false,
+                autoload:       true,
             },
 
             roleAssignment:     {},
@@ -157,7 +157,7 @@ class Schema
                 navigation:     false,
                 
                 handled:        false,
-                ignore:         false,
+                autoload:       true,
             },
 
             roleAssignment:     {},
@@ -216,7 +216,7 @@ class Schema
                 navigation:     false,
                 
                 handled:        false,
-                ignore:         false,
+                autoload:       true,
             },
 
             roleAssignment:     {},
@@ -276,7 +276,7 @@ class Schema
                 navigation:     false,
                 
                 handled:        false,
-                ignore:         false,
+                autoload:       true,
             },
 
             roleAssignment:     {},
@@ -336,7 +336,7 @@ class Schema
                 navigation:     false,
                 
                 handled:        false,
-                ignore:         false,
+                autoload:       true,
             },
             
             roleAssignment:     {},
@@ -424,7 +424,7 @@ class Schema
                 bot:            false,
 
                 maintenance:    false,
-                ignore:         false,
+                autoload:       true,
             },
 
             evaluate:           function() {},
@@ -458,7 +458,7 @@ class Schema
 
             flag: 
             {
-                ignore:         false,
+                autoload:       true,
                 reattempt:      true,
             },
 

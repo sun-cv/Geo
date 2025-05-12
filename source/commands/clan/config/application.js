@@ -3,8 +3,6 @@
 const applicationConfig =
 {
 
-    
-
     questions: (application) => 
     {
         return [

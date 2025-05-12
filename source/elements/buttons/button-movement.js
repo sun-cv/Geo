@@ -1,7 +1,8 @@
-import {Component, Schema, EmbedManager, Text } from '#utils';
+import {Component, Schema, EmbedManager, Text, Flags } from '#utils';
 import { move }                                 from '#utils/toolkit/embed-movement.js';
 import { clanConfig }                           from '#commands/clan/config/clan.js';
 
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -123,4 +124,5 @@ const data =
 }
 
 
+export { flag }
 export default data

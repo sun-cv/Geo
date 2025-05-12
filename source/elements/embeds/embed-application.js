@@ -1,7 +1,9 @@
 import { EmbedBuilder }         from '@discordjs/builders';
-import { Embed, Schema, Text }  from '#utils';
-import { template }             from '#resources/templates/application/template-application.js';
+import { Embed, Flags, Schema, Text }  from '#utils';
+import { template }             from '#resources/templates/template-application.js';
 
+
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -245,7 +247,5 @@ const data =
 }
 
 
-
-
-
+export { flag }
 export default data

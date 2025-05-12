@@ -17,7 +17,7 @@ async function backupDay()
             await FileManager.createDirectory(backupDirectory);
             await FileManager.copyFile(databaseDirectory, backupFilePath)
 
-            log.admin(`Daily database back up to ${backupFilePath} complete.`);
+            log.admin(`Created daily backup: ${backupFilePath}`);
         }
     }
 }

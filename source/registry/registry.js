@@ -56,7 +56,6 @@ class Registry
         // interaction cache
         this.modal.cache    = new Collection();
 
-
         client.registry     = this;
     }
 
@@ -89,9 +88,9 @@ class Registry
 
     async registerAutocomplete(autocomplete)
     {
-        if (autocomplete.flag.ignore.get())
+        if (!autocomplete.flag.autoload.get())
         {
-            log.trace(`${command.meta.id} load flag set to ignore.`)
+            log.trace(`${command.meta.id} autoload flag set to ignore.`)
             return;
         }  
         this.autocomplete.set(autocomplete.meta.id, autocomplete);
@@ -103,9 +102,9 @@ class Registry
     async registerCommand(command) 
     {
 
-        if (command.flag.ignore.get()) 
+        if (!command.flag.autoload.get()) 
         {
-            log.trace(`${command.meta.id} load flag set to ignore.`)
+            log.trace(`${command.meta.id} autoload flag set to ignore.`)
             return;
         }  
         this.command.set(command.meta.id, command);
@@ -118,9 +117,9 @@ class Registry
     {
         for (const embed of Object.values(data))
         {
-            if (embed.flag.ignore.get())
+            if (!embed.flag.autoload.get())
             {
-                log.trace(`${embed.meta.id} load flag set to ignore`);
+                log.trace(`${embed.meta.id} autoload flag set to ignore`);
             }
             this.embed.set(embed.meta.id, embed);
 
@@ -133,9 +132,9 @@ class Registry
     {
         for (const button of Object.values(data))
         {            
-            if (button.flag.ignore.get())
+            if (!button.flag.autoload.get())
             {
-                log.trace(`${id} load flag set to ignore.`);
+                log.trace(`${id} autoload flag set to ignore.`);
                 continue;
             }
             this.button.set(button.meta.id, button);
@@ -148,16 +147,16 @@ class Registry
     async registerMenu(data)
     {
         for (const menu of Object.values(data))
-            {            
-                if (menu.flag.ignore.get())
-                {
-                    log.trace(`${id} load flag set to ignore.`);
-                    continue;
-                }
-                this.menu.set(menu.meta.id, menu);
-    
-                log.trace(`Registered menu: ${menu.meta.id}`);
+        {            
+            if (!menu.flag.autoload.get())
+            {
+                log.trace(`${id} autoload flag set to ignore.`);
+                continue;
             }
+            this.menu.set(menu.meta.id, menu);
+
+            log.trace(`Registered menu: ${menu.meta.id}`);
+        }
     }
 
 
@@ -165,9 +164,9 @@ class Registry
     {
         for (const modal of Object.values(data))
         {            
-            if (modal.flag.ignore.get())
+            if (!modal.flag.autoload.get())
             {
-                log.trace(`${id} load flag set to ignore.`);
+                log.trace(`${id} autoload flag set to ignore.`);
                 continue;
             }
             this.modal.set(modal.meta.id, modal);
@@ -204,9 +203,9 @@ class Registry
     async registerTask(task)
     {
 
-        if (task.flag.ignore.get())
+        if (!task.flag.autoload.get())
         {
-            log.trace(`${task.meta.id} load flag set to ignore`);
+            log.trace(`${task.meta.id} autoload flag set to ignore`);
             return;
         }
         this.task.set(task.meta.id, task);
@@ -217,7 +216,7 @@ class Registry
 
     async deployCommands()
     {
-        if (global.commands)
+        if (global.command)
         {
             const commandData = [];
 

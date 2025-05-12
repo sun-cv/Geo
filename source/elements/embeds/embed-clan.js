@@ -1,6 +1,9 @@
 import { EmbedBuilder }         from '@discordjs/builders';
-import { Embed, Schema, Text }  from '#utils';
-import { template }             from '#resources/templates/clan/template-clan.js';
+import { Embed, Flags, Schema, Text }  from '#utils';
+import { template }             from '#resources/templates/template-clan.js';
+
+
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -178,9 +181,7 @@ const data =
 }
 
 
-
-
-
+export { flag }
 export default data
 
 

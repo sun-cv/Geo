@@ -1,7 +1,7 @@
 import { CommandInteraction, MessageFlags, SlashCommandBuilder }    from 'discord.js';
 import { Input, Schema }                                            from '#utils'
 import { error }                                                    from "#resources/templates/template-generic.js";
-import { template }                                                 from "#resources/templates/mercy/template-mercy.js";
+import { template }                                                 from "#resources/templates/template-mercy.js";
 
 async function reset(interaction = new CommandInteraction())
 {
@@ -72,7 +72,7 @@ const command = Schema.command
         navigation:     false,
         
         handled:        false,
-        ignore:         false,
+        autoload:       true,
     },
 
     roleAssignment:     {},

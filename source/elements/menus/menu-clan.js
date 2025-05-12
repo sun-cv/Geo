@@ -1,9 +1,10 @@
 import { UserSelectMenuBuilder }                    from 'discord.js';
 import config                                       from '#env/secret/credentials.json' with { type: 'json' }
-import { Component, EmbedManager, Schema, Input }   from '#utils'
+import { Component, EmbedManager, Schema, Input, Flags }   from '#utils'
 import { clanConfig }                               from '#commands/clan/config/clan.js'
 import { RoleAssignment }                           from '#events/interaction/handler/role.js';
 
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -589,4 +590,5 @@ const data =
     }),
 }
 
+export { flag }
 export default data;

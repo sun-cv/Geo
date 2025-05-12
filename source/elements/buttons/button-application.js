@@ -1,9 +1,12 @@
-import { MessageFlags }                                         from 'discord.js';
-import { Component, Text, EmbedManager, Schema, Timestamp }     from '#utils';
-import { applicationConfig }                                    from '#commands/clan/config/application.js';
-import { clanConfig }                                           from '#commands/clan/config/clan.js';
-import { RoleAssignment }                                       from '#events/interaction/handler/role.js';
-import { template }                                             from '#resources/templates/application/template-application.js';
+import { MessageFlags }                                             from 'discord.js';
+import { Component, Text, EmbedManager, Schema, Timestamp, Flags }  from '#utils';
+import { applicationConfig }                                        from '#commands/clan/config/application.js';
+import { clanConfig }                                               from '#commands/clan/config/clan.js';
+import { RoleAssignment }                                           from '#events/interaction/handler/role.js';
+import { template }                                                 from '#resources/templates/template-application.js';
+
+
+const flag = Flags.from({ autoload: true })
 
 const data = 
 {
@@ -461,4 +464,5 @@ const data =
 }
 
 
-export default data;
+export { flag }
+export default data
