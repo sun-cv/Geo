@@ -5,7 +5,7 @@ import { MemberManager }        from './member.js';
 
 class MercyTracker
 {
-    constructor(client, cluster, registry)
+    constructor(client, registry, cluster)
     {
         this.registry       = registry;
         this.database       = cluster.mercy;

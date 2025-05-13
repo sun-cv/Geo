@@ -9,6 +9,7 @@ import { TaskManager }              from '#tasks/taskManager.js'
 import { MercyTracker }             from '#commands/mercy/system/mercy.js'
 import { Cluster }                  from '#databases/models/cluster.js'
 import { ClanManagement }           from '#commands/clan/system/clan.js'
+import { Promocode }                from '#commands/promocode/system/promocode.js';
 
 log.admin('Initiating startup sequence');
 
@@ -29,14 +30,15 @@ class Bot
 
         this.cluster        = new Cluster();
 
-        this.registry       = new Registry(this.client);
-        this.dispatcher     = new Dispatcher(this.client);
-        this.interaction    = new Interaction(this.client, this.registry);
-        this.message        = new Message(this.client, this.registry)
-        this.scheduler      = new TaskManager(this.client, this.cluster, this.registry);
+        this.registry       = new Registry          (this.client);
+        this.dispatcher     = new Dispatcher        (this.client);
+        this.interaction    = new Interaction       (this.client, this.registry);
+        this.message        = new Message           (this.client, this.registry)
+        this.scheduler      = new TaskManager       (this.client, this.registry, this.cluster);
 
-        this.mercyTracker   = new MercyTracker(this.client, this.cluster, this.registry);
-        this.clanManagement = new ClanManagement(this.client, this.cluster, this.registry);
+        this.mercyTracker   = new MercyTracker      (this.client, this.registry, this.cluster);
+        this.clanManagement = new ClanManagement    (this.client, this.registry, this.cluster);
+        this.promocode      = new Promocode         (this.client, this.registry)
     }
     
 
@@ -59,7 +61,9 @@ class Bot
     async login()
     {
         await this.client.login(config.token);
+
         await this.registry.registerGuild();
+        await this.promocode.registerChannel();
         
         this.engage()
     }

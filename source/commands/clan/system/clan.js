@@ -6,7 +6,7 @@ import { ApplicationSystem }    from './application.js';
 
 class ClanManagement
 {
-    constructor(client, cluster, registry)
+    constructor(client, registry, cluster)
     {      
         this.registry       = registry;
         this.database       = cluster.clan;

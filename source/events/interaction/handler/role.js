@@ -34,7 +34,7 @@ class RoleHandler
             
             roleAssignment[memberID].add = roleAssignment[memberID].add.filter(roleName => 
             {
-                const role      = this.registry.role.get(roleName);
+                const role      = this.registry.roles.get(roleName);
 
                 if (!role)
                 {
@@ -50,7 +50,7 @@ class RoleHandler
    
             roleAssignment[memberID].remove = roleAssignment[memberID].remove.filter(roleName => 
             {
-                const role      = this.registry.role.get(roleName);
+                const role      = this.registry.roles.get(roleName);
 
                 if (!role)
                 {
@@ -83,7 +83,7 @@ class RoleHandler
 
             for (const roleID of roles)
             {
-                const role  = this.registry.role.get(roleID);
+                const role  = this.registry.roles.get(roleID);
                 
                 member.roles.remove(role);
                 
@@ -113,7 +113,7 @@ class RoleHandler
 
             for (const roleID of roles)
             {
-                const role  = this.registry.role.get(roleID);
+                const role  = this.registry.roles.get(roleID);
 
                 member.roles.add(role);
                 

@@ -1,14 +1,14 @@
-import fs           from 'node:fs';
-import path         from 'node:path';
-import directory    from '#env/directory/path.json' with { type: 'json'}
-import { Text, Timestamp }     from '#utils/index.js'
-import global       from '#env/constant/global.json' with { type: 'json'}
+import fs                   from 'node:fs';
+import path                 from 'node:path';
+import directory            from '#env/directory/path.json' with { type: 'json'}
+import { Text, Timestamp }  from '#utils/index.js'
+import global               from '#env/constant/global.json' with { type: 'json'}
 
+import indicator            from '#resources/mapping/indicator.json' with { type: 'json'}
 
-const rewardOrder = ['champion', 'silver', 'experience_brew', 'energy_refill', 'multi_battle',
+const order = ['champion', 'silver', 'experience_brew', 'energy_refill', 'multi_battle',
     'experience_day', 'potion', 'chicken', 'book', 'shard', 'artifact',
-    'energy_flat', 'refill_arena', 'not_listed'
-];
+    'energy_flat', 'refill_arena', 'not_listed'];
 
 
 const template = 
@@ -17,11 +17,12 @@ const template =
         {
             const message =
 `
+${Text.set(`Raid Shadow Legends Promo codes`).constrain(58, { style: ['block_code'], align: 'center'})}
 Promo codes grant **free one-time rewards** for your account! 
 
 Codes are **one-time use**, meaning each account can claim a reward **only once** per code. Additionally, you can **only redeem one promo code per day**, so choose wisely!
 
-There are two main types:
+${Text.set(`Types of promo codes:`).constrain(58, { style: ['block_code'], align: 'center'})}
 
 `
 
@@ -53,209 +54,191 @@ There are two main types:
             const message =
 `
 
-To use a promo code:
+${Text.set(`Using a code:`).constrain(58, { style: ['block_code'], align: 'center'})}
 1. Open **Raid Shadow Legends**.
 2. Click on the **Menu** (left-hand side).
 3. Select **Promo Codes**.
 4. Enter the code and confirm.
 5. Rewards will be sent to your **mailbox**, where they must be claimed before they expire (usually within 7 days).
 
-Code e.g.
-> \`date added\` \`[reported]\` : **CODE** - Rewards;
 `
             return message;
         },
 
-        player:         (interaction) => 
+        player: (interaction) => 
         {
-            const filePath                          = path.join(directory.root, 'source', 'resources', 'data', 'promocodes.json');
-            const codes                             = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-
-            let codeList = ''
-
-            for (const code in codes) 
-            {
-                if (codes[code].type !== 'player') 
-                {
-                    continue;
-                }
-            
-                const codeString = [];
-            
+            const promocode  = interaction.client.promocode
+            const promocodes = promocode.player;
+            const validCodes = promocodes.filter(code => code.flag.valid.get());
                 
-                for (const key of rewardOrder)
-                {
-                    if (codes[code][key] !== undefined)
-                    {
-                        codeString.push(stringGeneration[key](codes[code]));
-                    }
-                }
-            
-                codeList += `> ${stringGeneration.date(codes[code])}${stringGeneration.reported(codes[code])} : ${stringGeneration.code(codes[code])}`;
-                codeList += codeString.join(', ') + '\n';
-            }
-
-
-            if (codeList == '')
-            {
-                codeList += '> No known codes!'
-            }
+            const codeList = validCodes.length
+                ? validCodes.map(code => promocode.formatCode(code)).join('\n')
+                : '> No Active codes';
         
             const message = 
 `
 ${Text.set(`New Player Codes:`).constrain(58, { style: ['block_code'], align: 'center'})}
 ${codeList}
-`            
-            return message
+`
+            return message;
         },
 
-        limited:        (interaction) => 
+
+
+        limited: (interaction) => 
         {
-            const filePath                          = path.join(directory.root, 'source', 'resources', 'data', 'promocodes.json');
-            const codes                             = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            const promocode  = interaction.client.promocode
+            const promocodes = promocode.limited;
+            const validCodes = promocodes.filter(code => code.flag.valid.get());
 
-            let codeList = ''
-
-            for (const code in codes) 
-            {
-                if (codes[code].type !== 'limited') 
-                {
-                    continue;
-                }
-            
-                const codeString = [];
-            
-                
-                for (const key of rewardOrder)
-                {
-                    if (codes[code][key] !== undefined)
-                    {
-                        codeString.push(stringGeneration[key](codes[code]));
-                    }
-                }
-            
-                codeList += `> ${stringGeneration.date(codes[code])}${stringGeneration.reported(codes[code])} : ${stringGeneration.code(codes[code])}`;
-                codeList += codeString.join(', ') + '\n';
-            }
-
-            if (codeList == '')
-            {
-                codeList += '> No known codes!'
-            }
+            const codeList = validCodes.length
+                ? validCodes.map(code => promocode.formatCode(code)).join('\n')
+                : '> No Active codes';
         
             const message = 
 `
-${Text.set(`Time-Limited codes:`).constrain(58, { style: ['block_code'], align: 'center'})}
+${Text.set(`Limited-time Codes:`).constrain(58, { style: ['block_code'], align: 'center'})}
 ${codeList}
-`            
+`
+            return message;
+        },
+
+        example: (interaction) =>
+        {
+            const message =
+        `
+code e.g.
+> \`status\` **CODE** - Promo items;
+        `
+            return message;
+        },
+
+        report: (interaction) =>
+        {
+            const message =
+`
+Report e.g.
+> !report TRIVIADUNGEON
+`
+            return message;
+        },
+
+        found: () =>
+        {
+            const message =
+`
+*Code doesn't work?*
+> Use **!report CODE** to report it!
+`
             return message
+        },
+        discovered: () =>
+        {
+            const message =
+`
+*Discovered new promo code?*
+> Ping <@${global.admin}> and it'll get added!
+`
+            return message
+        },
+
+        closingHeader: (interaction) =>
+        {
+            const message =
+`
+${Text.set(`New Promos, reporting, details:`).constrain(58, { style: ['block_code'], align: 'center'})}
+**Don't forget to sign up for promo code notifications at <id:customize>!!**
+`
+            return message;
         },
 
         closing: (interaction) =>
         {
             const message =
 `
+Promo code status is tracked using the indicators below:
 
+\`🟢\` = Verified working
+\`🟠\` = Reported, under review
+\`🔴\` = Marked invalid, pending removal
 
-If a promo code is reported as no longer functioning it will be marked with an [x]. After several confirmed reports it will be removed.
-
-If you find a promo code that has expired or a new one to be added to the list please ping <@${global.admin}>
-
-Thank you!
+When a code is first reported, it will be flagged as under review. If multiple users report to confirm it's no longer working, it will escalate to invalid. After 5 reports, the code is automatically removed from the list.
 `
             return message;
+        },
+
+        announcement:
+        {
+            header: (data) =>
+            {
+                const message =
+`
+${Text.set(`🎉 A new Promo Code just dropped!`).constrain(58, {style: ['block_code'], align: 'center'})}
+${data.formattedCode}
+
+`
+                return message
+            },
+
+            revamp: (channel, role) =>
+            {
+                const message =
+`
+But that’s not all <@&${role.id}> — we’ve revamped the entire promo-codes page to make it easier than ever to stay up to date!
+
+`
+                return message
+            },
+
+            category: (channel) =>
+            {
+                const message =
+`
+${Text.set(`Categories:`).constrain(18, {style: ['block_code'], align: 'center'})}
+Clear categories for New Player and Limited-Time codes
+`
+                return message
+            },            
+            
+            status: (channel) =>
+            {
+                const message =
+`
+${Text.set(`Status:`).constrain(18, {style: ['block_code'], align: 'center'})}
+Live status tracking — see which codes are 
+\`🟢\` = Verified working
+\`🟠\` = Reported
+\`🔴\` = Marked invalid
+`
+                return message
+            },            
+            
+            report: (channel) =>
+            {
+                const message =
+`
+${Text.set(`Report:`).constrain(18, {style: ['block_code'], align: 'center'})}
+ Report broken codes instantly with 
+ 
+ *!report CODE*
+`
+                return message
+            },
+            close: (channel, role) =>
+            {
+                const message =
+`
+Head over to <#${channel.id}> now to check it out and claim some freebies while they’re still active!
+`
+                return message
+            },
+
+
         }
+
+
+
 };
 
 
 export { template }
-
-
-
-const stringGeneration = 
-{
-
-    date: (input) =>
-    {
-        return `${Text.set(`${Timestamp.monthDay(input.timestamp)}`).constrain(5, {style: ['code']})} `
-    },
-
-    reported: (input) =>
-    {
-        return `${Text.set(`[${input.reported == true ? 'x' : ' '}]`).constrain(3, {style: ['code']})} `
-    },
-
-    code: (input) => 
-    {
-        return `${Text.set(`${input.code.toUpperCase()} -`).style(['bold'])} `;
-    },
-
-    silver: (input) => 
-    {
-        return `${input.silver} Silver`;
-    },
-
-    experience_brew: (input) => 
-    {
-        return `${input.experience_brew} Brews`;
-    },
-
-    energy_refill: (input) => 
-    {
-        return `${input.energy_refill} Energy Refills`;
-    },
-
-    multi_battle: (input) => 
-    {
-        return `${input.multi_battle} Multi-Battles`;
-    },
-
-    experience_day: (input) => 
-    {
-        return `${input.experience_day} Days XP Boost`;
-    },
-
-    potion: (input) => 
-    {
-        return `${input.potion} Potions`;
-    },
-
-    chicken: (input) => 
-    {
-        return `${input.chicken} Chickens`;
-    },
-    book: (input) => 
-    {
-        return `${input.book} Skill Tomes`;
-    },
-
-    champion: (input) => 
-    {
-        return `Receive ${input.champion}`;
-    },
-
-    shard: (input) => 
-    {
-        return `${input.shard} Shards`;
-    },
-
-    artifact: (input) => 
-    {
-        return `${input.artifact} Artifacts`;
-    },
-
-    energy_flat: (input) => 
-    {
-        return `${input.energy_flat} Energy`;
-    },
-
-    refill_arena: (input) => 
-    {
-        return `${input.refill_arena} Arena Refills`;
-    },
-
-    not_listed: (input) => 
-    {
-        return `${input.not_listed}`;
-    },
-}

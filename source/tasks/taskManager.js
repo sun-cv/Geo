@@ -5,7 +5,7 @@ import { log, Text, FileManager, PathAccess, Timestamp }    from '#utils'
 
 class TaskManager
 {
-    constructor(client, cluster, registry)
+    constructor(client, registry, cluster)
     {
         this.client     = client;
         this.cluster    = cluster;

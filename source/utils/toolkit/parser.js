@@ -101,8 +101,7 @@ class Parser
             admin:      JSON.parse(data.admin),
             meta:       JSON.parse(data.meta),
         };
-    }
-       
+    }      
 }
 
 

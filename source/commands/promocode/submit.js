@@ -1,65 +1,25 @@
-import fs                                           from 'node:fs';
-import path                                         from 'node:path';
-import directory                                    from '#env/directory/path.json' with { type: 'json'}
 import { CommandInteraction, SlashCommandBuilder }  from "discord.js";
-import { EmbedManager, Input, Schema, Timestamp }              from "#utils/index.js";
-import { template }                                 from '#resources/templates/template-promocode.js';
+import { Input, Schema }                            from "#utils/index.js";
 
 
-async function promocode(interaction = new CommandInteraction())
+async function submit(interaction = new CommandInteraction())
 {
+    const promocode                         = interaction.client.promocode
+
     const input                             = Input.command(interaction);
-    const channel                           = await interaction.client.registry.channels.get('promo-codes')
-    const messages                          = await channel.messages.fetch({ limit: 10 });
-    const messageArray                      = [...messages.values()].reverse();
-
-    const banner                            = messageArray[0];
-    const message                           = messageArray[1];
-
-    if (input.refresh)
-    {
-        await message.edit(EmbedManager.set(interaction).load('embed-promo-landing').create())
-        return interaction.editReply('Refreshed successfully')
-    }
-
-    const filePath                          = path.join(directory.root, 'source', 'resources', 'data', 'promocodes.json');
-    const codes                             = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     const code                              = input.code.toLowerCase()
 
-
-    if (codes[code])
+    if (promocode.validateExists(code))
     {
         return interaction.editReply('Code already exists');
     }
 
-    codes[code] = {};
-
-    for (const [key, value] of Object.entries(input))
+    if (!promocode.validateInput(input))
     {
-        codes[code][key] = value;
+        return interaction.editReply('Invalid input - please try again');
     }
 
-    codes[code].code        = input.code.toUpperCase();
-    codes[code].timestamp   = Timestamp.iso();
-    codes[code].reported    = false
-
-    await fs.writeFileSync(filePath, JSON.stringify(
-        codes
-    , null, 4), 'utf8');
-
-    if (!banner)
-    {
-        const attachmentPath = path.join(directory.shared, 'assets', 'template', 'banner', 'promocodes-banner.png');
-        await channel.send({ files: [{ attachment: attachmentPath, name: path.basename(attachmentPath) }] });
-    }
-    if (!message)
-    {
-        await channel.send(EmbedManager.set(interaction).load('embed-promo-landing').create())
-    }
-    else
-    {
-        await message.edit(EmbedManager.set(interaction).load('embed-promo-landing').create())
-    }
+    promocode.create(input);
 
     return interaction.editReply(`Code submitted successfully`)
 }
@@ -71,7 +31,7 @@ const command = Schema.command
     {
         id:             "promocode",
         type:           "command",
-        description:    "code management - submit new codes",
+        description:    "promocode management - submit new codes",
     },
 
     permission: 
@@ -117,11 +77,11 @@ const command = Schema.command
     .addStringOption(option =>
         option.setName('code')
             .setDescription('e.g: (promo code in caps): YEARLYGIFT')
-            .setRequired(false))
+            .setRequired(true))
     .addStringOption(option =>
         option.setName('type')
             .setDescription('e.g: (type of promo code): New Player, Time-Limited')
-            .setRequired(false)
+            .setRequired(true)
             .addChoices(
                 { name: 'New Player',  value: 'player'},
                 { name: 'Time-Limited', value: 'limited'},
@@ -195,13 +155,9 @@ const command = Schema.command
         option.setName('not_listed')
             .setDescription('e.g: (custom reward description): 25 Primal Fragments')
             .setRequired(false)
-            .setAutocomplete(true))
-    .addBooleanOption(option =>
-        option.setName('refresh')
-        .setDescription('Refresh only')
-    ),
+            .setAutocomplete(true)),
 
-    execute: promocode
+    execute: submit
 });
 
 export default command;

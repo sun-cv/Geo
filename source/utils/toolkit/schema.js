@@ -467,7 +467,68 @@ class Schema
     
         const schema    = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
         schema.flag     = Flags.from(schema.flag, defaultSchema.flag)
-        return schema;    }
+        return schema;    
+    }
+
+    static promocode(overrides) 
+    {
+        const defaultSchema = 
+        {
+            meta: 
+            {
+                id:             '',
+                type:           '',
+                category:       'promocode',
+                description:    'Raid promocode',
+                timestamp:      ''
+            },
+
+            data: 
+            {
+                code:               '',
+                type:               '',
+                champion:           '',
+                silver:             '',
+                experience_brew:    '',
+                experience_day:     0,
+                energy_refill:      0,
+                energy_flat:        0,
+                multi_battle:       0,
+                potion:             '',
+                chicken:            '',
+                book:               '',
+                shard:              '',
+                artifact:           '',
+                refill_arena:       0,
+                not_listed:         '',
+            },
+
+            condition:
+            {
+                scopes: [],
+            },
+
+            status:
+            {
+                reportCount:        0,
+                reportUser:         [],
+            },
+
+            flag: 
+            {
+                valid:              true,
+                reported:           false
+            },
+
+        };
+
+        const schema    = lodash.merge(lodash.cloneDeep(defaultSchema), overrides);
+        schema.flag     = Flags.from(schema.flag, defaultSchema.flag);
+        return schema;
+    }
+
+
+
 }
 
 

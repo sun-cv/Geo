@@ -46,7 +46,7 @@ class Registry
 
         // Guild
         this.guild          = null;
-        this.role           = new Collection();
+        this.roles           = new Collection();
         this.channels       = new Collection();
 
         // Mercy Tracker
@@ -274,7 +274,7 @@ class Registry
         const roles = await guild.roles.fetch();
 
         this.guild = guild;
-        roles.map((role) => this.role.set(role.name, role))
+        roles.map((role) => this.roles.set(role.name, role))
         
         this.mapChannels();
     }

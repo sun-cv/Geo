@@ -68,7 +68,6 @@ class EmbedManager
     {
         if (embed.attachment)
         {
-            console.log('testomg', embed.attachment)
             const attachmentPath = embed.attachment.path
 
             if (!fs.existsSync(attachmentPath))
