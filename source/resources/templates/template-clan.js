@@ -253,7 +253,7 @@ ${Text.set(`${selection == 2 ? '▶' : ' '}Level: ${Text.set(`${clan.level}`).co
 
             const message =
 `
->>> ${Text.set(`${selection == 3 ? '▶' : ' '}`)}${Text.set(`${leadershipMap.length > 1 ? leadershipMap : 'TBD'}`).constrain(110, {paddingChar: ' ⠀'})}
+>>> ${Text.set(`${selection == 3 ? '▶' : ' '}`)}${Text.set(`${leadershipMap.length > 0 ? leadershipMap : 'TBD'}`).constrain(110, {paddingChar: ' ⠀'})}
 
 ` 
             return message;
