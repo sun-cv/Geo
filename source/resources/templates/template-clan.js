@@ -15,7 +15,7 @@ ${Text.set(`${indicator.color.green[clan.member.count < 30]} ${clan.member.count
 > ${Text.set(`Hydra  : ${hydra.custom || `${hydra.keys} key ${hydra.difficulty}`}`)         .constrain(41, { style: ['code'] })} ⠀${Text.set(`CVC    : ${cvc.custom  || `${cvc.points}k minimum`}`)                      .constrain(20, { style: ['code'] })}
 > ${Text.set(`Chimera: ${chimera.custom || `${chimera.keys} key ${chimera.difficulty}`}`)   .constrain(41, { style: ['code'] })}
 
-> ${leadershipMap.length > 1 ? leadershipMap : 'TBD'}
+> ${leadershipMap.length > 0 ? leadershipMap : 'TBD'}
 `;
 
         return message;

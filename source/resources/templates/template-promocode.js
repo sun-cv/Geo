@@ -107,7 +107,7 @@ ${codeList}
         {
             const message =
         `
-code e.g.
+Code e.g.
 > \`status\` **CODE** - Promo items;
         `
             return message;
