@@ -92,7 +92,7 @@ ${Text.set(`Level: ${Text.set(`${clan.level}`).constrain(8, {align: 'right'})}`)
             const message =
 `
 ${Text.set(`Leadership:`).constrain(20, {style: ['block_code']})}
-> ${Text.set(`${leadershipMap.length > 1 ? leadershipMap : 'TBD'}`).constrain(110, {paddingChar: ' ⠀'})}
+> ${Text.set(`${leadershipMap.length > 0 ? leadershipMap : 'TBD'}`).constrain(110, {paddingChar: ' ⠀'})}
 
 ` 
             return message;
