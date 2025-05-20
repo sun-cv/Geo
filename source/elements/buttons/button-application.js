@@ -395,7 +395,7 @@ const data =
     
         execute: (interaction) => 
         {
-            const { member, client: { registry: { channels, role }, clanManagement: { officersTable, applications }} } = interaction;
+            const { member, client: { registry: { channels, roles }, clanManagement: { officersTable, applications }} } = interaction;
             
             const application = applications.getApplication(member);
             
@@ -408,7 +408,10 @@ const data =
             
             interaction.editReply(EmbedManager.set(interaction).load('embed-application-apply-submit').create());
 
-            channels.get(officersTable).send(`📢 Attention ${role.get(application.clan)}!`);
+            console.log(roles)
+            console.log(application.clan)
+
+            channels.get(officersTable).send(`📢 Attention ${roles.get(application.clan)}!`);
             channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification').create());
 
         }
