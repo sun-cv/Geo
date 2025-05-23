@@ -104,7 +104,7 @@ const data =
     
         execute: function(interaction) 
         {
-            const { member, client: { registry: { channels }, clanManagement: { officersTable, applications, applications: {cache: { active}} }} } = interaction;
+            const { member, client: { registry: { channels, roles }, clanManagement: { officersTable, applications, applications: {cache: { active}} }} } = interaction;
 
             const [value] = Input.menu(interaction)
             const application = applications.getApplication({id: active.get(member.id)})
@@ -120,7 +120,7 @@ const data =
             applications.updateApplication(application);
             applications.resetCache();
 
-            channels.get(officersTable).send(`📢 Attention @here!`);
+            channels.get(officersTable).send(`📢 Attention ${roles.get(application.clan)}!`);
             channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-transfer').create());
 
             interaction.editReply(EmbedManager.set(interaction).load('embed-clan-home').create());
