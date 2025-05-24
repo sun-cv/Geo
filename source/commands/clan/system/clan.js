@@ -101,8 +101,7 @@ class Clan
 
         this.channel    = 
         {
-            home:           data.channel?.home              ?? '',
-            announcements:  data.channel?.announcements     ?? '',
+            ...data.channel
         };
 
         this.leadership = 
