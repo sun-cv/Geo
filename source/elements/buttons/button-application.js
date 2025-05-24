@@ -408,8 +408,6 @@ const data =
             
             interaction.editReply(EmbedManager.set(interaction).load('embed-application-apply-submit').create());
 
-            console.log(roles)
-            console.log(application.clan)
 
             channels.get(officersTable).send(`📢 Attention ${roles.get(application.clan)}!`);
             channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification').create());
@@ -441,7 +439,8 @@ const data =
         }
     }),
 
-        'application-view-transfer': Schema.button
+    
+    'application-view-transfer': Schema.button
     ({
         meta: { id: 'button-application-view-transfer' },
 

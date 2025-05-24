@@ -28,7 +28,7 @@ class ApplicationSystem
         {
             for (const application of applications)
             {
-                this.cache[application.request].set(application.member.id, application)
+                this.cache[application.request].set(application.member.id, new Application(this, application))
             }
             log.trace(`Successfully cached ${applications.length ? applications.length : '0'} applications`)
         }
@@ -144,6 +144,7 @@ class Application
 {
     constructor(system, data = {}) 
     {
+
         this.system     =   system;
         this.id         =   data.id                     || '';
 

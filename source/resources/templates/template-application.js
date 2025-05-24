@@ -273,7 +273,7 @@ ${Timestamp.monthDay(application.timestamp)} | ${Text.set(application.member.use
 
         const message =
 `
-Welcome to the ${application.clan} home-base <@${application.id}>!
+Welcome to the ${application.clan} home-base <@${application.member.id}>!
 
 Here you can:
 - Find the latest clan news in the <#${clan.channel.announcements}>
