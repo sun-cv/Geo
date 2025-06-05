@@ -214,11 +214,16 @@ class Promocode
 
                 if (field.prefix) 
                 {
-                    return `${field.prefix} ${value}`;
+                    return `${field.join}${field.prefix}${field.join}${value}`;
                 }
 
-                return field.label
-                    ? `${value} ${field.label}`
+                return field.label 
+                    ?
+                    field.join 
+                        ?
+                        `${value}${field.join}${field.label}`
+                        :
+                        `${value} ${field.label}`
                     : `${value}`;
             })
             .filter(Boolean);
@@ -231,20 +236,20 @@ class Promocode
 }
 
 const fields = [
-    { key: 'champion',        label: '',                prefix: 'Receive'   },
-    { key: 'silver',          label: 'Silver'                               },
-    { key: 'experience_brew', label: 'Brews'                                },
-    { key: 'energy_refill',   label: 'Energy Refills'                       },
-    { key: 'multi_battle',    label: 'Multi-Battles'                        },
-    { key: 'experience_day',  label: 'Days XP Boost'                        },
-    { key: 'potion',          label: 'Potions'                              },
-    { key: 'chicken',         label: 'Chickens'                             },
-    { key: 'book',            label: 'Skill Tomes'                          },
-    { key: 'shard',           label: 'Shards'                               },
-    { key: 'artifact',        label: 'Artifacts'                            },
-    { key: 'energy_flat',     label: 'Energy'                               },
-    { key: 'refill_arena',    label: 'Arena Refills'                        },
-    { key: 'not_listed',      label: ''                                     },
+    { key: 'champion',        label: '',                prefix: ' Receive' },
+    { key: 'silver',          label: 'Silver',                             },
+    { key: 'experience_brew', label: 'Brews',                              },
+    { key: 'energy_refill',   label: 'Energy Refills',                     },
+    { key: 'multi_battle',    label: 'Multi-Battles',                      },
+    { key: 'experience_day',  label: 'Days XP Boost',                      },
+    { key: 'potion',          label: 'Potions',                            },
+    { key: 'chicken',         label: 'Chickens',        join: '* ',        },
+    { key: 'book',            label: 'Skill Tomes',                        },
+    { key: 'shard',           label: 'Shards',                             },
+    { key: 'artifact',        label: 'Artifacts',                          },
+    { key: 'energy_flat',     label: 'Energy',                             },
+    { key: 'refill_arena',    label: 'Arena Refills',                      },
+    { key: 'not_listed',      label: '',                                   },
 ];
 
 
