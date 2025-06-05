@@ -113,7 +113,7 @@ class Promocode
 
         this.data = 
         {
-            formattedCode: this.formatCode(this.codes[code])
+            formattedCode: this.formatCode(this.codes[code.toLowerCase()])
         } 
         this.post()
         this.save();
