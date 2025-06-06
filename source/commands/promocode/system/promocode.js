@@ -214,7 +214,11 @@ class Promocode
 
                 if (field.prefix) 
                 {
-                    return `${field.join}${field.prefix}${field.join}${value}`;
+                    return field.join 
+                    ? 
+                    `${field.join}${field.prefix}${field.join}${value}`
+                    :
+                    `${field.prefix} ${value}`;
                 }
 
                 return field.label 
