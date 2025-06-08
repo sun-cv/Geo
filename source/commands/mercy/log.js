@@ -71,8 +71,6 @@ const command = Schema.command
 
     },
 
-    roleAssignment:     {},
-    
     data: new SlashCommandBuilder()
     .setName('log')
     .setDescription('Manually log a champion pull')

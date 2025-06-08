@@ -1,5 +1,6 @@
 import { Events, MessageFlags }     from 'discord.js'
 import { Tracer, log, navigate }    from '#utils';
+import { AssignHandler }            from './handler/assign.js';
 import { AutocompleteHandler }      from './handler/autocomplete.js';
 import { PermissionHandler }        from './handler/permission.js';
 import { CooldownHandler }          from './handler/cooldown.js';
@@ -23,6 +24,7 @@ class Interaction
         this.permission = new PermissionHandler(client, registry);
         this.cooldown   = new CooldownHandler(client, registry);
 
+        this.assign     = new AssignHandler(client, registry)
         
         this.autofill   = new AutocompleteHandler(client, registry);
         this.modal      = new ModalHandler(client, registry);
@@ -30,7 +32,6 @@ class Interaction
         this.menu       = new MenuHandler(client, registry);
         this.command    = new CommandHandler(client, registry);
         this.role       = new RoleHandler(client, registry);
-
     }
 
     create =
@@ -62,6 +63,8 @@ class Interaction
         await this.navigation   .handle(interaction);
         await this.permission   .handle(interaction);
         await this.cooldown     .handle(interaction);
+
+        await this.assign       .handle(interaction);
 
         await this.modal        .handle(interaction);
         await this.button       .handle(interaction);

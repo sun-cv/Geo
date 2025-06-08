@@ -19,7 +19,7 @@ class RoleHandler
         {
             return;
         }
-            
+
         await this.validate(roleAssignment);
         
         await this.remove(roleAssignment);
@@ -127,43 +127,59 @@ class RoleHandler
 
 
 
-class RoleAssignment
+class RoleAssignment 
 {
-    constructor(interaction, targetId = interaction.member.id)
-    {
-        this.require        = [];
-        this.remove         = [];
-        this.add            = [];
+    static instance = null;
 
-        this.initialize(interaction, targetId);
-    }
-
-    initialize(interaction, targetId)
+    constructor(interaction) 
     {
+        this.interaction    = interaction;
+        this.currentMember  = null;
         interaction.data.roleAssignment ??= {};
-        interaction.data.roleAssignment[targetId] = this;
     }
 
-    static set(interaction, targetId)
+    static set(interaction) 
     {
-        return new RoleAssignment(interaction, targetId);
+        this.instance = new RoleAssignment(interaction);
+        return this.instance;
     }
 
-    requireRole(...args)
+    static member(userId) 
     {
-        this.require.push(...args);
+        if (!this.instance) 
+        {
+            throw new Error('RoleAssignment.set(interaction) must be called first.');
+        }
+        return this.instance.member(userId);
+    }
+
+    member(userId) 
+    {
+        this.currentMember = userId;
+
+        if (!this.interaction.data.roleAssignment[userId]) 
+        {
+            this.interaction.data.roleAssignment[userId] = { require: [], remove: [], add: [] };
+        }
+
         return this;
     }
 
-    removeRole(...args)
+    requireRole(...roles) 
     {
-        this.remove.push(...args);
+        this.interaction.data.roleAssignment[this.currentMember].require.push(...roles);
         return this;
     }
 
-    addRole(...args)
+    removeRole(...roles)
     {
-        this.add.push(...args);
+        this.interaction.data.roleAssignment[this.currentMember].remove.push(...roles);
+        return this;
+    }
+
+    addRole(...roles) 
+    {
+        this.interaction.data.roleAssignment[this.currentMember].add.push(...roles);
         return this;
     }
 }

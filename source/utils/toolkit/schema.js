@@ -98,8 +98,6 @@ class Schema
                 autoload:       true,
             },
 
-            roleAssignment:     {},
-
             data:               null,
 
             execute:            function() {}
@@ -160,8 +158,6 @@ class Schema
                 autoload:       true,
             },
 
-            roleAssignment:     {},
-
             load:               function() {},
             execute:            function() {}
         };
@@ -218,8 +214,6 @@ class Schema
                 handled:        false,
                 autoload:       true,
             },
-
-            roleAssignment:     {},
 
             load:               function() {},
             execute:            function() {}
@@ -279,8 +273,6 @@ class Schema
                 autoload:       true,
             },
 
-            roleAssignment:     {},
-
             load:               function() {},
             execute:            function() {}
         };
@@ -339,8 +331,6 @@ class Schema
                 autoload:       true,
             },
             
-            roleAssignment:     {},
-
             load:               () => {},
             execute:            () => {}
         };

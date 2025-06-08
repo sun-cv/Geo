@@ -53,8 +53,6 @@ const command = Schema.command
         autoload:       true,
     },
 
-    roleAssignment:     {},
-
 	data: new SlashCommandBuilder()
 		.setName('account')
 		.setDescription('Manage Mercy Tracker accounts'),

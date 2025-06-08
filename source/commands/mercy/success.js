@@ -82,8 +82,6 @@ const command = Schema.command
         autoload:       true,
     },
 
-    roleAssignment:     {},
-
     data: new SlashCommandBuilder()
     	.setName('success')
     	.setDescription('Calculate success chance of pulling a provided number of shards (and more!)')

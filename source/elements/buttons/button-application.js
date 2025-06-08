@@ -176,7 +176,7 @@ const data =
                 clanManagement.addMember(application);
                 clanManagement.applications.updateLanding(interaction)
 
-                RoleAssignment.set(interaction, application.member.id).removeRole(...clans).addRole(application.clan)
+                RoleAssignment.member(application.member.id).removeRole(...clans).addRole(application.clan)
 
                 channels.get(officersTable).send(EmbedManager.set(interaction).load('embed-application-officer-notification-accepted').create());
                 channels.get(clan[application.clan].channel.home).send(template.accepted(interaction, application));

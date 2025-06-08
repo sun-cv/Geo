@@ -75,8 +75,6 @@ const command = Schema.command
         autoload:       true,
     },
 
-    roleAssignment:     {},
-    
     data: new SlashCommandBuilder()
     .setName('reset')
     .setDescription('Reset shard mercy and log your pull!')

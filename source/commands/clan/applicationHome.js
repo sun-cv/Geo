@@ -55,8 +55,6 @@ const command = Schema.command
 
     },
 
-    roleAssignment:     {},
-
     data: new SlashCommandBuilder()
     	.setName('application_landing')
     	.setDescription('Create the Clan Application landing'),

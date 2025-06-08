@@ -94,14 +94,63 @@ const data =
             return menu;
         },
 
-        execute: function(interaction) 
+        execute: async function(interaction) 
         {
 
-            const { member, client: { guilds, clanManagement: { cache: { active, selection, clones }}}} = interaction;
-            const [value]   = Input.menu(interaction)
+            const { member, client: {  registry: { roles }, guilds, clanManagement: { clan,  cache: { active, selection, clones }}}} = interaction;
+            const value         = Input.menu(interaction)
+            
+            const guild         = guilds.cache.get(config.guildID);
+            await guild.members.fetch();
 
-            clones.get(member.id).leadership.leader = value
-            RoleAssignment.set(interaction, value).removeRole('Deputy').addRole('Officer')
+            const officerRole   = 'Officer';
+            const deputyRole    = 'Deputy';
+            const clanRole      = clan[active.get(member.id)].role;
+
+            const allClanRoles  = Object.values(clan).map((clan) => clan.role)
+
+            const officerRoles  = [officerRole, clanRole]
+            const officerFilter = [officerRole, clanRole].map(name => roles.get(name)?.id);
+
+            const clanOfficers  = guild.members.cache.filter(member =>
+                officerFilter.every(role => member.roles.cache.has(role))
+            );
+
+            const officerIds    = clanOfficers.map(m => m.id);
+
+            clones.get(member.id).leadership.leader = value;
+
+            const allUserIds = new Set([...value, ...officerIds]);
+
+
+            for (const userId of allUserIds) 
+            {
+                const memberObj = guild.members.cache.get(userId);
+
+                if (userId == value[0]) 
+                {
+                    RoleAssignment.member(userId).removeRole('Deputy');
+
+                    for (const role of officerRoles)
+                    {
+                        RoleAssignment.member(userId).addRole(role)
+                    }
+                }
+                else
+                {
+                    RoleAssignment.member(userId).removeRole('Officer');
+                }
+
+                for (const role of allClanRoles) 
+                {
+                    const roleFilter = roles.get(role)?.id
+
+                    if (role !== clanRole && memberObj.roles.cache.has(roleFilter)) 
+                    {
+                        RoleAssignment.member(userId).removeRole(role);
+                    }
+                }
+            } 
 
             interaction.editReply(EmbedManager.set(interaction).load('embed-clan-management-home').modify(clanConfig.getModifier(selection.get(member.id))).create());
         }
@@ -130,30 +179,74 @@ const data =
 
         execute: async function(interaction) 
         {
-            const { member, client: { guilds, clanManagement: { cache: { active, selection, clones }}}} = interaction;
-            const value     = Input.menu(interaction)
-            
-            const guild     = guilds.cache.get(config.guildID);
+            const { member, client: { registry: { roles }, guilds, clanManagement: { clan, cache: { active, selection, clones }}}} = interaction;
+            const value         = Input.menu(interaction)
+                
+            const guild         = guilds.cache.get(config.guildID);
             await guild.members.fetch();
             
             const officerRole   = 'Officer';
-            const clanRole      = active.get(member.id).role;
+            const deputyRole    = 'Deputy';
+            const clanRole      = clan[active.get(member.id)].role;
 
-            const roles         = [officerRole, clanRole];
+            const allClanRoles  = Object.values(clan).map((clan) => clan.role)
+
+            const officerRoles  = [officerRole, clanRole];
+            const officerFilter = [officerRole, clanRole].map(name => roles.get(name)?.id);
+
+            const deputyRoles   = [deputyRole, clanRole]
+            const deputyFilter  = [deputyRole, clanRole].map(name => roles.get(name)?.id);
+
 
             const clanOfficers  = guild.members.cache.filter(member =>
-                roles.every(role => member.roles.cache.has(role))
+                officerFilter.every(role => member.roles.cache.has(role))
             );
 
+            const clanDeputies = guild.members.cache.filter(member =>
+                deputyFilter.every(role => member.roles.cache.has(role))
+            )
+
             const officerIds    = clanOfficers.map(m => m.id);
+            const deputyIds     = clanDeputies.map(m => m.id);
 
             clones.get(member.id).leadership.deputies = value;
 
-            for (const userId of value) 
+            const allUserIds = new Set([...value, ...deputyIds]);
+
+
+            for (const userId of allUserIds) 
             {
+                const memberObj = guild.members.cache.get(userId);
+
                 if (officerIds.includes(userId)) 
                 {
-                    RoleAssignment.set(interaction, userId).removeRole('Officer').addRole('Deputy');
+                    RoleAssignment.member(userId).removeRole('Officer');
+
+                    for (const role of deputyRoles)
+                    {
+                        RoleAssignment.member(userId).addRole(role);
+                    }
+                }
+                else if (value.includes(userId))
+                {
+                    for (const role of deputyRoles)
+                    {
+                        RoleAssignment.member(userId).addRole(role);
+                    }                
+                }
+                else
+                {
+                    RoleAssignment.member(userId).removeRole('Deputy');
+                }
+
+                for (const role of allClanRoles) 
+                {
+                    const roleFilter = roles.get(role)?.id
+
+                    if (role !== clanRole && memberObj.roles.cache.has(roleFilter)) 
+                    {
+                        RoleAssignment.member(userId).removeRole(role);
+                    }
                 }
             } 
 

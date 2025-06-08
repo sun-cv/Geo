@@ -57,8 +57,6 @@ const command = Schema.command
 
     },
 
-    roleAssignment:     {},
-
     data: new SlashCommandBuilder()
     	.setName('promocode-refresh')
     	.setDescription('Refresh the promo code board'),

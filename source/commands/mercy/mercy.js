@@ -80,8 +80,6 @@ const command = Schema.command
 
     },
 
-    roleAssignment:     {},
-
     data: new SlashCommandBuilder()
     	.setName('mercy')
     	.setDescription('Generate your current mercy')

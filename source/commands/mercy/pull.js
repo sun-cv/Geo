@@ -67,7 +67,6 @@ const command = Schema.command
         autoload:       true,
     },
 
-    roleAssignment:     {},
 
     data: new SlashCommandBuilder()
     	.setName('pull')

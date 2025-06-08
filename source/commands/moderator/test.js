@@ -50,8 +50,6 @@ const command = Schema.command
         autoload:       true,
     },
 
-    roleAssignment:     {},
-    
     data: new SlashCommandBuilder()
     .setName('test')
     .setDescription('Command for testing purposes.')

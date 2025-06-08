@@ -27,16 +27,16 @@ class MercyTracker
         const member = this.memberManager.get(interaction.member);
        
         if (member.new)
-        {
-            log.event(`Greeting new Mercy member ${member.username}`)
-
+        {            
+            log.event(`Greeting new Mercy member ${member.username}`);
+            RoleAssignment.member(member.id).addRole('Mercy');
             delete member.new;
             setTimeout(() =>{ this.greetMember(interaction, member)}, 2000)
         }
         return member;
     }
 
-    autofill(interaction)
+    autofill(interacion)
     {
         const member = this.memberManager.get(interaction.member);
         return member;
@@ -44,7 +44,6 @@ class MercyTracker
 
     greetMember(interaction, member)
     {
-        RoleAssignment.set(interaction).addRole('Mercy')
         interaction.followUp(EmbedManager.set(interaction).load('embed-mercy-greeting').create());
     }
 }

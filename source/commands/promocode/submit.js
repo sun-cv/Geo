@@ -69,8 +69,6 @@ const command = Schema.command
 
     },
 
-    roleAssignment:     {},
-
     data: new SlashCommandBuilder()
     	.setName('promocode')
     	.setDescription('Submit a new promo code')

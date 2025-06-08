@@ -24,7 +24,7 @@ const command = Schema.command
         require:
         {
             channels:   [],
-            roles:      ['Officer', 'Deputy'],
+            roles:      [],
         },
         exclude:
         {
@@ -51,8 +51,6 @@ const command = Schema.command
         autoload:       true,
 
     },
-
-    roleAssignment:     {},
 
     data: new SlashCommandBuilder()
     	.setName('clan')
