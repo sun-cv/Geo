@@ -1,6 +1,6 @@
 import lodash                   from 'lodash';
 import { Collection }           from 'discord.js';
-import { log }                  from '#utils';
+import { log, Toolkit }                  from '#utils';
 import { ApplicationSystem }    from './application.js';
 
 
@@ -77,7 +77,8 @@ class ClanManagement
         
         if (!this.database.hasMember(application))
         {
-            this.clan[application.clan].member.count++;
+            this.clan[application.clan].member.count = Toolkit.clamp(this.clan[application.clan].member.count + 1, 0, 30);
+
             this.updateClan(this.clan[application.clan]);
             this.database.addMember(application);
             return;
