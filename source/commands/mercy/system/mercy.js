@@ -36,7 +36,7 @@ class MercyTracker
         return member;
     }
 
-    autofill(interacion)
+    autofill(interaction)
     {
         const member = this.memberManager.get(interaction.member);
         return member;
