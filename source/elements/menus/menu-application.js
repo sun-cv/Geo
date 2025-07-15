@@ -56,7 +56,7 @@ const data =
         {
             const { client: { clanManagement: { applications, cache: { active }}}, member} = interaction
             
-            const transfers = applications.getTransfersByClan(active.get(member.id)).sort((a, b) => a.timestamp - b.timestamp).reduce((obj, application) => { obj[template.menu(application)] = application.id; return obj }, {})
+            const transfers = applications.getTransfersByClan(active.get(member.id)).sort((a, b) => a.timestamp - b.timestamp).reduce((obj, application) => { obj[template.menu(application)] = application.member.id; return obj }, {})
             
             return Component
                 .menu(this.meta.id)
