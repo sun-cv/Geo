@@ -150,8 +150,8 @@ class Application
 
         this.member     =
         {
-            id:             data.member.id              || '',
-            username:       data.member.username        || '',
+            id:             data.member?.id              || '',
+            username:       data.member?.username        || '',
         }
         this.account    =   data.account                || '';
         this.request    =   data.request                || '';
