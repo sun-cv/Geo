@@ -42,11 +42,12 @@ class Registry
             member:           new Collection(),
             content:          new Collection(),
             channel:          new Collection(),
+            takeover:         new Collection(),
         }
 
         // Guild
         this.guild          = null;
-        this.roles           = new Collection();
+        this.roles          = new Collection();
         this.channels       = new Collection();
 
         // Mercy Tracker
@@ -55,6 +56,8 @@ class Registry
 
         // interaction cache
         this.modal.cache    = new Collection();
+
+
 
         client.registry     = this;
     }

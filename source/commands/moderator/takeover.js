@@ -1,22 +1,27 @@
 import { CommandInteraction,  SlashCommandBuilder } from 'discord.js';
 import { EmbedManager, Schema }                     from '#utils'
 
-
-
-async function applicationLanding(interaction = new CommandInteraction())
+const channel = 
 {
-    const { client: { channels, clanManagement: { applications: { channel }}}} = interaction;
+    landing:    "account-takeover",
+    moderator:  "takeover-mod",
+}
 
-    channels.get(channel).send(EmbedManager.set(interaction).load('embed-clan-application-landing').create())
+async function takeoverManagement(interaction = new CommandInteraction())
+{
+    const { client: { registry: { channels }}} = interaction;
+
+    channels.get(channel.landing)  .send(EmbedManager.set(interaction).load('embed-takeover-landing').create())
+    channels.get(channel.moderator).send(EmbedManager.set(interaction).load('embed-takeover-moderator').create())
 }
 
 const command = Schema.command
 ({
     meta: 
     {
-        id:             "application-landing",
+        id:             "takeover-management",
         type:           "command",
-        description:    "Creates Clan Applications home embed",
+        description:    "Creates Clan Takeover home and moderator embeds",
     },
 
     permission: 
@@ -25,7 +30,7 @@ const command = Schema.command
         access:         [],
         require:
         {
-            channels:   ['clan-applications'],
+            channels:   ['account-takeover', 'takeover-mod'],
             roles:      ['Moderator'],
         },
         exclude:
@@ -56,11 +61,11 @@ const command = Schema.command
     },
 
     data: new SlashCommandBuilder()
-    	.setName('application-landing')
-    	.setDescription('Create the Clan Application landing'),
+    	.setName('takeover-management')
+    	.setDescription('Creates Clan Takeover home and moderator embeds'),
         
-    execute: applicationLanding
+    execute: takeoverManagement
 });
 
 export default command;
-
+export { channel }

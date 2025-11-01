@@ -12,14 +12,9 @@ class MercyTracker
 
         this.memberManager  = new MemberManager(this)
 
-        this.setClientContext(client);
-    }
-
-
-    async setClientContext(client)
-    {
         client.mercy = this;
-        log.admin(`Successfully initialized Mercy Tracker`);
+        
+        log.admin(`Successfully initialized Mercy Tracker`);    
     }
 
     initialize(interaction)

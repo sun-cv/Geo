@@ -19,7 +19,7 @@ const filter = Schema.filter
         {
             member:     [],
             content:    [],
-            channel:    ['mercy-beta'],
+            channel:    ['mercy'],
         },
         exclude:
         {

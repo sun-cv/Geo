@@ -39,7 +39,6 @@ const data =
                 { name: ' ', value: template.closing(interaction),      inline: false },
                 { name: ' ', value: template.example(interaction),      inline: true  },
                 { name: ' ', value: template.report(interaction),       inline: true  },
-
             )
 
             return embed;
