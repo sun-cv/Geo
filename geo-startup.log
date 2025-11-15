@@ -1,0 +1,18 @@
+Starting Geo bot... 
+[PM2][ERROR] Script not found: C:\coding\project\geo\prod\Geo
+Starting Geo bot... 
+[PM2][ERROR] Script not found: C:\coding\project\geo\prod\Geo
+[Wed 07/16/2025 10:44:45.56] Starting Geo 
+[PM2][ERROR] Script not found: C:\coding\project\geo\prod\Geo
+[Wed 07/16/2025 10:44:45.75] Geo failed to start. Starting fallback... 
+[PM2] Starting C:\coding\project\geo\prod\main.js in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name   │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ Geo    │ default     │ 0.0.1   │ fork    │ 9816     │ 0s     │ 0    │ online    │ 0%       │ 0b       │ sun      │ disabled │
+└────┴────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[PM2] Saving current process list...
+[PM2] Successfully saved in C:\Users\sun\.pm2\dump.pm2
+[ERROR] Geo not found. Fallback started. 
+[Wed 07/16/2025 10:44:46.12] Script finished. Press any key to exit. 
