@@ -41,6 +41,8 @@ const data =
         flag: 
         {
             defer: false,
+            permission: true,
+            exclude: true
         },
 
         permission:
@@ -90,6 +92,8 @@ const data =
         flag: 
         {
             defer: false,
+            permission: true,
+            exclude: true
         },
 
 
