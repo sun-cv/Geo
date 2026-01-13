@@ -1,0 +1,27 @@
+{
+    "root": "C:/dev/projects",
+    "project": "geo",
+    "env": "dev",
+  
+    "paths": 
+    {
+        "databases": 
+        {
+          "mercy": "mercy.db",
+          "clan": "clan.db",
+          "system": "system.db"
+        }
+    },
+  
+    "backups": 
+    {
+        "databases": ["c", "x"]
+    },
+  
+    "sources": 
+    {
+        "c": "C:/ops/backups",
+        "x": "X:/ops/backups"
+    }
+}
+  

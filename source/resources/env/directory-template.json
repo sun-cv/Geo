@@ -1,0 +1,80 @@
+{
+    "template": {
+        "alure": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/alure.png"
+        },
+        "arbiter-red": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/arbiter-red.png"
+        },
+        "archer": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/archer.png"
+        },
+        "artak": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/artak.png"
+        },
+        "concept-armor": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/concept-armor.png"
+        },
+        "conscript": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/conscript.png"
+        },
+        "fayne": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/fayne.png"
+        },
+        "gnishak": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/gnishak.png"
+        },
+        "hotatsu": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/hotatsu.png"
+        },
+        "lady-mikage": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/lady-mikage.png"
+        },
+        "leorius": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/leorius.png"
+        },
+        "morrigaine": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/morrigaine.png"
+        },
+        "scyl-nature": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/scyl-nature.png"
+        },
+        "skytouched-shaman": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/skytouched-shaman.png"
+        },
+        "spear-ice": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/spear-ice.png"
+        },
+        "tatsu": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/tatsu.png"
+        },
+        "thor": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/thor.png"
+        },
+        "tormin-ice-smash": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/tormin-ice-smash.png"
+        },
+        "trunda-red": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/trunda-red.png"
+        },
+        "tuhanarak": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/tuhanarak.png"
+        },
+        "udk-green": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/udk-green.png"
+        },
+        "wukong": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/wukong.png"
+        },
+        "wythir": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/wythir.png"
+        },
+        "yumeko-battle": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/yumeko-battle.png"
+        },
+        "zinogre": {
+            "path": "C:/dev/projects/geo/shared/assets/template/mercy/zinogre.png"
+        }
+    },
+    "directory": "C:\\dev\\projects\\geo\\shared\\assets\\template\\mercy"
+}

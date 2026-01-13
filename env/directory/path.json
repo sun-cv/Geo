@@ -1,0 +1,27 @@
+{
+	"root": "C:/dev/projects/geo/dev",
+	"shared": "C:/dev/projects/geo/shared",
+	"databases": {
+		"mercy": {
+			"path": "C:/dev/projects/geo/dev/source/databases/mercy.db",
+			"backup": {
+				"c": "C:/ops/storage/backups/geo/dev/mercy",
+				"x": "X:/ops/storage/backups/geo/dev/mercy"
+			}
+		},
+		"clan": {
+			"path": "C:/coding/project/geo/dev/source/databases/clan.db",
+			"backup": {
+				"c": "C:/ops/storage/backups/geo/dev/clan",
+				"x": "X:/ops/storage/backups/geo/dev/clan"
+			}
+		},
+		"system": {
+			"path": "C:/coding/project/geo/dev/source/databases/system.db",
+			"backup": {
+				"c": "C:/ops/storage/backups/geo/dev/system",
+				"x": "X:/ops/storage/backups/geo/dev/system"
+			}
+		}
+	}
+}

@@ -1,5 +1,5 @@
 @echo off
-cd C:\coding\project\geo\prod
+cd C:\dev\project\geo\dev
 
 call "C:\Users\sun\AppData\Roaming\npm\pm2.cmd" start Geo
 
