@@ -15,13 +15,12 @@
   
     "backups": 
     {
-        "databases": ["c", "x"]
+        "databases": ["c"]
     },
   
     "sources": 
     {
-        "c": "C:/ops/backups",
-        "x": "X:/ops/backups"
+        "c": "C:/ops/backups/projects"
     }
 }
   
