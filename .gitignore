@@ -1,0 +1,5 @@
+*.db
+env/secret/
+env/config.json
+node_modules/
+

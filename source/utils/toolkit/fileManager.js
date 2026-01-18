@@ -51,40 +51,37 @@ class FileManager
     }
 
 
-    static async loadJS(filePath, callbackFunction, ...args)
-    {        
-        const fileURL   = pathToFileURL(filePath).href;
-        const module    = await import(fileURL);
-        const object    = module.default;
-        const flag      = module.flag;
+static async loadJS(filePath, callbackFunction, ...args)
+{        
+    const fileURL   = pathToFileURL(filePath).href;
+    const module    = await import(fileURL);
+    const object    = module.default;
+    const flag      = module.flag;
 
-        if (!object) 
-        {
-            log.trace(module ? `Skipping module (No autoload flag): ${fileURL}` 
-                             : `File load failed (No object data found): ${fileURL}`);
-            return;
-        }
-
-        
-        if (object?.flag instanceof Flags) 
-        {
-            if (!object.flag?.autoload?.get())
-            {
-                log.trace(`Skipping load (Autoload flag instance set to ignore): ${fileURL}`)
-                return
-            }
-            
-        }
-        else if (!flag)
-        {
-            log.trace(`Skipping load: ${fileURL}`)
-            return
-        }
-
-        log.trace(`Loading JavaScript module: ${fileURL})`);
-        await callbackFunction(object, ...args);
+    if (!object) 
+    {
+        log.trace(module ? `Skipping module (No autoload flag): ${fileURL}` 
+                         : `File load failed (No object data found): ${fileURL}`);
+        return;
     }
 
+    if (object?.flag?.constructor?.name === 'Flags' || (object?.flag && typeof object.flag.all === 'function')) 
+    {
+        if (!object.flag?.autoload?.get())
+        {
+            log.trace(`Skipping load (Autoload flag instance set to ignore): ${fileURL}`)
+            return
+        }
+    }
+    else if (!flag)
+    {
+        log.trace(`Skipping load: ${fileURL}`)
+        return
+    }
+
+    log.trace(`Loading JavaScript module: ${fileURL})`);
+    await callbackFunction(object, ...args);
+}
 
     static async loadJSON(filePath, callbackFunction, ...args) 
     {

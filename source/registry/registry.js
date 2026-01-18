@@ -57,8 +57,6 @@ class Registry
         // interaction cache
         this.modal.cache    = new Collection();
 
-
-
         client.registry     = this;
     }
 

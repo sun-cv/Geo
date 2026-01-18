@@ -1,7 +1,6 @@
 import lodash           from 'lodash';
 import { Condition }    from '#events/message/handler/filter.js';
-import { Flags }        from './flag.js';
-
+import { Flags }        from '#utils/toolkit/flag.js';
 
 class Schema
 {

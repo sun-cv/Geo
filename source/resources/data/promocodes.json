@@ -1,0 +1,122 @@
+{
+    "test123": {
+        "meta": {
+            "id": "test123",
+            "type": "limited",
+            "category": "promocode",
+            "description": "Raid promocode",
+            "timestamp": "2025-06-05T17:42:50.993Z"
+        },
+        "data": {
+            "code": "TEST123",
+            "type": "",
+            "champion": "",
+            "silver": "",
+            "experience_brew": "",
+            "experience_day": 0,
+            "energy_refill": 0,
+            "energy_flat": 50,
+            "multi_battle": 0,
+            "potion": "",
+            "chicken": "",
+            "book": "",
+            "shard": "",
+            "artifact": "",
+            "refill_arena": 0,
+            "not_listed": ""
+        },
+        "condition": {
+            "scopes": [
+                "energy_flat"
+            ]
+        },
+        "status": {
+            "reportCount": 0,
+            "reportUser": []
+        },
+        "flag": {
+            "valid": true,
+            "reported": false
+        }
+    },
+    "etstest": {
+        "meta": {
+            "id": "etstest",
+            "type": "player",
+            "category": "promocode",
+            "description": "Raid promocode",
+            "timestamp": "2025-06-05T19:33:31.208Z"
+        },
+        "data": {
+            "code": "ETSTEST",
+            "type": "",
+            "champion": "",
+            "silver": "",
+            "experience_brew": "",
+            "experience_day": 0,
+            "energy_refill": 0,
+            "energy_flat": 0,
+            "multi_battle": 0,
+            "potion": "",
+            "chicken": "1 x 4",
+            "book": "",
+            "shard": "",
+            "artifact": "",
+            "refill_arena": 0,
+            "not_listed": ""
+        },
+        "condition": {
+            "scopes": [
+                "chicken"
+            ]
+        },
+        "status": {
+            "reportCount": 0,
+            "reportUser": []
+        },
+        "flag": {
+            "valid": true,
+            "reported": false
+        }
+    },
+    "demonslayer": {
+        "meta": {
+            "id": "demonslayer",
+            "type": "player",
+            "category": "promocode",
+            "description": "Raid promocode",
+            "timestamp": "2025-06-06T22:44:55.831Z"
+        },
+        "data": {
+            "code": "DEMONSLAYER",
+            "type": "",
+            "champion": "Abbess",
+            "silver": "",
+            "experience_brew": "",
+            "experience_day": 0,
+            "energy_refill": 0,
+            "energy_flat": 0,
+            "multi_battle": 0,
+            "potion": "",
+            "chicken": "",
+            "book": "",
+            "shard": "",
+            "artifact": "",
+            "refill_arena": 0,
+            "not_listed": ""
+        },
+        "condition": {
+            "scopes": [
+                "champion"
+            ]
+        },
+        "status": {
+            "reportCount": 0,
+            "reportUser": []
+        },
+        "flag": {
+            "valid": true,
+            "reported": false
+        }
+    }
+}
