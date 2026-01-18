@@ -1,5 +1,5 @@
 *.db
 env/secret/
-env/config.json
 node_modules/
-
+env/directory/path.json
+env/config.json
