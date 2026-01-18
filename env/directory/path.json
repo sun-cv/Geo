@@ -5,22 +5,19 @@
 		"mercy": {
 			"path": "C:/dev/projects/geo/dev/source/databases/mercy.db",
 			"backup": {
-				"c": "C:/ops/backups/geo/dev/mercy",
-				"x": "X:/ops/backups/geo/dev/mercy"
+				"c": "C:/ops/backups/projects/geo/dev/mercy"
 			}
 		},
 		"clan": {
 			"path": "C:/dev/projects/geo/dev/source/databases/clan.db",
 			"backup": {
-				"c": "C:/ops/backups/geo/dev/clan",
-				"x": "X:/ops/backups/geo/dev/clan"
+				"c": "C:/ops/backups/projects/geo/dev/clan"
 			}
 		},
 		"system": {
 			"path": "C:/dev/projects/geo/dev/source/databases/system.db",
 			"backup": {
-				"c": "C:/ops/backups/geo/dev/system",
-				"x": "X:/ops/backups/geo/dev/system"
+				"c": "C:/ops/backups/projects/geo/dev/system"
 			}
 		}
 	}
