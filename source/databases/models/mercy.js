@@ -54,8 +54,6 @@ class Mercy extends Database
     {
         const data = this.database.prepare(`SELECT * FROM mercy WHERE member_id = ? AND account_id = ?`).all(member.id, account_id);
 
-        log.trace(`Successfully found mercy data (${data.length} records)`);
-
         return Parser.accountMercy(data);
     }
     
