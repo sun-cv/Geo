@@ -3,4 +3,4 @@ env/secret/
 node_modules/
 env/directory/path.json
 env/config.json
-env/constant
+env/constant/
