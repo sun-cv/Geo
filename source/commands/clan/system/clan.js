@@ -2,7 +2,7 @@ import lodash                   from 'lodash';
 import { Collection }           from 'discord.js';
 import { log, Toolkit }                  from '#utils';
 import { ApplicationSystem }    from './application.js';
-
+import global                   from './../../../../env/constant/global.json' with { type: 'json' }
 
 class ClanManagement
 {
@@ -13,7 +13,7 @@ class ClanManagement
 
         this.clan           = {};
         this.clans          = [];
-        this.officersTable  = "officers-table"
+        this.officersTable  = global.officersTable;
        
         this.applications   = new ApplicationSystem(this);
 
