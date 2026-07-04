@@ -19,35 +19,43 @@ async function updateChampionList()
     await page.goto(url);
     await page.click('button.clear-button-tier-list');
 
-    let championNames   = [];
-    let lastBatch       = [];
+    await page.waitForSelector('.tl-pagination-tile');
 
-    for (let i = 0; ; i += 60) 
+    const offsets = await page.evaluate(() =>
+        Array.from(document.querySelectorAll('.tl-pagination-tile'))
+            .map(tile => tile.getAttribute('data-offset'))
+    );
+
+    await page.waitForFunction(() => document.querySelectorAll('.champion-name a').length > 0);
+
+    let championNames   = [];
+    let previousFirst   = null;
+
+    for (const offset of offsets)
     {
-        await page.evaluate((offset) => 
+        await page.evaluate((offset) =>
         {
             const tile = document.querySelector(`.tl-pagination-tile[data-offset="${offset}"]`);
-            if (tile) 
+            if (tile)
             {
                 tile.click();
             }
-        }, i);
+        }, offset);
 
-        await page.waitForSelector('.champion-name a');
+        await page.waitForFunction((previousFirst) =>
+        {
+            const names = document.querySelectorAll('.champion-name a');
+            return names.length > 0 && names[0].textContent.trim() !== previousFirst;
+        }, {}, previousFirst);
 
-        const names = await page.evaluate(() => 
+        const names = await page.evaluate(() =>
             Array.from(document.querySelectorAll('.champion-name a')).map(element => element.textContent.trim())
         );
 
-        log.trace(`Page search offset ${i}: Found ${names.length} names`);
+        previousFirst   = names[0];
 
-        if (JSON.stringify(names) === JSON.stringify(lastBatch)) 
-        {
-            log.trace('End of results - ending loop.');
-            break;
-        }
+        log.trace(`Page search offset ${offset}: Found ${names.length} names`);
 
-        lastBatch       = names;
         championNames   = championNames.concat(names);
     }
 
@@ -81,6 +89,8 @@ async function updateChampionList()
     updateChampionListTrieCache();
 }
 
+
+updateChampionList();
 
 const data = Schema.task
 ({
